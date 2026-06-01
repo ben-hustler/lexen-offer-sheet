@@ -8,6 +8,7 @@ function fmtPhone(p) {
   return p || '';
 }
 
+
 function _templatePayload() {
   const today = new Date();
   const validUntil = new Date(today); validUntil.setDate(today.getDate() + 30);
