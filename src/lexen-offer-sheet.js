@@ -122,7 +122,8 @@ export class LexenOfferSheet extends LitElement {
 
     // Public properties (settable from Bubble JS)
     payload:        { type: Object },
-    defaultDisplay: { type: Object },
+    sharedDisplay:  { type: Object },
+    pdfDisplay:     { type: Object },
     employees:      { type: Array },
     locked:         { type: Boolean },
 
@@ -750,8 +751,9 @@ export class LexenOfferSheet extends LitElement {
     this.apiMode = 'url';
     this.authToken = '';
     this.templateMode = false;
-    this.payload = null;
-    this.defaultDisplay = null;
+    this.payload       = null;
+    this.sharedDisplay = null;
+    this.pdfDisplay    = null;
     this.employees = [];
     this._selectedEmployeeIndex = 0;
 
@@ -838,26 +840,30 @@ export class LexenOfferSheet extends LitElement {
     };
   }
 
-  _applyDisplayState(state) {
-    if (state.mode !== undefined) this._mode = state.mode;
-    if (state.valueDisplay !== undefined) this._valueDisplay = state.valueDisplay;
-    if (state.taxRatePct !== undefined) this._taxRatePct = state.taxRatePct;
-    // In instance mode, profitName and disclaimerText always come from the location's
-    // template props (profitLabel / disclaimerText), never from the saved offer display.
-    if (state.disclaimerPunct !== undefined) this._disclaimerPunct = state.disclaimerPunct;
-    if (!this.templateMode) {
-      // leave _profitName and _disclaimerText to be set by the prop handlers in updated()
-    } else {
-      if (state.profitName !== undefined) this._profitName = state.profitName;
-      if (state.disclaimerText !== undefined) this._disclaimerText = state.disclaimerText;
-    }
-    if (state.fontSizeIndex !== undefined) this._fontSizeIndex = state.fontSizeIndex;
-    if (state.photosPerRow !== undefined) this._photosPerRow = state.photosPerRow;
-    if (state.discLayout !== undefined) this._discLayout = state.discLayout;
-    if (state.marketDisplay !== undefined) this._marketDisplay = state.marketDisplay;
-    if (state.sectionOrder !== undefined) this._sectionOrder = state.sectionOrder.filter(s => DEFAULT_LAYOUT_ORDER.includes(s));
-    if (state.pills !== undefined) this._pills = { ...state.pills };
-    if (state.groups !== undefined) this._groups = { ...state.groups };
+  _applySharedDisplay(d) {
+    if (!d) return;
+    const GROUP_KEYS = ['valuation','disclosures','observations','market','recon','photos'];
+    const sec = d.sections || {};
+    const newGroups = { ...this._groups };
+    GROUP_KEYS.forEach(k => { if (sec[k] != null) newGroups[k] = sec[k] ? 'checked' : 'unchecked'; });
+    this._groups = newGroups;
+    if (d.pills != null)         this._pills        = { ...this._pills, ...d.pills };
+    if (d.section_order != null) this._sectionOrder = d.section_order.filter(s => DEFAULT_LAYOUT_ORDER.includes(s));
+    if (d.tax_rate_pct != null)  this._taxRatePct   = d.tax_rate_pct;
+    if (d.value_display != null) this._valueDisplay = d.value_display;
+    if (d.profit_name != null)   this._profitName   = d.profit_name;
+    if (d.market_view != null)   this._marketDisplay = d.market_view === 'summary' ? 'summary' : 'full';
+  }
+
+  _applyPdfDisplay(d) {
+    if (!d) return;
+    if (d.mode != null)             this._mode                  = d.mode;
+    if (d.font_size_index != null)  this._fontSizeIndex         = d.font_size_index;
+    if (d.photos_per_row != null)   this._photosPerRow          = d.photos_per_row;
+    if (d.disc_layout != null)      this._discLayout            = d.disc_layout;
+    if (d.disclaimer_text != null)  this._disclaimerText        = d.disclaimer_text;
+    if (d.disclaimer_punct != null) this._disclaimerPunct       = d.disclaimer_punct;
+    if (d.selected_emp_idx != null) this._selectedEmployeeIndex = d.selected_emp_idx;
   }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
@@ -870,18 +876,19 @@ export class LexenOfferSheet extends LitElement {
   }
 
   updated(changedProps) {
-    // Apply defaultDisplay when it's first set
-    if (changedProps.has('defaultDisplay') && this.defaultDisplay) {
-      this._applyDisplayState(this.defaultDisplay);
-      // If auto-preview already fired before saved settings arrived (Bubble async load),
-      // re-trigger once with the real saved display state.
-      if (this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl) {
-        this._savedDisplayConsumed = true;
-        clearTimeout(this._autoPreviewTimer);
-        this._autoPreviewTimer = setTimeout(() => {
-          this._handleGenerate();
-        }, 300);
-      }
+    if (changedProps.has('sharedDisplay') && this.sharedDisplay) {
+      this._applySharedDisplay(this.sharedDisplay);
+    }
+    if (changedProps.has('pdfDisplay') && this.pdfDisplay) {
+      this._applyPdfDisplay(this.pdfDisplay);
+    }
+    // If auto-preview already fired before saved settings arrived (Bubble async load),
+    // re-trigger once with the real saved display state.
+    const savedDisplayArrived = changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay');
+    if (savedDisplayArrived && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl) {
+      this._savedDisplayConsumed = true;
+      clearTimeout(this._autoPreviewTimer);
+      this._autoPreviewTimer = setTimeout(() => { this._handleGenerate(); }, 300);
     }
 
     // Update vehicle info when payload is set externally
@@ -938,7 +945,7 @@ export class LexenOfferSheet extends LitElement {
 
     // Auto-preview once on initial load: debounce off the last external prop arrival
     if (!this._autoPreviewDone && this.apiBaseUrl) {
-      if (['payload', 'defaultDisplay', 'employees', 'locked'].some(p => changedProps.has(p))) {
+      if (['payload', 'sharedDisplay', 'pdfDisplay', 'employees', 'locked'].some(p => changedProps.has(p))) {
         clearTimeout(this._autoPreviewTimer);
         this._autoPreviewTimer = setTimeout(() => {
           if (!this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload)) {
@@ -1020,7 +1027,9 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _restoreLayoutOrder(section) {
-    const refOrder = (this.defaultDisplay?.sectionOrder?.length ? this.defaultDisplay.sectionOrder : DEFAULT_LAYOUT_ORDER);
+    const refOrder = this.sharedDisplay?.section_order?.length
+      ? this.sharedDisplay.section_order
+      : DEFAULT_LAYOUT_ORDER;
     const order = [...this._sectionOrder].filter(s => s !== section);
     const refIdx = refOrder.indexOf(section);
     const insertBefore = order.findIndex(s => refOrder.indexOf(s) > refIdx);
@@ -1043,21 +1052,35 @@ export class LexenOfferSheet extends LitElement {
 
   // ── Display block builder ──────────────────────────────────────────────────
 
-  _buildSaveState() {
+  _buildSharedState() {
+    const g = this._groups;
     return {
-      mode: this._mode,
-      valueDisplay: this._valueDisplay,
-      taxRatePct: this._taxRatePct,
-      profitName: this._profitName || '',
-      disclaimerText: this._disclaimerText || '',
-      disclaimerPunct: this._disclaimerPunct ?? '.',
-      fontSizeIndex: this._fontSizeIndex,
-      photosPerRow: this._photosPerRow,
-      discLayout: this._discLayout,
-      marketDisplay: this._marketDisplay,
-      sectionOrder: [...this._sectionOrder],
-      pills: { ...this._pills },
-      groups: { ...this._groups },
+      sections: {
+        valuation:    g.valuation    !== 'unchecked',
+        disclosures:  g.disclosures  !== 'unchecked',
+        observations: g.observations !== 'unchecked',
+        market:       g.market       !== 'unchecked',
+        recon:        g.recon        !== 'unchecked',
+        photos:       g.photos       !== 'unchecked',
+      },
+      market_view:   this._marketDisplay,
+      pills:         { ...this._pills },
+      section_order: [...this._sectionOrder],
+      value_display: this._valueDisplay,
+      tax_rate_pct:  this._taxRatePct,
+      profit_name:   this._profitName || null,
+    };
+  }
+
+  _buildPdfState() {
+    return {
+      mode:             this._mode,
+      font_size_index:  this._fontSizeIndex,
+      photos_per_row:   this._photosPerRow,
+      disc_layout:      this._discLayout,
+      disclaimer_text:  this._disclaimerText || '',
+      disclaimer_punct: this._disclaimerPunct ?? ',',
+      selected_emp_idx: this._selectedEmployeeIndex,
     };
   }
 
@@ -1205,8 +1228,9 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _handleReset() {
-    if (this.defaultDisplay) {
-      this._applyDisplayState(this.defaultDisplay);
+    if (this.sharedDisplay || this.pdfDisplay) {
+      if (this.sharedDisplay) this._applySharedDisplay(this.sharedDisplay);
+      if (this.pdfDisplay)    this._applyPdfDisplay(this.pdfDisplay);
     } else {
       this._resetToggles();
     }
@@ -1366,7 +1390,7 @@ export class LexenOfferSheet extends LitElement {
       ? this.employees[this._selectedEmployeeIndex] || this.employees[0]
       : null;
     this.dispatchEvent(new CustomEvent('display-save', {
-      detail: { display: this._buildSaveState(), employee },
+      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee },
       bubbles: true, composed: true,
     }));
   }
