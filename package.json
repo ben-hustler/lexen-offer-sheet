@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build && cp dist/lexen-offer-sheet.js deploy/lexen-offer-sheet.js",
+    "build": "vite build && cp dist/lexen-offer-sheet.js deploy/lexen-offer-sheet.js && cp dist/_headers deploy/_headers",
     "dev": "vite"
   },
   "dependencies": {
