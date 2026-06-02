@@ -727,6 +727,10 @@ export class LexenOfferSheet extends LitElement {
       color: #c0392b;
     }
 
+    .action-msg { font-size: 12px; line-height: 1.4; margin-top: 10px; text-align: center; }
+    .action-msg.success { color: #27ae60; }
+    .action-msg.error   { color: #c0392b; }
+
     .reset-btn {
       width: 100%; padding: 9px 20px; background: transparent; color: #667085;
       border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
@@ -1920,6 +1924,12 @@ export class LexenOfferSheet extends LitElement {
 
         <div class="divider"></div>
 
+        ${this._statusError && this._statusMsg ? html`
+          <div class="action-msg error">${this._statusMsg}</div>
+        ` : nothing}
+        ${this._savedConfirm ? html`
+          <div class="action-msg success">${this.templateMode ? 'Template saved.' : 'Changes saved!'}</div>
+        ` : nothing}
         <button
           class="btn btn-green"
           ?disabled="${this._generating || this._finalizing}"
@@ -1927,10 +1937,6 @@ export class LexenOfferSheet extends LitElement {
         >${this.templateMode
             ? (this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template')
             : (this._generating || this._finalizing ? 'Generating…' : 'Apply')}</button>
-
-        ${this._savedConfirm && !this.templateMode ? html`
-          <div style="text-align:center;margin-top:10px;font-size:13px;color:#222222;font-weight:500;">Changes saved!</div>
-        ` : nothing}
 
         ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
           <div class="confirm-reset">

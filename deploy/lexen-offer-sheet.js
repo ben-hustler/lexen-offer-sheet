@@ -289,7 +289,7 @@ E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[T("elementProper
  */
 const M = globalThis, ce = (a) => a, j = M.trustedTypes, pe = j ? j.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, xe = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + $, He = `<${$e}>`, P = document, N = () => P.createComment(""), L = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
 \f\r]`, R = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, k = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, je = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), h = je(1), C = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
+\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, je = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = je(1), C = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
 function ke(a, e) {
   if (!ie(a) || !a.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return pe !== void 0 ? pe.createHTML(e) : e;
@@ -299,8 +299,8 @@ const Ge = (a, e) => {
   let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = R;
   for (let l = 0; l < t; l++) {
     const n = a[l];
-    let f, p, c = -1, g = 0;
-    for (; g < n.length && (r.lastIndex = g, p = r.exec(n), p !== null); ) g = r.lastIndex, r === R ? p[1] === "!--" ? r = he : p[1] !== void 0 ? r = ue : p[2] !== void 0 ? (we.test(p[2]) && (s = RegExp("</" + p[2], "g")), r = k) : p[3] !== void 0 && (r = k) : r === k ? p[0] === ">" ? (r = s ?? R, c = -1) : p[1] === void 0 ? c = -2 : (c = r.lastIndex - p[2].length, f = p[1], r = p[3] === void 0 ? k : p[3] === '"' ? _e : fe) : r === _e || r === fe ? r = k : r === he || r === ue ? r = R : (r = k, s = void 0);
+    let f, h, c = -1, g = 0;
+    for (; g < n.length && (r.lastIndex = g, h = r.exec(n), h !== null); ) g = r.lastIndex, r === R ? h[1] === "!--" ? r = he : h[1] !== void 0 ? r = ue : h[2] !== void 0 ? (we.test(h[2]) && (s = RegExp("</" + h[2], "g")), r = k) : h[3] !== void 0 && (r = k) : r === k ? h[0] === ">" ? (r = s ?? R, c = -1) : h[1] === void 0 ? c = -2 : (c = r.lastIndex - h[2].length, f = h[1], r = h[3] === void 0 ? k : h[3] === '"' ? _e : fe) : r === _e || r === fe ? r = k : r === he || r === ue ? r = R : (r = k, s = void 0);
     const b = r === k && a[l + 1].startsWith("/>") ? " " : "";
     o += r === R ? n + He : c >= 0 ? (i.push(f), n.slice(0, c) + xe + n.slice(c) + $ + b) : n + $ + (c === -2 ? l : b);
   }
@@ -311,7 +311,7 @@ class I {
     let s;
     this.parts = [];
     let o = 0, r = 0;
-    const l = e.length - 1, n = this.parts, [f, p] = Ge(e, t);
+    const l = e.length - 1, n = this.parts, [f, h] = Ge(e, t);
     if (this.el = I.createElement(f, i), S.currentNode = this.el.content, t === 2 || t === 3) {
       const c = this.el.content.firstChild;
       c.replaceWith(...c.childNodes);
@@ -319,7 +319,7 @@ class I {
     for (; (s = S.nextNode()) !== null && n.length < l; ) {
       if (s.nodeType === 1) {
         if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith(xe)) {
-          const g = p[r++], b = s.getAttribute(c).split($), d = /([.?@])?(.*)/.exec(g);
+          const g = h[r++], b = s.getAttribute(c).split($), d = /([.?@])?(.*)/.exec(g);
           n.push({ type: 1, index: o, name: d[2], strings: b, ctor: d[1] === "." ? qe : d[1] === "?" ? We : d[1] === "@" ? Ke : G }), s.removeAttribute(c);
         } else c.startsWith($) && (n.push({ type: 6, index: o }), s.removeAttribute(c));
         if (we.test(s.tagName)) {
@@ -660,7 +660,7 @@ const H = [
   market: "Market",
   recon: "Recon",
   photos: "Photos"
-}, J = h`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}, J = p`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 class X extends U {
   constructor() {
     super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...D], this._pills = {
@@ -719,12 +719,12 @@ class X extends U {
     if (e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const p = (r = (o = (s = this.payload) == null ? void 0 : s.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : r.rate_pct;
-      this._taxRatePct = p != null ? parseFloat(parseFloat(p).toFixed(2)) : 0;
+      const h = (r = (o = (s = this.payload) == null ? void 0 : s.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : r.rate_pct;
+      this._taxRatePct = h != null ? parseFloat(parseFloat(h).toFixed(2)) : 0;
     }
     if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("profitLabel") && this.templateMode && this._autoPreviewDone && this.apiBaseUrl && this._handleGenerate(), e.has("employees") && ((l = this.employees) != null && l.length) && ((f = (n = this.payload) == null ? void 0 : n.employee) != null && f.name)) {
-      const p = this.employees.findIndex((c) => c.name === this.payload.employee.name);
-      p !== -1 && (this._selectedEmployeeIndex = p);
+      const h = this.employees.findIndex((c) => c.name === this.payload.employee.name);
+      h !== -1 && (this._selectedEmployeeIndex = h);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -741,13 +741,13 @@ class X extends U {
       "_pills",
       "_groups",
       "_selectedEmployeeIndex"
-    ].some((c) => e.has(c)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((p) => e.has(p)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    ].some((c) => e.has(c)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((h) => e.has(h)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
     }, 300));
     const i = this.shadowRoot;
     if (i)
-      for (const [p, c] of Object.entries(this._groups)) {
-        const g = i.querySelector(`input[data-group="${p}"]`);
+      for (const [h, c] of Object.entries(this._groups)) {
+        const g = i.querySelector(`input[data-group="${h}"]`);
         g && (g.indeterminate = c === "indeterminate", g.checked = c === "checked" || c === "indeterminate");
       }
   }
@@ -996,7 +996,7 @@ class X extends U {
   }
   // ── Generate ───────────────────────────────────────────────────────────────
   async _handleGenerate(e = !1) {
-    var t, i, s, o, r, l, n, f, p, c;
+    var t, i, s, o, r, l, n, f, h, c;
     this._generating = !0, this._statusMsg = "Generating…", this._statusError = !1;
     try {
       const g = this._buildDisplay(), b = {
@@ -1083,7 +1083,7 @@ class X extends U {
         this._pdfVehicle = _.vehicle;
         const y = { "ngrok-skip-browser-warning": "true" };
         this.authToken && (y.Authorization = `Bearer ${this.authToken}`);
-        const x = await (await fetch(v, { headers: y })).blob(), Ae = (((p = d.customer) == null ? void 0 : p.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Pe = ((c = _.vehicle) == null ? void 0 : c.vin) || "offer";
+        const x = await (await fetch(v, { headers: y })).blob(), Ae = (((h = d.customer) == null ? void 0 : h.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Pe = ((c = _.vehicle) == null ? void 0 : c.vin) || "offer";
         this._pdfFilename = `${Ae}_${Pe}.pdf`;
         const De = new File([x], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
@@ -1128,7 +1128,7 @@ class X extends U {
   }
   // ── Render helpers ─────────────────────────────────────────────────────────
   _renderHeader() {
-    return h`
+    return p`
       <div class="component-header">
         <div class="wrap">
           <h1>LXN Offer Sheet Generator</h1>
@@ -1138,7 +1138,7 @@ class X extends U {
   }
   _renderOfferCard() {
     if (this.templateMode)
-      return h`
+      return p`
         <div class="card">
           <h2>Template</h2>
           <div style="font-size:13px; color:#667085; line-height:1.6;">
@@ -1147,22 +1147,22 @@ class X extends U {
         </div>
       `;
     const e = this._vehicleInfo;
-    return h`
+    return p`
       <div class="card">
         <h2>Offer</h2>
-        ${e ? h`
+        ${e ? p`
           <div class="vehicle-info">
             <div class="amount">${e.amount}</div>
             <div class="desc">${e.desc}</div>
-            ${e.vin ? h`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
+            ${e.vin ? p`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
           </div>
-        ` : h`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ` : p`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
       </div>
     `;
   }
   _renderCustomizeCard() {
     const e = this._isOnePage(), t = H[this._fontSizeIndex].label, i = D.map((s) => this._renderShowHideGroup(s));
-    return h`
+    return p`
       <div class="card">
         <div>
         <div class="customize-header-row">
@@ -1226,7 +1226,7 @@ class X extends U {
                 @input="${this._handleProfitNameInput}"
               />
             </div>
-            ${!this.templateMode && this.employees && this.employees.length > 0 ? h`
+            ${!this.templateMode && this.employees && this.employees.length > 0 ? p`
               <div class="config-row">
                 <span>Employee</span>
                 <select
@@ -1235,7 +1235,7 @@ class X extends U {
       this._selectedEmployeeIndex = parseInt(s.target.value);
     }}"
                 >
-                  ${this.employees.map((s, o) => h`
+                  ${this.employees.map((s, o) => p`
                     <option value="${o}" ?selected="${o === this._selectedEmployeeIndex}">${s.name}</option>
                   `)}
                 </select>
@@ -1382,7 +1382,7 @@ class X extends U {
             >
               ${this._sectionOrder.map((s) => {
       const o = this._isSectionDisabled(s);
-      return h`
+      return p`
                   <div
                     class="sortable-item ${o ? "disabled" : ""}"
                     data-section="${s}"
@@ -1409,17 +1409,19 @@ class X extends U {
 
         <div class="divider"></div>
 
+        ${this._statusError && this._statusMsg ? p`
+          <div class="action-msg error">${this._statusMsg}</div>
+        ` : u}
+        ${this._savedConfirm ? p`
+          <div class="action-msg success">${this.templateMode ? "Template saved." : "Changes saved!"}</div>
+        ` : u}
         <button
           class="btn btn-green"
           ?disabled="${this._generating || this._finalizing}"
           @click="${this._handleApply}"
         >${this.templateMode ? this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template" : this._generating || this._finalizing ? "Generating…" : "Apply"}</button>
 
-        ${this._savedConfirm && !this.templateMode ? h`
-          <div style="text-align:center;margin-top:10px;font-size:13px;color:#222222;font-weight:500;">Changes saved!</div>
-        ` : u}
-
-        ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? this._confirmReset ? h`
+        ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? this._confirmReset ? p`
           <div class="confirm-reset">
             <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
             <div class="confirm-reset-btns">
@@ -1429,7 +1431,7 @@ class X extends U {
     }}">Cancel</button>
             </div>
           </div>
-        ` : h`
+        ` : p`
           <button class="reset-btn" @click="${() => {
       this._confirmReset = !0;
     }}">Reset to template</button>
@@ -1439,7 +1441,7 @@ class X extends U {
   }
   _renderShowHideGroup(e) {
     const i = this._isOnePage() && ["disclosures", "recon", "photos"].includes(e), s = this._groups[e];
-    return e === "valuation" ? h`
+    return e === "valuation" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="valuation">
           <label class="group-header">
             <input
@@ -1458,7 +1460,7 @@ class X extends U {
             ${this._renderPill("valuation.tax_savings", "Tax Savings", "valuation")}
           </div>
         </div>
-      ` : e === "disclosures" ? h`
+      ` : e === "disclosures" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="disclosures">
           <label class="group-header">
             <input
@@ -1470,7 +1472,7 @@ class X extends U {
             Disclosures
           </label>
         </div>
-      ` : e === "observations" ? h`
+      ` : e === "observations" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="observations">
           <label class="group-header">
             <input
@@ -1486,7 +1488,7 @@ class X extends U {
             ${this._renderPill("sections.observations_comments", "Comments", "observations")}
           </div>
         </div>
-      ` : e === "market" ? h`
+      ` : e === "market" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="market">
           <label class="group-header">
             <input
@@ -1498,7 +1500,7 @@ class X extends U {
             Market
           </label>
         </div>
-      ` : e === "recon" ? h`
+      ` : e === "recon" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="recon">
           <label class="group-header">
             <input
@@ -1510,7 +1512,7 @@ class X extends U {
             Recon
           </label>
         </div>
-      ` : e === "photos" ? h`
+      ` : e === "photos" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="photos">
           <label class="group-header">
             <input
@@ -1526,7 +1528,7 @@ class X extends U {
   }
   _renderPill(e, t, i) {
     const s = this._pills[e];
-    return h`
+    return p`
       <span
         class="pill ${s ? "active" : ""}"
         @click="${() => this._handlePillClick(e, i)}"
@@ -1535,16 +1537,16 @@ class X extends U {
   }
   _renderPreviewPane() {
     const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e, o = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
-    return h`
+    return p`
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
             <h2>${o ? "Preview" : "PDF"}</h2>
-            ${!this.templateMode && e && !t && o ? h`
+            ${!this.templateMode && e && !t && o ? p`
               <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
             ` : u}
           </div>
-          ${i ? h`
+          ${i ? p`
             <div class="preview-loading">
               <div class="pulse-dots">
                 <span></span><span></span><span></span>
@@ -1552,22 +1554,22 @@ class X extends U {
               Generating preview…
             </div>
           ` : u}
-          ${!i && !e ? h`
+          ${!i && !e ? p`
             <div class="empty-preview">Select a payload and click Refresh Preview</div>
           ` : u}
-          ${e && !t && o ? h`
+          ${e && !t && o ? p`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
           ` : u}
-          ${e && !t && !o ? h`
+          ${e && !t && !o ? p`
             <div style="display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
-              ${window.natively ? h`
+              ${window.natively ? p`
                 <button
                   class="btn btn-primary"
                   style="width:auto;padding:10px 24px;"
                   @click="${() => window.natively.openPDF({ base64: this._pdfUrl.split(",")[1], fileName: "offer.pdf", download: !0 }, () => {
     })}"
                 >Open PDF</button>
-              ` : h`
+              ` : p`
                 <a
                   href="${this._pdfUrl}"
                   target="_blank"
@@ -1584,7 +1586,7 @@ class X extends U {
   }
   // ── Main render ────────────────────────────────────────────────────────────
   render() {
-    return h`
+    return p`
       ${this._renderHeader()}
       <main>
         <div class="wrap">
@@ -2213,6 +2215,10 @@ q(X, "properties", {
       font-size: 12px;
       color: #c0392b;
     }
+
+    .action-msg { font-size: 12px; line-height: 1.4; margin-top: 10px; text-align: center; }
+    .action-msg.success { color: #27ae60; }
+    .action-msg.error   { color: #c0392b; }
 
     .reset-btn {
       width: 100%; padding: 9px 20px; background: transparent; color: #667085;
