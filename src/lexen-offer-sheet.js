@@ -105,8 +105,10 @@ const SECTION_LABELS = {
   market: 'Market', recon: 'Recon', photos: 'Photos',
 };
 
-// ── Chevron SVG helper ────────────────────────────────────────────────────────
-const chevronSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// ── Chevron + lock SVG helpers ────────────────────────────────────────────────
+const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -164,6 +166,7 @@ export class LexenOfferSheet extends LitElement {
     _pdfVehicle:        { type: Object,  state: true },
     _savedConfirm:      { type: Boolean, state: true },
     _confirmReset:      { type: Boolean, state: true },
+    _locks:             { type: Object,  state: true },
   };
 
   static styles = css`
@@ -417,6 +420,7 @@ export class LexenOfferSheet extends LitElement {
     .btn-reopen:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-green { background: #35BB9C; color: #fff; }
     .btn-green:hover { background: #2a9880; }
+    .btn-green:disabled { background: #d0d5dd; color: #98a2b3; cursor: not-allowed; }
 
     /* Status */
     .status { margin-top: 10px; font-size: 13px; min-height: 18px; text-align: center; }
@@ -731,6 +735,27 @@ export class LexenOfferSheet extends LitElement {
     .action-msg.success { color: #27ae60; }
     .action-msg.error   { color: #c0392b; }
 
+    /* Lock controls */
+    .lock-btn {
+      width: 26px; height: 26px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: 1.5px solid #d0d5dd; border-radius: 6px;
+      cursor: pointer; color: #98a2b3; transition: all 0.15s; padding: 0;
+    }
+    .lock-btn:hover { background: #f2f4f7; color: #344054; border-color: #b0b8c4; }
+    .lock-btn.locked { background: #fff3cd; border-color: #f59f00; color: #b45309; }
+    .lock-indicator {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; color: #b0b8c4; flex-shrink: 0;
+    }
+    .ctrl-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .ctrl-group.locked > :first-child { opacity: 0.5; pointer-events: none; }
+    .group-row { display: flex; align-items: center; justify-content: space-between; }
+    .group-row label.group-header { flex: 1; }
+    .group-row-locked label.group-header { opacity: 0.5; }
+    .group-row-locked input[type="checkbox"] { pointer-events: none; }
+    .pill-group.locked { opacity: 0.45; pointer-events: none; }
+
     .reset-btn {
       width: 100%; padding: 9px 20px; background: transparent; color: #667085;
       border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
@@ -851,6 +876,25 @@ export class LexenOfferSheet extends LitElement {
     this._pdfVehicle = null;
     this._savedConfirm  = false;
     this._confirmReset  = false;
+    this._locks = {
+      mode:           false,
+      value_display:  false,
+      tax_rate_pct:   false,
+      profit_label:   false,
+      font_size:      false,
+      photos_per_row: false,
+      disc_layout:    false,
+      market_display: false,
+      disclaimer:     false,
+      section_order:  false,
+      valuation:      false,
+      disclosures:    false,
+      observations:   false,
+      market:         false,
+      recon:          false,
+      photos:         false,
+      signature:      false,
+    };
 
     // Drag-and-drop internal (non-reactive)
     this._dragSrcSection = null;
@@ -899,6 +943,7 @@ export class LexenOfferSheet extends LitElement {
     if (d.disclaimer_text != null)  this._disclaimerText        = d.disclaimer_text;
     if (d.disclaimer_punct != null) this._disclaimerPunct       = d.disclaimer_punct;
     if (d.selected_emp_idx != null) this._selectedEmployeeIndex = d.selected_emp_idx;
+    if (d.locks)                    this._locks = { ...this._locks, ...d.locks };
   }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
@@ -967,7 +1012,7 @@ export class LexenOfferSheet extends LitElement {
     if (this._savedConfirm && !changedProps.has('_savedConfirm')) {
       const settingKeys = ['_mode', '_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
         '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay',
-        '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex'];
+        '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex', '_locks'];
       if (settingKeys.some(k => changedProps.has(k))) {
         this._savedConfirm = false;
       }
@@ -1116,6 +1161,7 @@ export class LexenOfferSheet extends LitElement {
       disclaimer_text:  this._disclaimerText || '',
       disclaimer_punct: this._disclaimerPunct ?? ',',
       selected_emp_idx: this._selectedEmployeeIndex,
+      locks:            { ...this._locks },
     };
   }
 
@@ -1419,6 +1465,28 @@ export class LexenOfferSheet extends LitElement {
     this._dragSrcIndex = -1;
   }
 
+  // ── Lock helpers ───────────────────────────────────────────────────────────
+
+  _isLocked(key) {
+    return !this.templateMode && !!this._locks?.[key];
+  }
+
+  _lk(key) {
+    const locked = !!this._locks?.[key];
+    if (this.templateMode) {
+      return html`
+        <button class="lock-btn ${locked ? 'locked' : ''}"
+                title="${locked ? 'Unlock for dealers' : 'Lock for dealers'}"
+                @click="${(e) => { e.stopPropagation(); this._locks = { ...this._locks, [key]: !locked }; }}">
+          ${locked ? lockClosedSvg : lockOpenSvg}
+        </button>`;
+    }
+    if (locked) {
+      return html`<span class="lock-indicator" title="Locked by template">${lockClosedSvg}</span>`;
+    }
+    return nothing;
+  }
+
   // ── Save Settings ──────────────────────────────────────────────────────────
 
   _handleSaveSettings() {
@@ -1692,15 +1760,20 @@ export class LexenOfferSheet extends LitElement {
         <div>
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="segmented-control" style="width:auto;">
-            <button
-              class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
-              @click="${() => this._handleModeChange('full')}"
-            >Full</button>
-            <button
-              class="seg-btn ${onePage ? 'active' : ''}"
-              @click="${() => this._handleModeChange('one_page')}"
-            >One-Page</button>
+          <div class="ctrl-group ${this._isLocked('mode') ? 'locked' : ''}">
+            <div class="segmented-control" style="width:auto;">
+              <button
+                class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
+                ?disabled="${this._isLocked('mode')}"
+                @click="${() => this._handleModeChange('full')}"
+              >Full</button>
+              <button
+                class="seg-btn ${onePage ? 'active' : ''}"
+                ?disabled="${this._isLocked('mode')}"
+                @click="${() => this._handleModeChange('one_page')}"
+              >One-Page</button>
+            </div>
+            ${this._lk('mode')}
           </div>
         </div>
 
@@ -1712,42 +1785,55 @@ export class LexenOfferSheet extends LitElement {
           </div>
           <div class="section-body">
             <div class="config-row">
-              <span>$ Amount (header)</span>
-              <div class="segmented-control">
-                <button
-                  class="seg-btn ${this._valueDisplay === 'offer' ? 'active' : ''}"
-                  @click="${() => this._handleSegmentedClick('value-display', 'offer')}"
-                >Offer</button>
-                <button
-                  class="seg-btn ${this._valueDisplay === 'tax_savings' ? 'active' : ''}"
-                  @click="${() => this._handleSegmentedClick('value-display', 'tax_savings')}"
-                >Tax Savings</button>
+              <span>Display offer as</span>
+              <div class="ctrl-group ${this._isLocked('value_display') ? 'locked' : ''}">
+                <div class="segmented-control">
+                  <button
+                    class="seg-btn ${this._valueDisplay === 'offer' ? 'active' : ''}"
+                    ?disabled="${this._isLocked('value_display')}"
+                    @click="${() => this._handleSegmentedClick('value-display', 'offer')}"
+                  >Amount</button>
+                  <button
+                    class="seg-btn ${this._valueDisplay === 'tax_savings' ? 'active' : ''}"
+                    ?disabled="${this._isLocked('value_display')}"
+                    @click="${() => this._handleSegmentedClick('value-display', 'tax_savings')}"
+                  >+ Tax Savings</button>
+                </div>
+                ${this._lk('value_display')}
               </div>
             </div>
             <div class="config-row">
-              <span>Tax savings rate</span>
-              <div class="tax-rate-wrapper">
+              <span>Tax Savings Rate</span>
+              <div class="ctrl-group ${this._isLocked('tax_rate_pct') ? 'locked' : ''}">
+                <div class="tax-rate-wrapper">
+                  <input
+                    type="number"
+                    class="tax-rate-input"
+                    .value="${this._taxRatePct ?? ''}"
+                    min="0"
+                    max="99"
+                    step="0.01"
+                    ?disabled="${this._isLocked('tax_rate_pct')}"
+                    @input="${this._handleTaxRateInput}"
+                  />
+                  <span class="tax-rate-suffix">%</span>
+                </div>
+                ${this._lk('tax_rate_pct')}
+              </div>
+            </div>
+            <div class="config-row">
+              <span>Profit label</span>
+              <div class="ctrl-group ${this._isLocked('profit_label') ? 'locked' : ''}">
                 <input
-                  type="number"
-                  class="tax-rate-input"
-                  .value="${this._taxRatePct ?? ''}"
-                  min="0"
-                  max="99"
-                  step="0.01"
-                  @input="${this._handleTaxRateInput}"
+                  type="text"
+                  style="font-size:12px;padding:4px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;width:110px;"
+                  placeholder="Target Profit"
+                  .value="${this._profitName ?? ''}"
+                  ?disabled="${this._isLocked('profit_label')}"
+                  @input="${this._handleProfitNameInput}"
                 />
-                <span class="tax-rate-suffix">%</span>
+                ${this._lk('profit_label')}
               </div>
-            </div>
-            <div class="config-row">
-              <span>Profit name</span>
-              <input
-                type="text"
-                style="font-size:12px;padding:4px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;width:130px;"
-                placeholder="Target Profit"
-                .value="${this._profitName ?? ''}"
-                @input="${this._handleProfitNameInput}"
-              />
             </div>
             ${!this.templateMode && this.employees && this.employees.length > 0 ? html`
               <div class="config-row">
@@ -1764,69 +1850,68 @@ export class LexenOfferSheet extends LitElement {
             ` : nothing}
             <div class="config-row">
               <span>Font size</span>
-              <div class="stepper">
-                <button
-                  class="step-btn"
-                  ?disabled="${this._fontSizeIndex <= 0}"
-                  @click="${() => this._handleFontSizeStep(-1)}"
-                >−</button>
-                <span class="stepper-value font-size-display">${fontLabel}</span>
-                <button
-                  class="step-btn"
-                  ?disabled="${this._fontSizeIndex >= FONT_SIZE_OPTIONS.length - 1}"
-                  @click="${() => this._handleFontSizeStep(1)}"
-                >+</button>
+              <div class="ctrl-group ${this._isLocked('font_size') ? 'locked' : ''}">
+                <div class="stepper">
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex <= 0 || this._isLocked('font_size')}"
+                          @click="${() => this._handleFontSizeStep(-1)}">−</button>
+                  <span class="stepper-value font-size-display">${fontLabel}</span>
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= FONT_SIZE_OPTIONS.length - 1 || this._isLocked('font_size')}"
+                          @click="${() => this._handleFontSizeStep(1)}">+</button>
+                </div>
+                ${this._lk('font_size')}
               </div>
             </div>
             <div class="config-row ${onePage ? 'disabled' : ''}">
               <span>Photos (per row)</span>
-              <div class="stepper">
-                <button
-                  class="step-btn"
-                  ?disabled="${this._photosPerRow <= 2 || onePage}"
-                  @click="${() => this._handlePhotosPerRowStep(-1)}"
-                >−</button>
-                <span class="stepper-value">${this._photosPerRow}</span>
-                <button
-                  class="step-btn"
-                  ?disabled="${this._photosPerRow >= 4 || onePage}"
-                  @click="${() => this._handlePhotosPerRowStep(1)}"
-                >+</button>
+              <div class="ctrl-group ${this._isLocked('photos_per_row') ? 'locked' : ''}">
+                <div class="stepper">
+                  <button class="step-btn" ?disabled="${this._photosPerRow <= 2 || onePage || this._isLocked('photos_per_row')}"
+                          @click="${() => this._handlePhotosPerRowStep(-1)}">−</button>
+                  <span class="stepper-value">${this._photosPerRow}</span>
+                  <button class="step-btn" ?disabled="${this._photosPerRow >= 4 || onePage || this._isLocked('photos_per_row')}"
+                          @click="${() => this._handlePhotosPerRowStep(1)}">+</button>
+                </div>
+                ${this._lk('photos_per_row')}
               </div>
             </div>
-
             <div class="config-row ${onePage ? 'disabled' : ''}">
               <span>Disclosures</span>
-              <div class="segmented-control ${onePage ? 'disabled' : ''}">
-                <button
-                  class="seg-btn ${this._discLayout === 'vertical' ? 'active' : ''}"
-                  @click="${() => this._handleSegmentedClick('disc-layout', 'vertical')}"
-                >Vertical</button>
-                <button
-                  class="seg-btn ${this._discLayout === 'horizontal' ? 'active' : ''}"
-                  @click="${() => this._handleSegmentedClick('disc-layout', 'horizontal')}"
-                >Horizontal</button>
+              <div class="ctrl-group ${this._isLocked('disc_layout') ? 'locked' : ''}">
+                <div class="segmented-control ${onePage ? 'disabled' : ''}">
+                  <button class="seg-btn ${this._discLayout === 'vertical' ? 'active' : ''}"
+                          ?disabled="${this._isLocked('disc_layout')}"
+                          @click="${() => this._handleSegmentedClick('disc-layout', 'vertical')}">Vertical</button>
+                  <button class="seg-btn ${this._discLayout === 'horizontal' ? 'active' : ''}"
+                          ?disabled="${this._isLocked('disc_layout')}"
+                          @click="${() => this._handleSegmentedClick('disc-layout', 'horizontal')}">Horizontal</button>
+                </div>
+                ${this._lk('disc_layout')}
               </div>
             </div>
             <div class="config-row ${onePage ? 'disabled' : ''}">
               <span>Market</span>
-              <div class="segmented-control ${onePage ? 'disabled' : ''}">
-                <button
-                  class="seg-btn ${this._marketDisplay === 'summary' ? 'active' : ''}"
-                  @click="${() => this._handleSegmentedClick('market-display', 'summary')}"
-                >Summary</button>
-                <button
-                  class="seg-btn ${this._marketDisplay === 'full' ? 'active' : ''}"
-                  @click="${() => this._handleSegmentedClick('market-display', 'full')}"
-                >Full</button>
+              <div class="ctrl-group ${this._isLocked('market_display') ? 'locked' : ''}">
+                <div class="segmented-control ${onePage ? 'disabled' : ''}">
+                  <button class="seg-btn ${this._marketDisplay === 'summary' ? 'active' : ''}"
+                          ?disabled="${this._isLocked('market_display')}"
+                          @click="${() => this._handleSegmentedClick('market-display', 'summary')}">Summary</button>
+                  <button class="seg-btn ${this._marketDisplay === 'full' ? 'active' : ''}"
+                          ?disabled="${this._isLocked('market_display')}"
+                          @click="${() => this._handleSegmentedClick('market-display', 'full')}">Full</button>
+                </div>
+                ${this._lk('market_display')}
               </div>
             </div>
             <div style="padding:8px 0 4px;">
-              <div style="font-size:12px;color:#222222;margin-bottom:6px;">Disclaimer (appended to footer)</div>
-              <div class="config-row" style="margin-bottom:6px;padding-left:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:12px;color:#222222;">Disclaimer (appended to footer)</span>
+                ${this._lk('disclaimer')}
+              </div>
+              <div class="config-row ${this._isLocked('disclaimer') ? 'disabled' : ''}" style="margin-bottom:6px;padding-left:16px;">
                 <span>Separator</span>
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
+                  ?disabled="${this._isLocked('disclaimer')}"
                   @change="${(e) => { this._disclaimerPunct = e.target.value; }}"
                 >
                   <option value="," ?selected="${this._disclaimerPunct === ','}">Comma (,)</option>
@@ -1835,9 +1920,10 @@ export class LexenOfferSheet extends LitElement {
                 </select>
               </div>
               <textarea
-                style="width:100%;font-size:12px;padding:6px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;resize:vertical;min-height:60px;font-family:inherit;line-height:1.4;margin-left:16px;width:calc(100% - 16px);"
+                style="width:calc(100% - 16px);font-size:12px;padding:6px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;resize:vertical;min-height:60px;font-family:inherit;line-height:1.4;margin-left:16px;${this._isLocked('disclaimer') ? 'opacity:0.5;pointer-events:none;' : ''}"
                 placeholder="e.g., subject to Carfax History and Lien report."
                 .value="${this._disclaimerText ?? ''}"
+                ?disabled="${this._isLocked('disclaimer')}"
                 @input="${this._handleDisclaimerInput}"
               ></textarea>
             </div>
@@ -1869,15 +1955,19 @@ export class LexenOfferSheet extends LitElement {
             ${sectionGroups}
             <!-- Signature (always at end of PDF, not draggable) -->
             <div class="toggle-group" data-group="signature">
-              <label class="group-header">
-                <input
-                  type="checkbox"
-                  data-group="signature"
-                  .checked="${this._groups.signature === 'checked'}"
-                  @change="${(e) => this._handleGroupChange('signature', e.target.checked)}"
-                >
-                Customer Signature
-              </label>
+              <div class="group-row ${this._isLocked('signature') ? 'group-row-locked' : ''}">
+                <label class="group-header">
+                  <input
+                    type="checkbox"
+                    data-group="signature"
+                    .checked="${this._groups.signature === 'checked'}"
+                    ?disabled="${this._isLocked('signature')}"
+                    @change="${(e) => this._handleGroupChange('signature', e.target.checked)}"
+                  >
+                  Customer Signature
+                </label>
+                ${this._lk('signature')}
+              </div>
             </div>
           </div>
         </div>
@@ -1888,15 +1978,18 @@ export class LexenOfferSheet extends LitElement {
         <div class="collapsible-section ${this._layoutOpen ? '' : 'collapsed'}">
           <div class="section-header" @click="${() => { this._layoutOpen = !this._layoutOpen; }}">
             <span>Layout</span>
-            <div class="section-chevron">${chevronSvg}</div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              ${this._lk('section_order')}
+              <div class="section-chevron">${chevronSvg}</div>
+            </div>
           </div>
           <div class="section-body">
-            <div class="sortable-list"
+            <div class="sortable-list ${this._isLocked('section_order') ? 'disabled' : ''}"
               @dragover="${(e) => e.preventDefault()}"
               @drop="${(e) => this._handleListDrop(e)}"
             >
-              ${this._sectionOrder.map(sec => {
-                const disabled = this._isSectionDisabled(sec);
+              ${this._sectionOrder.map((sec, i) => {
+                const disabled = this._isSectionDisabled(sec) || this._isLocked('section_order');
                 return html`
                   <div
                     class="sortable-item ${disabled ? 'disabled' : ''}"
@@ -1910,8 +2003,8 @@ export class LexenOfferSheet extends LitElement {
                     <span class="drag-handle">⠿</span>
                     <span>${SECTION_LABELS[sec]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${disabled || this._sectionOrder.indexOf(sec) === 0}" @click="${() => this._handleMoveSection(sec, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${disabled || this._sectionOrder.indexOf(sec) === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(sec, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${disabled || i === 0}" @click="${() => this._handleMoveSection(sec, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${disabled || i === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(sec, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -1954,107 +2047,51 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _renderShowHideGroup(section) {
-    const onePage = this._isOnePage();
+    const onePage    = this._isOnePage();
     const groupDisabled = onePage && ['disclosures', 'recon', 'photos'].includes(section);
+    const locked     = this._isLocked(section);
     const groupState = this._groups[section];
+    const LABELS     = { valuation:'Valuation', disclosures:'Disclosures', observations:'Observations', market:'Market', recon:'Recon', photos:'Photos' };
+
+    const row = html`
+      <div class="group-row ${locked ? 'group-row-locked' : ''}">
+        <label class="group-header">
+          <input type="checkbox" data-group="${section}"
+            .checked="${groupState === 'checked' || groupState === 'indeterminate'}"
+            ?disabled="${locked}"
+            @change="${(e) => this._handleGroupChange(section, e.target.checked)}"
+          >${LABELS[section]}
+        </label>
+        ${this._lk(section)}
+      </div>`;
 
     if (section === 'valuation') {
       return html`
         <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="valuation">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="valuation"
-              .checked="${groupState === 'checked' || groupState === 'indeterminate'}"
-              @change="${(e) => this._handleGroupChange('valuation', e.target.checked)}"
-            >
-            Valuation
-          </label>
-          <div class="pill-group">
+          ${row}
+          <div class="pill-group ${locked ? 'locked' : ''}">
             ${this._renderPill('valuation.retail_value', 'Retail Value', 'valuation')}
             ${this._renderPill('valuation.recon', 'Recon', 'valuation')}
             ${this._renderPill('valuation.fixed_overhead', 'Fixed Overhead', 'valuation')}
             ${this._renderPill('valuation.target_profit', this._profitName || 'Target Profit', 'valuation')}
             ${this._renderPill('valuation.tax_savings', 'Tax Savings', 'valuation')}
           </div>
-        </div>
-      `;
-    } else if (section === 'disclosures') {
-      return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="disclosures">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="disclosures"
-              .checked="${groupState === 'checked'}"
-              @change="${(e) => this._handleGroupChange('disclosures', e.target.checked)}"
-            >
-            Disclosures
-          </label>
-        </div>
-      `;
-    } else if (section === 'observations') {
+        </div>`;
+    }
+    if (section === 'observations') {
       return html`
         <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="observations">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="observations"
-              .checked="${groupState === 'checked' || groupState === 'indeterminate'}"
-              @change="${(e) => this._handleGroupChange('observations', e.target.checked)}"
-            >
-            Observations
-          </label>
-          <div class="pill-group">
+          ${row}
+          <div class="pill-group ${locked ? 'locked' : ''}">
             ${this._renderPill('sections.observations_highlights', 'Highlights', 'observations')}
             ${this._renderPill('sections.observations_comments', 'Comments', 'observations')}
           </div>
-        </div>
-      `;
-    } else if (section === 'market') {
-      return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="market">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="market"
-              .checked="${groupState === 'checked'}"
-              @change="${(e) => this._handleGroupChange('market', e.target.checked)}"
-            >
-            Market
-          </label>
-        </div>
-      `;
-    } else if (section === 'recon') {
-      return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="recon">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="recon"
-              .checked="${groupState === 'checked'}"
-              @change="${(e) => this._handleGroupChange('recon', e.target.checked)}"
-            >
-            Recon
-          </label>
-        </div>
-      `;
-    } else if (section === 'photos') {
-      return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="photos">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="photos"
-              .checked="${groupState === 'checked'}"
-              @change="${(e) => this._handleGroupChange('photos', e.target.checked)}"
-            >
-            Photos
-          </label>
-        </div>
-      `;
+        </div>`;
     }
-    return nothing;
+    return html`
+      <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="${section}">
+        ${row}
+      </div>`;
   }
 
   _renderPill(path, label, group) {

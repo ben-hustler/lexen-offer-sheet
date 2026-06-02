@@ -1,13 +1,13 @@
-var Ee = Object.defineProperty;
-var Ce = (a, e, t) => e in a ? Ee(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
-var q = (a, e, t) => Ce(a, typeof e != "symbol" ? e + "" : e, t);
+var Ce = Object.defineProperty;
+var Oe = (a, e, t) => e in a ? Ce(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
+var q = (a, e, t) => Oe(a, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const F = globalThis, ee = F.ShadowRoot && (F.ShadyCSS === void 0 || F.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, te = Symbol(), ae = /* @__PURE__ */ new WeakMap();
-let be = class {
+const j = globalThis, ee = j.ShadowRoot && (j.ShadyCSS === void 0 || j.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, te = Symbol(), ae = /* @__PURE__ */ new WeakMap();
+let ye = class {
   constructor(e, t, i) {
     if (this._$cssResult$ = !0, i !== te) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = e, this.t = t;
@@ -25,33 +25,33 @@ let be = class {
     return this.cssText;
   }
 };
-const Oe = (a) => new be(typeof a == "string" ? a : a + "", void 0, te), ze = (a, ...e) => {
+const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Re = (a, ...e) => {
   const t = a.length === 1 ? a[0] : e.reduce((i, s, o) => i + ((r) => {
     if (r._$cssResult$ === !0) return r.cssText;
     if (typeof r == "number") return r;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(s) + a[o + 1], a[0]);
-  return new be(t, a, te);
-}, Re = (a, e) => {
+  return new ye(t, a, te);
+}, Le = (a, e) => {
   if (ee) a.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
-    const i = document.createElement("style"), s = F.litNonce;
+    const i = document.createElement("style"), s = j.litNonce;
     s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, a.appendChild(i);
   }
 }, ne = ee ? (a) => a : (a) => a instanceof CSSStyleSheet ? ((e) => {
   let t = "";
   for (const i of e.cssRules) t += i.cssText;
-  return Oe(t);
+  return ze(t);
 })(a) : a;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Le, getPrototypeOf: Ie } = Object, w = globalThis, le = w.trustedTypes, Be = le ? le.emptyScript : "", W = w.reactiveElementPolyfillSupport, T = (a, e) => a, Q = { toAttribute(a, e) {
+const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Be, getPrototypeOf: Ie } = Object, k = globalThis, le = k.trustedTypes, He = le ? le.emptyScript : "", W = k.reactiveElementPolyfillSupport, L = (a, e) => a, Q = { toAttribute(a, e) {
   switch (e) {
     case Boolean:
-      a = a ? Be : null;
+      a = a ? He : null;
       break;
     case Object:
     case Array:
@@ -76,8 +76,8 @@ const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnProperty
       }
   }
   return t;
-} }, ye = (a, e) => !Te(a, e), de = { attribute: !0, type: String, converter: Q, reflect: !1, useDefault: !1, hasChanged: ye };
-Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), w.litPropertyMetadata ?? (w.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+} }, xe = (a, e) => !Te(a, e), de = { attribute: !0, type: String, converter: Q, reflect: !1, useDefault: !1, hasChanged: xe };
+Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), k.litPropertyMetadata ?? (k.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
 let E = class extends HTMLElement {
   static addInitializer(e) {
     this._$Ei(), (this.l ?? (this.l = [])).push(e);
@@ -98,22 +98,22 @@ let E = class extends HTMLElement {
       this[t] = r;
     } };
     return { get: s, set(r) {
-      const l = s == null ? void 0 : s.call(this);
-      o == null || o.call(this, r), this.requestUpdate(e, l, i);
+      const n = s == null ? void 0 : s.call(this);
+      o == null || o.call(this, r), this.requestUpdate(e, n, i);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(e) {
     return this.elementProperties.get(e) ?? de;
   }
   static _$Ei() {
-    if (this.hasOwnProperty(T("elementProperties"))) return;
+    if (this.hasOwnProperty(L("elementProperties"))) return;
     const e = Ie(this);
     e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
   }
   static finalize() {
-    if (this.hasOwnProperty(T("finalized"))) return;
-    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(T("properties"))) {
-      const t = this.properties, i = [...Ne(t), ...Le(t)];
+    if (this.hasOwnProperty(L("finalized"))) return;
+    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(L("properties"))) {
+      const t = this.properties, i = [...Ne(t), ...Be(t)];
       for (const s of i) this.createProperty(s, t[s]);
     }
     const e = this[Symbol.metadata];
@@ -162,7 +162,7 @@ let E = class extends HTMLElement {
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Re(e, this.constructor.elementStyles), e;
+    return Le(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     var e;
@@ -195,17 +195,17 @@ let E = class extends HTMLElement {
     var o, r;
     const i = this.constructor, s = i._$Eh.get(e);
     if (s !== void 0 && this._$Em !== s) {
-      const l = i.getPropertyOptions(s), n = typeof l.converter == "function" ? { fromAttribute: l.converter } : ((o = l.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? l.converter : Q;
+      const n = i.getPropertyOptions(s), l = typeof n.converter == "function" ? { fromAttribute: n.converter } : ((o = n.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? n.converter : Q;
       this._$Em = s;
-      const f = n.fromAttribute(t, l.type);
+      const f = l.fromAttribute(t, n.type);
       this[s] = f ?? ((r = this._$Ej) == null ? void 0 : r.get(s)) ?? f, this._$Em = null;
     }
   }
   requestUpdate(e, t, i, s = !1, o) {
     var r;
     if (e !== void 0) {
-      const l = this.constructor;
-      if (s === !1 && (o = this[e]), i ?? (i = l.getPropertyOptions(e)), !((i.hasChanged ?? ye)(o, t) || i.useDefault && i.reflect && o === ((r = this._$Ej) == null ? void 0 : r.get(e)) && !this.hasAttribute(l._$Eu(e, i)))) return;
+      const n = this.constructor;
+      if (s === !1 && (o = this[e]), i ?? (i = n.getPropertyOptions(e)), !((i.hasChanged ?? xe)(o, t) || i.useDefault && i.reflect && o === ((r = this._$Ej) == null ? void 0 : r.get(e)) && !this.hasAttribute(n._$Eu(e, i)))) return;
       this.C(e, t, i);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
@@ -236,8 +236,8 @@ let E = class extends HTMLElement {
       }
       const s = this.constructor.elementProperties;
       if (s.size > 0) for (const [o, r] of s) {
-        const { wrapped: l } = r, n = this[o];
-        l !== !0 || this._$AL.has(o) || n === void 0 || this.C(o, void 0, r, n);
+        const { wrapped: n } = r, l = this[o];
+        n !== !0 || this._$AL.has(o) || l === void 0 || this.C(o, void 0, r, l);
       }
     }
     let e = !1;
@@ -281,59 +281,59 @@ let E = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[T("elementProperties")] = /* @__PURE__ */ new Map(), E[T("finalized")] = /* @__PURE__ */ new Map(), W == null || W({ ReactiveElement: E }), (w.reactiveElementVersions ?? (w.reactiveElementVersions = [])).push("2.1.2");
+E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[L("elementProperties")] = /* @__PURE__ */ new Map(), E[L("finalized")] = /* @__PURE__ */ new Map(), W == null || W({ ReactiveElement: E }), (k.reactiveElementVersions ?? (k.reactiveElementVersions = [])).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const M = globalThis, ce = (a) => a, j = M.trustedTypes, pe = j ? j.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, xe = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + $, He = `<${$e}>`, P = document, N = () => P.createComment(""), L = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
-\f\r]`, R = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, k = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, je = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = je(1), C = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
-function ke(a, e) {
+const T = globalThis, ce = (a) => a, F = T.trustedTypes, pe = F ? F.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, $e = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, ke = "?" + $, je = `<${ke}>`, P = document, U = () => P.createComment(""), N = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
+\f\r]`, R = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, w = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, Ge = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = Ge(1), C = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
+function Se(a, e) {
   if (!ie(a) || !a.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return pe !== void 0 ? pe.createHTML(e) : e;
 }
-const Ge = (a, e) => {
+const Ve = (a, e) => {
   const t = a.length - 1, i = [];
   let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = R;
-  for (let l = 0; l < t; l++) {
-    const n = a[l];
+  for (let n = 0; n < t; n++) {
+    const l = a[n];
     let f, h, c = -1, g = 0;
-    for (; g < n.length && (r.lastIndex = g, h = r.exec(n), h !== null); ) g = r.lastIndex, r === R ? h[1] === "!--" ? r = he : h[1] !== void 0 ? r = ue : h[2] !== void 0 ? (we.test(h[2]) && (s = RegExp("</" + h[2], "g")), r = k) : h[3] !== void 0 && (r = k) : r === k ? h[0] === ">" ? (r = s ?? R, c = -1) : h[1] === void 0 ? c = -2 : (c = r.lastIndex - h[2].length, f = h[1], r = h[3] === void 0 ? k : h[3] === '"' ? _e : fe) : r === _e || r === fe ? r = k : r === he || r === ue ? r = R : (r = k, s = void 0);
-    const b = r === k && a[l + 1].startsWith("/>") ? " " : "";
-    o += r === R ? n + He : c >= 0 ? (i.push(f), n.slice(0, c) + xe + n.slice(c) + $ + b) : n + $ + (c === -2 ? l : b);
+    for (; g < l.length && (r.lastIndex = g, h = r.exec(l), h !== null); ) g = r.lastIndex, r === R ? h[1] === "!--" ? r = he : h[1] !== void 0 ? r = ue : h[2] !== void 0 ? (we.test(h[2]) && (s = RegExp("</" + h[2], "g")), r = w) : h[3] !== void 0 && (r = w) : r === w ? h[0] === ">" ? (r = s ?? R, c = -1) : h[1] === void 0 ? c = -2 : (c = r.lastIndex - h[2].length, f = h[1], r = h[3] === void 0 ? w : h[3] === '"' ? _e : fe) : r === _e || r === fe ? r = w : r === he || r === ue ? r = R : (r = w, s = void 0);
+    const b = r === w && a[n + 1].startsWith("/>") ? " " : "";
+    o += r === R ? l + je : c >= 0 ? (i.push(f), l.slice(0, c) + $e + l.slice(c) + $ + b) : l + $ + (c === -2 ? n : b);
   }
-  return [ke(a, o + (a[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
+  return [Se(a, o + (a[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
-class I {
+class B {
   constructor({ strings: e, _$litType$: t }, i) {
     let s;
     this.parts = [];
     let o = 0, r = 0;
-    const l = e.length - 1, n = this.parts, [f, h] = Ge(e, t);
-    if (this.el = I.createElement(f, i), S.currentNode = this.el.content, t === 2 || t === 3) {
+    const n = e.length - 1, l = this.parts, [f, h] = Ve(e, t);
+    if (this.el = B.createElement(f, i), S.currentNode = this.el.content, t === 2 || t === 3) {
       const c = this.el.content.firstChild;
       c.replaceWith(...c.childNodes);
     }
-    for (; (s = S.nextNode()) !== null && n.length < l; ) {
+    for (; (s = S.nextNode()) !== null && l.length < n; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith(xe)) {
+        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith($e)) {
           const g = h[r++], b = s.getAttribute(c).split($), d = /([.?@])?(.*)/.exec(g);
-          n.push({ type: 1, index: o, name: d[2], strings: b, ctor: d[1] === "." ? qe : d[1] === "?" ? We : d[1] === "@" ? Ke : G }), s.removeAttribute(c);
-        } else c.startsWith($) && (n.push({ type: 6, index: o }), s.removeAttribute(c));
+          l.push({ type: 1, index: o, name: d[2], strings: b, ctor: d[1] === "." ? We : d[1] === "?" ? Ke : d[1] === "@" ? Ze : G }), s.removeAttribute(c);
+        } else c.startsWith($) && (l.push({ type: 6, index: o }), s.removeAttribute(c));
         if (we.test(s.tagName)) {
           const c = s.textContent.split($), g = c.length - 1;
           if (g > 0) {
-            s.textContent = j ? j.emptyScript : "";
-            for (let b = 0; b < g; b++) s.append(c[b], N()), S.nextNode(), n.push({ type: 2, index: ++o });
-            s.append(c[g], N());
+            s.textContent = F ? F.emptyScript : "";
+            for (let b = 0; b < g; b++) s.append(c[b], U()), S.nextNode(), l.push({ type: 2, index: ++o });
+            s.append(c[g], U());
           }
         }
-      } else if (s.nodeType === 8) if (s.data === $e) n.push({ type: 2, index: o });
+      } else if (s.nodeType === 8) if (s.data === ke) l.push({ type: 2, index: o });
       else {
         let c = -1;
-        for (; (c = s.data.indexOf($, c + 1)) !== -1; ) n.push({ type: 7, index: o }), c += $.length - 1;
+        for (; (c = s.data.indexOf($, c + 1)) !== -1; ) l.push({ type: 7, index: o }), c += $.length - 1;
       }
       o++;
     }
@@ -344,13 +344,13 @@ class I {
   }
 }
 function O(a, e, t = a, i) {
-  var r, l;
+  var r, n;
   if (e === C) return e;
   let s = i !== void 0 ? (r = t._$Co) == null ? void 0 : r[i] : t._$Cl;
-  const o = L(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== o && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = O(a, s._$AS(a, e.values), s, i)), e;
+  const o = N(e) ? void 0 : e._$litDirective$;
+  return (s == null ? void 0 : s.constructor) !== o && ((n = s == null ? void 0 : s._$AO) == null || n.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = O(a, s._$AS(a, e.values), s, i)), e;
 }
-class Ve {
+class qe {
   constructor(e, t) {
     this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
   }
@@ -363,13 +363,13 @@ class Ve {
   u(e) {
     const { el: { content: t }, parts: i } = this._$AD, s = ((e == null ? void 0 : e.creationScope) ?? P).importNode(t, !0);
     S.currentNode = s;
-    let o = S.nextNode(), r = 0, l = 0, n = i[0];
-    for (; n !== void 0; ) {
-      if (r === n.index) {
+    let o = S.nextNode(), r = 0, n = 0, l = i[0];
+    for (; l !== void 0; ) {
+      if (r === l.index) {
         let f;
-        n.type === 2 ? f = new B(o, o.nextSibling, this, e) : n.type === 1 ? f = new n.ctor(o, n.name, n.strings, this, e) : n.type === 6 && (f = new Ze(o, this, e)), this._$AV.push(f), n = i[++l];
+        l.type === 2 ? f = new I(o, o.nextSibling, this, e) : l.type === 1 ? f = new l.ctor(o, l.name, l.strings, this, e) : l.type === 6 && (f = new Ye(o, this, e)), this._$AV.push(f), l = i[++n];
       }
-      r !== (n == null ? void 0 : n.index) && (o = S.nextNode(), r++);
+      r !== (l == null ? void 0 : l.index) && (o = S.nextNode(), r++);
     }
     return S.currentNode = P, s;
   }
@@ -378,7 +378,7 @@ class Ve {
     for (const i of this._$AV) i !== void 0 && (i.strings !== void 0 ? (i._$AI(e, i, t), t += i.strings.length - 2) : i._$AI(e[t])), t++;
   }
 }
-class B {
+class I {
   get _$AU() {
     var e;
     return ((e = this._$AM) == null ? void 0 : e._$AU) ?? this._$Cv;
@@ -398,7 +398,7 @@ class B {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = O(this, e, t), L(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== C && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Fe(e) ? this.k(e) : this._(e);
+    e = O(this, e, t), N(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== C && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Fe(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -407,26 +407,26 @@ class B {
     this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
   }
   _(e) {
-    this._$AH !== u && L(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
+    this._$AH !== u && N(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
   }
   $(e) {
     var o;
-    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = I.createElement(ke(i.h, i.h[0]), this.options)), i);
+    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = B.createElement(Se(i.h, i.h[0]), this.options)), i);
     if (((o = this._$AH) == null ? void 0 : o._$AD) === s) this._$AH.p(t);
     else {
-      const r = new Ve(s, this), l = r.u(this.options);
-      r.p(t), this.T(l), this._$AH = r;
+      const r = new qe(s, this), n = r.u(this.options);
+      r.p(t), this.T(n), this._$AH = r;
     }
   }
   _$AC(e) {
     let t = ge.get(e.strings);
-    return t === void 0 && ge.set(e.strings, t = new I(e)), t;
+    return t === void 0 && ge.set(e.strings, t = new B(e)), t;
   }
   k(e) {
     ie(this._$AH) || (this._$AH = [], this._$AR());
     const t = this._$AH;
     let i, s = 0;
-    for (const o of e) s === t.length ? t.push(i = new B(this.O(N()), this.O(N()), this, this.options)) : i = t[s], i._$AI(o), s++;
+    for (const o of e) s === t.length ? t.push(i = new I(this.O(U()), this.O(U()), this, this.options)) : i = t[s], i._$AI(o), s++;
     s < t.length && (this._$AR(i && i._$AB.nextSibling, s), t.length = s);
   }
   _$AR(e = this._$AA.nextSibling, t) {
@@ -454,11 +454,11 @@ class G {
   _$AI(e, t = this, i, s) {
     const o = this.strings;
     let r = !1;
-    if (o === void 0) e = O(this, e, t, 0), r = !L(e) || e !== this._$AH && e !== C, r && (this._$AH = e);
+    if (o === void 0) e = O(this, e, t, 0), r = !N(e) || e !== this._$AH && e !== C, r && (this._$AH = e);
     else {
-      const l = e;
-      let n, f;
-      for (e = o[0], n = 0; n < o.length - 1; n++) f = O(this, l[i + n], t, n), f === C && (f = this._$AH[n]), r || (r = !L(f) || f !== this._$AH[n]), f === u ? e = u : e !== u && (e += (f ?? "") + o[n + 1]), this._$AH[n] = f;
+      const n = e;
+      let l, f;
+      for (e = o[0], l = 0; l < o.length - 1; l++) f = O(this, n[i + l], t, l), f === C && (f = this._$AH[l]), r || (r = !N(f) || f !== this._$AH[l]), f === u ? e = u : e !== u && (e += (f ?? "") + o[l + 1]), this._$AH[l] = f;
     }
     r && !s && this.j(e);
   }
@@ -466,7 +466,7 @@ class G {
     e === u ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
-class qe extends G {
+class We extends G {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -474,7 +474,7 @@ class qe extends G {
     this.element[this.name] = e === u ? void 0 : e;
   }
 }
-class We extends G {
+class Ke extends G {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -482,7 +482,7 @@ class We extends G {
     this.element.toggleAttribute(this.name, !!e && e !== u);
   }
 }
-class Ke extends G {
+class Ze extends G {
   constructor(e, t, i, s, o) {
     super(e, t, i, s, o), this.type = 5;
   }
@@ -496,7 +496,7 @@ class Ke extends G {
     typeof this._$AH == "function" ? this._$AH.call(((t = this.options) == null ? void 0 : t.host) ?? this.element, e) : this._$AH.handleEvent(e);
   }
 }
-class Ze {
+class Ye {
   constructor(e, t, i) {
     this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = i;
   }
@@ -507,14 +507,14 @@ class Ze {
     O(this, e);
   }
 }
-const Z = M.litHtmlPolyfillSupport;
-Z == null || Z(I, B), (M.litHtmlVersions ?? (M.litHtmlVersions = [])).push("3.3.3");
-const Ye = (a, e, t) => {
+const Z = T.litHtmlPolyfillSupport;
+Z == null || Z(B, I), (T.litHtmlVersions ?? (T.litHtmlVersions = [])).push("3.3.3");
+const Je = (a, e, t) => {
   const i = (t == null ? void 0 : t.renderBefore) ?? e;
   let s = i._$litPart$;
   if (s === void 0) {
     const o = (t == null ? void 0 : t.renderBefore) ?? null;
-    i._$litPart$ = s = new B(e.insertBefore(N(), o), o, void 0, t ?? {});
+    i._$litPart$ = s = new I(e.insertBefore(U(), o), o, void 0, t ?? {});
   }
   return s._$AI(a), s;
 };
@@ -524,7 +524,7 @@ const Ye = (a, e, t) => {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const A = globalThis;
-class U extends E {
+class M extends E {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -535,7 +535,7 @@ class U extends E {
   }
   update(e) {
     const t = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Ye(t, this.renderRoot, this.renderOptions);
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Je(t, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     var e;
@@ -549,16 +549,16 @@ class U extends E {
     return C;
   }
 }
-var ve;
-U._$litElement$ = !0, U.finalized = !0, (ve = A.litElementHydrateSupport) == null || ve.call(A, { LitElement: U });
+var be;
+M._$litElement$ = !0, M.finalized = !0, (be = A.litElementHydrateSupport) == null || be.call(A, { LitElement: M });
 const Y = A.litElementPolyfillSupport;
-Y == null || Y({ LitElement: U });
+Y == null || Y({ LitElement: M });
 (A.litElementVersions ?? (A.litElementVersions = [])).push("4.2.2");
 function me(a) {
   const e = String(a || "").replace(/\D/g, "");
   return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : a || "";
 }
-function Je() {
+function Qe() {
   const a = /* @__PURE__ */ new Date(), e = new Date(a);
   e.setDate(a.getDate() + 30);
   const t = (s) => s.toISOString().slice(0, 10);
@@ -653,15 +653,15 @@ const H = [
   { label: "Medium", delta: 1 },
   { label: "Large", delta: 2 },
   { label: "Extra Large", delta: 3 }
-], D = ["valuation", "disclosures", "observations", "market", "recon", "photos"], Qe = {
+], D = ["valuation", "disclosures", "observations", "market", "recon", "photos"], Xe = {
   valuation: "Valuation",
   disclosures: "Disclosures",
   observations: "Observations",
   market: "Market",
   recon: "Recon",
   photos: "Photos"
-}, J = p`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-class X extends U {
+}, J = p`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, ve = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`, et = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+class X extends M {
   constructor() {
     super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...D], this._pills = {
       "general.condition": !0,
@@ -680,7 +680,25 @@ class X extends U {
       recon: "checked",
       photos: "checked",
       signature: "checked"
-    }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._savedConfirm = !1, this._confirmReset = !1, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null;
+    }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
+      mode: !1,
+      value_display: !1,
+      tax_rate_pct: !1,
+      profit_label: !1,
+      font_size: !1,
+      photos_per_row: !1,
+      disc_layout: !1,
+      market_display: !1,
+      disclaimer: !1,
+      section_order: !1,
+      valuation: !1,
+      disclosures: !1,
+      observations: !1,
+      market: !1,
+      recon: !1,
+      photos: !1,
+      signature: !1
+    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null;
   }
   // ── Public API ─────────────────────────────────────────────────────────────
   /** Returns the full current customization state. Save this to restore later. */
@@ -705,7 +723,7 @@ class X extends U {
     }), this._groups = s, e.pills != null && (this._pills = { ...this._pills, ...e.pills }), e.section_order != null && (this._sectionOrder = e.section_order.filter((o) => D.includes(o))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full");
   }
   _applyPdfDisplay(e) {
-    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx));
+    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.locks && (this._locks = { ...this._locks, ...e.locks }));
   }
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   firstUpdated() {
@@ -715,14 +733,14 @@ class X extends U {
     }));
   }
   updated(e) {
-    var s, o, r, l, n, f;
+    var s, o, r, n, l, f;
     if (e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
       const h = (r = (o = (s = this.payload) == null ? void 0 : s.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : r.rate_pct;
       this._taxRatePct = h != null ? parseFloat(parseFloat(h).toFixed(2)) : 0;
     }
-    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("profitLabel") && this.templateMode && this._autoPreviewDone && this.apiBaseUrl && this._handleGenerate(), e.has("employees") && ((l = this.employees) != null && l.length) && ((f = (n = this.payload) == null ? void 0 : n.employee) != null && f.name)) {
+    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("profitLabel") && this.templateMode && this._autoPreviewDone && this.apiBaseUrl && this._handleGenerate(), e.has("employees") && ((n = this.employees) != null && n.length) && ((f = (l = this.payload) == null ? void 0 : l.employee) != null && f.name)) {
       const h = this.employees.findIndex((c) => c.name === this.payload.employee.name);
       h !== -1 && (this._selectedEmployeeIndex = h);
     }
@@ -740,7 +758,8 @@ class X extends U {
       "_sectionOrder",
       "_pills",
       "_groups",
-      "_selectedEmployeeIndex"
+      "_selectedEmployeeIndex",
+      "_locks"
     ].some((c) => e.has(c)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((h) => e.has(h)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
     }, 300));
@@ -756,7 +775,7 @@ class X extends U {
     return !e && e !== 0 ? "" : "$" + Number(e).toLocaleString();
   }
   _getPayloadData() {
-    return this.payload || Je();
+    return this.payload || Qe();
   }
   _vehicleInfoFromData(e) {
     const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", r = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
@@ -783,8 +802,8 @@ class X extends U {
     i !== -1 && (t.splice(i, 1), t.push(e)), this._sectionOrder = t;
   }
   _restoreLayoutOrder(e) {
-    var r, l;
-    const t = (l = (r = this.sharedDisplay) == null ? void 0 : r.section_order) != null && l.length ? this.sharedDisplay.section_order : D, i = [...this._sectionOrder].filter((n) => n !== e), s = t.indexOf(e), o = i.findIndex((n) => t.indexOf(n) > s);
+    var r, n;
+    const t = (n = (r = this.sharedDisplay) == null ? void 0 : r.section_order) != null && n.length ? this.sharedDisplay.section_order : D, i = [...this._sectionOrder].filter((l) => l !== e), s = t.indexOf(e), o = i.findIndex((l) => t.indexOf(l) > s);
     o === -1 ? i.push(e) : i.splice(o, 0, e), this._sectionOrder = i;
   }
   _isOnePage() {
@@ -821,7 +840,8 @@ class X extends U {
       disc_layout: this._discLayout,
       disclaimer_text: this._disclaimerText || "",
       disclaimer_punct: this._disclaimerPunct ?? ",",
-      selected_emp_idx: this._selectedEmployeeIndex
+      selected_emp_idx: this._selectedEmployeeIndex,
+      locks: { ...this._locks }
     };
   }
   _buildDisplay() {
@@ -858,10 +878,10 @@ class X extends U {
   _handleModeChange(e) {
     if (this._mode = e, e === "one_page") {
       const i = { ...this._groups };
-      ["disclosures", "recon", "photos"].forEach((l) => {
-        i[l] = "unchecked";
+      ["disclosures", "recon", "photos"].forEach((n) => {
+        i[n] = "unchecked";
       }), this._groups = i, this._marketDisplay = "summary";
-      const s = ["disclosures", "recon", "photos"], o = this._sectionOrder.filter((l) => !s.includes(l)), r = this._sectionOrder.filter((l) => s.includes(l));
+      const s = ["disclosures", "recon", "photos"], o = this._sectionOrder.filter((n) => !s.includes(n)), r = this._sectionOrder.filter((n) => s.includes(n));
       this._sectionOrder = [...o, ...r];
     } else {
       const i = { ...this._groups };
@@ -982,6 +1002,23 @@ class X extends U {
   _handleDragEnd(e) {
     e.currentTarget.classList.remove("dragging"), this.shadowRoot.querySelectorAll(".sortable-item").forEach((t) => t.classList.remove("dragging")), this._placeholder && this._placeholder.parentNode && this._placeholder.parentNode.removeChild(this._placeholder), this._placeholder = null, this._dragSrcSection = null, this._dragSrcIndex = -1;
   }
+  // ── Lock helpers ───────────────────────────────────────────────────────────
+  _isLocked(e) {
+    var t;
+    return !this.templateMode && !!((t = this._locks) != null && t[e]);
+  }
+  _lk(e) {
+    var i;
+    const t = !!((i = this._locks) != null && i[e]);
+    return this.templateMode ? p`
+        <button class="lock-btn ${t ? "locked" : ""}"
+                title="${t ? "Unlock for dealers" : "Lock for dealers"}"
+                @click="${(s) => {
+      s.stopPropagation(), this._locks = { ...this._locks, [e]: !t };
+    }}">
+          ${t ? ve : et}
+        </button>` : t ? p`<span class="lock-indicator" title="Locked by template">${ve}</span>` : u;
+  }
   // ── Save Settings ──────────────────────────────────────────────────────────
   _handleSaveSettings() {
     this._dispatchDisplaySave(), this._savedConfirm = !0;
@@ -996,7 +1033,7 @@ class X extends U {
   }
   // ── Generate ───────────────────────────────────────────────────────────────
   async _handleGenerate(e = !1) {
-    var t, i, s, o, r, l, n, f, h, c;
+    var t, i, s, o, r, n, l, f, h, c;
     this._generating = !0, this._statusMsg = "Generating…", this._statusError = !1;
     try {
       const g = this._buildDisplay(), b = {
@@ -1027,14 +1064,14 @@ class X extends U {
         const _ = d.market.comparables.map((m) => ({
           ...m,
           days_on_market: m.listing_type === "delisted" && m.delisted_days || m.days_on_market
-        })), v = _.map((m) => m.days_on_market).filter((m) => m != null), y = v.length > 0 ? Math.round(v.reduce((m, x) => m + x, 0) / v.length) : (l = d.market.summary) == null ? void 0 : l.avg_days;
+        })), v = _.map((m) => m.days_on_market).filter((m) => m != null), y = v.length > 0 ? Math.round(v.reduce((m, x) => m + x, 0) / v.length) : (n = d.market.summary) == null ? void 0 : n.avg_days;
         d.market = {
           ...d.market,
           comparables: _,
           summary: { ...d.market.summary, avg_days: y }
         };
       }
-      if (this._taxRatePct !== null && ((n = d.valuation) != null && n.tax_savings) && ((f = d.offer) == null ? void 0 : f.amount) != null) {
+      if (this._taxRatePct !== null && ((l = d.valuation) != null && l.tax_savings) && ((f = d.offer) == null ? void 0 : f.amount) != null) {
         const _ = Math.round(d.offer.amount * this._taxRatePct / 100);
         d.valuation = {
           ...d.valuation,
@@ -1046,12 +1083,12 @@ class X extends U {
           }
         };
       }
-      const Se = { ...b, raw_payload: d }, oe = { "Content-Type": "application/json", Accept: "application/pdf" };
+      const Ae = { ...b, raw_payload: d }, oe = { "Content-Type": "application/json", Accept: "application/pdf" };
       this.authToken && (oe.Authorization = `Bearer ${this.authToken}`);
       const z = await fetch(`${this.apiBaseUrl}/printout-offer`, {
         method: "POST",
         headers: oe,
-        body: JSON.stringify(Se)
+        body: JSON.stringify(Ae)
       });
       if (this.apiMode === "binary") {
         if (!z.ok) {
@@ -1083,11 +1120,11 @@ class X extends U {
         this._pdfVehicle = _.vehicle;
         const y = { "ngrok-skip-browser-warning": "true" };
         this.authToken && (y.Authorization = `Bearer ${this.authToken}`);
-        const x = await (await fetch(v, { headers: y })).blob(), Ae = (((h = d.customer) == null ? void 0 : h.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Pe = ((c = _.vehicle) == null ? void 0 : c.vin) || "offer";
-        this._pdfFilename = `${Ae}_${Pe}.pdf`;
-        const De = new File([x], this._pdfFilename, { type: "application/pdf" });
+        const x = await (await fetch(v, { headers: y })).blob(), Pe = (((h = d.customer) == null ? void 0 : h.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), De = ((c = _.vehicle) == null ? void 0 : c.vin) || "offer";
+        this._pdfFilename = `${Pe}_${De}.pdf`;
+        const Ee = new File([x], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
-        const re = URL.createObjectURL(De);
+        const re = URL.createObjectURL(Ee);
         this._currentBlobUrl = re, this._pdfUrl = re, this._statusMsg = "", this.dispatchEvent(new CustomEvent("offer-generated", {
           detail: { pdfUrl: v },
           bubbles: !0,
@@ -1120,8 +1157,8 @@ class X extends U {
     try {
       const i = { "ngrok-skip-browser-warning": "true" };
       this.authToken && (i.Authorization = `Bearer ${this.authToken}`);
-      const o = await (await fetch(this._pdfUrl, { headers: i })).blob(), r = URL.createObjectURL(o), l = document.createElement("a");
-      l.href = r, l.download = e, l.click(), setTimeout(() => URL.revokeObjectURL(r), 1e4);
+      const o = await (await fetch(this._pdfUrl, { headers: i })).blob(), r = URL.createObjectURL(o), n = document.createElement("a");
+      n.href = r, n.download = e, n.click(), setTimeout(() => URL.revokeObjectURL(r), 1e4);
     } catch {
       window.open(this._pdfUrl, "_blank");
     }
@@ -1167,15 +1204,20 @@ class X extends U {
         <div>
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="segmented-control" style="width:auto;">
-            <button
-              class="seg-btn ${this._mode === "full" ? "active" : ""}"
-              @click="${() => this._handleModeChange("full")}"
-            >Full</button>
-            <button
-              class="seg-btn ${e ? "active" : ""}"
-              @click="${() => this._handleModeChange("one_page")}"
-            >One-Page</button>
+          <div class="ctrl-group ${this._isLocked("mode") ? "locked" : ""}">
+            <div class="segmented-control" style="width:auto;">
+              <button
+                class="seg-btn ${this._mode === "full" ? "active" : ""}"
+                ?disabled="${this._isLocked("mode")}"
+                @click="${() => this._handleModeChange("full")}"
+              >Full</button>
+              <button
+                class="seg-btn ${e ? "active" : ""}"
+                ?disabled="${this._isLocked("mode")}"
+                @click="${() => this._handleModeChange("one_page")}"
+              >One-Page</button>
+            </div>
+            ${this._lk("mode")}
           </div>
         </div>
 
@@ -1189,42 +1231,55 @@ class X extends U {
           </div>
           <div class="section-body">
             <div class="config-row">
-              <span>$ Amount (header)</span>
-              <div class="segmented-control">
-                <button
-                  class="seg-btn ${this._valueDisplay === "offer" ? "active" : ""}"
-                  @click="${() => this._handleSegmentedClick("value-display", "offer")}"
-                >Offer</button>
-                <button
-                  class="seg-btn ${this._valueDisplay === "tax_savings" ? "active" : ""}"
-                  @click="${() => this._handleSegmentedClick("value-display", "tax_savings")}"
-                >Tax Savings</button>
+              <span>Display offer as</span>
+              <div class="ctrl-group ${this._isLocked("value_display") ? "locked" : ""}">
+                <div class="segmented-control">
+                  <button
+                    class="seg-btn ${this._valueDisplay === "offer" ? "active" : ""}"
+                    ?disabled="${this._isLocked("value_display")}"
+                    @click="${() => this._handleSegmentedClick("value-display", "offer")}"
+                  >Amount</button>
+                  <button
+                    class="seg-btn ${this._valueDisplay === "tax_savings" ? "active" : ""}"
+                    ?disabled="${this._isLocked("value_display")}"
+                    @click="${() => this._handleSegmentedClick("value-display", "tax_savings")}"
+                  >+ Tax Savings</button>
+                </div>
+                ${this._lk("value_display")}
               </div>
             </div>
             <div class="config-row">
-              <span>Tax savings rate</span>
-              <div class="tax-rate-wrapper">
+              <span>Tax Savings Rate</span>
+              <div class="ctrl-group ${this._isLocked("tax_rate_pct") ? "locked" : ""}">
+                <div class="tax-rate-wrapper">
+                  <input
+                    type="number"
+                    class="tax-rate-input"
+                    .value="${this._taxRatePct ?? ""}"
+                    min="0"
+                    max="99"
+                    step="0.01"
+                    ?disabled="${this._isLocked("tax_rate_pct")}"
+                    @input="${this._handleTaxRateInput}"
+                  />
+                  <span class="tax-rate-suffix">%</span>
+                </div>
+                ${this._lk("tax_rate_pct")}
+              </div>
+            </div>
+            <div class="config-row">
+              <span>Profit label</span>
+              <div class="ctrl-group ${this._isLocked("profit_label") ? "locked" : ""}">
                 <input
-                  type="number"
-                  class="tax-rate-input"
-                  .value="${this._taxRatePct ?? ""}"
-                  min="0"
-                  max="99"
-                  step="0.01"
-                  @input="${this._handleTaxRateInput}"
+                  type="text"
+                  style="font-size:12px;padding:4px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;width:110px;"
+                  placeholder="Target Profit"
+                  .value="${this._profitName ?? ""}"
+                  ?disabled="${this._isLocked("profit_label")}"
+                  @input="${this._handleProfitNameInput}"
                 />
-                <span class="tax-rate-suffix">%</span>
+                ${this._lk("profit_label")}
               </div>
-            </div>
-            <div class="config-row">
-              <span>Profit name</span>
-              <input
-                type="text"
-                style="font-size:12px;padding:4px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;width:130px;"
-                placeholder="Target Profit"
-                .value="${this._profitName ?? ""}"
-                @input="${this._handleProfitNameInput}"
-              />
             </div>
             ${!this.templateMode && this.employees && this.employees.length > 0 ? p`
               <div class="config-row">
@@ -1243,69 +1298,68 @@ class X extends U {
             ` : u}
             <div class="config-row">
               <span>Font size</span>
-              <div class="stepper">
-                <button
-                  class="step-btn"
-                  ?disabled="${this._fontSizeIndex <= 0}"
-                  @click="${() => this._handleFontSizeStep(-1)}"
-                >−</button>
-                <span class="stepper-value font-size-display">${t}</span>
-                <button
-                  class="step-btn"
-                  ?disabled="${this._fontSizeIndex >= H.length - 1}"
-                  @click="${() => this._handleFontSizeStep(1)}"
-                >+</button>
+              <div class="ctrl-group ${this._isLocked("font_size") ? "locked" : ""}">
+                <div class="stepper">
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex <= 0 || this._isLocked("font_size")}"
+                          @click="${() => this._handleFontSizeStep(-1)}">−</button>
+                  <span class="stepper-value font-size-display">${t}</span>
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= H.length - 1 || this._isLocked("font_size")}"
+                          @click="${() => this._handleFontSizeStep(1)}">+</button>
+                </div>
+                ${this._lk("font_size")}
               </div>
             </div>
             <div class="config-row ${e ? "disabled" : ""}">
               <span>Photos (per row)</span>
-              <div class="stepper">
-                <button
-                  class="step-btn"
-                  ?disabled="${this._photosPerRow <= 2 || e}"
-                  @click="${() => this._handlePhotosPerRowStep(-1)}"
-                >−</button>
-                <span class="stepper-value">${this._photosPerRow}</span>
-                <button
-                  class="step-btn"
-                  ?disabled="${this._photosPerRow >= 4 || e}"
-                  @click="${() => this._handlePhotosPerRowStep(1)}"
-                >+</button>
+              <div class="ctrl-group ${this._isLocked("photos_per_row") ? "locked" : ""}">
+                <div class="stepper">
+                  <button class="step-btn" ?disabled="${this._photosPerRow <= 2 || e || this._isLocked("photos_per_row")}"
+                          @click="${() => this._handlePhotosPerRowStep(-1)}">−</button>
+                  <span class="stepper-value">${this._photosPerRow}</span>
+                  <button class="step-btn" ?disabled="${this._photosPerRow >= 4 || e || this._isLocked("photos_per_row")}"
+                          @click="${() => this._handlePhotosPerRowStep(1)}">+</button>
+                </div>
+                ${this._lk("photos_per_row")}
               </div>
             </div>
-
             <div class="config-row ${e ? "disabled" : ""}">
               <span>Disclosures</span>
-              <div class="segmented-control ${e ? "disabled" : ""}">
-                <button
-                  class="seg-btn ${this._discLayout === "vertical" ? "active" : ""}"
-                  @click="${() => this._handleSegmentedClick("disc-layout", "vertical")}"
-                >Vertical</button>
-                <button
-                  class="seg-btn ${this._discLayout === "horizontal" ? "active" : ""}"
-                  @click="${() => this._handleSegmentedClick("disc-layout", "horizontal")}"
-                >Horizontal</button>
+              <div class="ctrl-group ${this._isLocked("disc_layout") ? "locked" : ""}">
+                <div class="segmented-control ${e ? "disabled" : ""}">
+                  <button class="seg-btn ${this._discLayout === "vertical" ? "active" : ""}"
+                          ?disabled="${this._isLocked("disc_layout")}"
+                          @click="${() => this._handleSegmentedClick("disc-layout", "vertical")}">Vertical</button>
+                  <button class="seg-btn ${this._discLayout === "horizontal" ? "active" : ""}"
+                          ?disabled="${this._isLocked("disc_layout")}"
+                          @click="${() => this._handleSegmentedClick("disc-layout", "horizontal")}">Horizontal</button>
+                </div>
+                ${this._lk("disc_layout")}
               </div>
             </div>
             <div class="config-row ${e ? "disabled" : ""}">
               <span>Market</span>
-              <div class="segmented-control ${e ? "disabled" : ""}">
-                <button
-                  class="seg-btn ${this._marketDisplay === "summary" ? "active" : ""}"
-                  @click="${() => this._handleSegmentedClick("market-display", "summary")}"
-                >Summary</button>
-                <button
-                  class="seg-btn ${this._marketDisplay === "full" ? "active" : ""}"
-                  @click="${() => this._handleSegmentedClick("market-display", "full")}"
-                >Full</button>
+              <div class="ctrl-group ${this._isLocked("market_display") ? "locked" : ""}">
+                <div class="segmented-control ${e ? "disabled" : ""}">
+                  <button class="seg-btn ${this._marketDisplay === "summary" ? "active" : ""}"
+                          ?disabled="${this._isLocked("market_display")}"
+                          @click="${() => this._handleSegmentedClick("market-display", "summary")}">Summary</button>
+                  <button class="seg-btn ${this._marketDisplay === "full" ? "active" : ""}"
+                          ?disabled="${this._isLocked("market_display")}"
+                          @click="${() => this._handleSegmentedClick("market-display", "full")}">Full</button>
+                </div>
+                ${this._lk("market_display")}
               </div>
             </div>
             <div style="padding:8px 0 4px;">
-              <div style="font-size:12px;color:#222222;margin-bottom:6px;">Disclaimer (appended to footer)</div>
-              <div class="config-row" style="margin-bottom:6px;padding-left:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:12px;color:#222222;">Disclaimer (appended to footer)</span>
+                ${this._lk("disclaimer")}
+              </div>
+              <div class="config-row ${this._isLocked("disclaimer") ? "disabled" : ""}" style="margin-bottom:6px;padding-left:16px;">
                 <span>Separator</span>
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
+                  ?disabled="${this._isLocked("disclaimer")}"
                   @change="${(s) => {
       this._disclaimerPunct = s.target.value;
     }}"
@@ -1316,9 +1370,10 @@ class X extends U {
                 </select>
               </div>
               <textarea
-                style="width:100%;font-size:12px;padding:6px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;resize:vertical;min-height:60px;font-family:inherit;line-height:1.4;margin-left:16px;width:calc(100% - 16px);"
+                style="width:calc(100% - 16px);font-size:12px;padding:6px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;resize:vertical;min-height:60px;font-family:inherit;line-height:1.4;margin-left:16px;${this._isLocked("disclaimer") ? "opacity:0.5;pointer-events:none;" : ""}"
                 placeholder="e.g., subject to Carfax History and Lien report."
                 .value="${this._disclaimerText ?? ""}"
+                ?disabled="${this._isLocked("disclaimer")}"
                 @input="${this._handleDisclaimerInput}"
               ></textarea>
             </div>
@@ -1352,15 +1407,19 @@ class X extends U {
             ${i}
             <!-- Signature (always at end of PDF, not draggable) -->
             <div class="toggle-group" data-group="signature">
-              <label class="group-header">
-                <input
-                  type="checkbox"
-                  data-group="signature"
-                  .checked="${this._groups.signature === "checked"}"
-                  @change="${(s) => this._handleGroupChange("signature", s.target.checked)}"
-                >
-                Customer Signature
-              </label>
+              <div class="group-row ${this._isLocked("signature") ? "group-row-locked" : ""}">
+                <label class="group-header">
+                  <input
+                    type="checkbox"
+                    data-group="signature"
+                    .checked="${this._groups.signature === "checked"}"
+                    ?disabled="${this._isLocked("signature")}"
+                    @change="${(s) => this._handleGroupChange("signature", s.target.checked)}"
+                  >
+                  Customer Signature
+                </label>
+                ${this._lk("signature")}
+              </div>
             </div>
           </div>
         </div>
@@ -1373,30 +1432,33 @@ class X extends U {
       this._layoutOpen = !this._layoutOpen;
     }}">
             <span>Layout</span>
-            <div class="section-chevron">${J}</div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              ${this._lk("section_order")}
+              <div class="section-chevron">${J}</div>
+            </div>
           </div>
           <div class="section-body">
-            <div class="sortable-list"
+            <div class="sortable-list ${this._isLocked("section_order") ? "disabled" : ""}"
               @dragover="${(s) => s.preventDefault()}"
               @drop="${(s) => this._handleListDrop(s)}"
             >
-              ${this._sectionOrder.map((s) => {
-      const o = this._isSectionDisabled(s);
+              ${this._sectionOrder.map((s, o) => {
+      const r = this._isSectionDisabled(s) || this._isLocked("section_order");
       return p`
                   <div
-                    class="sortable-item ${o ? "disabled" : ""}"
+                    class="sortable-item ${r ? "disabled" : ""}"
                     data-section="${s}"
-                    draggable="${o ? "false" : "true"}"
-                    @dragstart="${(r) => this._handleDragStart(r, s)}"
-                    @dragover="${(r) => this._handleDragOver(r, s)}"
-                    @drop="${(r) => this._handleDrop(r)}"
-                    @dragend="${(r) => this._handleDragEnd(r)}"
+                    draggable="${r ? "false" : "true"}"
+                    @dragstart="${(n) => this._handleDragStart(n, s)}"
+                    @dragover="${(n) => this._handleDragOver(n, s)}"
+                    @drop="${(n) => this._handleDrop(n)}"
+                    @dragend="${(n) => this._handleDragEnd(n)}"
                   >
                     <span class="drag-handle">⠿</span>
-                    <span>${Qe[s]}</span>
+                    <span>${Xe[s]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${o || this._sectionOrder.indexOf(s) === 0}" @click="${() => this._handleMoveSection(s, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${o || this._sectionOrder.indexOf(s) === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(s, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${r || o === 0}" @click="${() => this._handleMoveSection(s, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${r || o === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(s, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -1440,91 +1502,38 @@ class X extends U {
     `;
   }
   _renderShowHideGroup(e) {
-    const i = this._isOnePage() && ["disclosures", "recon", "photos"].includes(e), s = this._groups[e];
+    const i = this._isOnePage() && ["disclosures", "recon", "photos"].includes(e), s = this._isLocked(e), o = this._groups[e], n = p`
+      <div class="group-row ${s ? "group-row-locked" : ""}">
+        <label class="group-header">
+          <input type="checkbox" data-group="${e}"
+            .checked="${o === "checked" || o === "indeterminate"}"
+            ?disabled="${s}"
+            @change="${(l) => this._handleGroupChange(e, l.target.checked)}"
+          >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Market", recon: "Recon", photos: "Photos" }[e]}
+        </label>
+        ${this._lk(e)}
+      </div>`;
     return e === "valuation" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="valuation">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="valuation"
-              .checked="${s === "checked" || s === "indeterminate"}"
-              @change="${(o) => this._handleGroupChange("valuation", o.target.checked)}"
-            >
-            Valuation
-          </label>
-          <div class="pill-group">
+          ${n}
+          <div class="pill-group ${s ? "locked" : ""}">
             ${this._renderPill("valuation.retail_value", "Retail Value", "valuation")}
             ${this._renderPill("valuation.recon", "Recon", "valuation")}
             ${this._renderPill("valuation.fixed_overhead", "Fixed Overhead", "valuation")}
             ${this._renderPill("valuation.target_profit", this._profitName || "Target Profit", "valuation")}
             ${this._renderPill("valuation.tax_savings", "Tax Savings", "valuation")}
           </div>
-        </div>
-      ` : e === "disclosures" ? p`
-        <div class="toggle-group ${i ? "disabled" : ""}" data-group="disclosures">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="disclosures"
-              .checked="${s === "checked"}"
-              @change="${(o) => this._handleGroupChange("disclosures", o.target.checked)}"
-            >
-            Disclosures
-          </label>
-        </div>
-      ` : e === "observations" ? p`
+        </div>` : e === "observations" ? p`
         <div class="toggle-group ${i ? "disabled" : ""}" data-group="observations">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="observations"
-              .checked="${s === "checked" || s === "indeterminate"}"
-              @change="${(o) => this._handleGroupChange("observations", o.target.checked)}"
-            >
-            Observations
-          </label>
-          <div class="pill-group">
+          ${n}
+          <div class="pill-group ${s ? "locked" : ""}">
             ${this._renderPill("sections.observations_highlights", "Highlights", "observations")}
             ${this._renderPill("sections.observations_comments", "Comments", "observations")}
           </div>
-        </div>
-      ` : e === "market" ? p`
-        <div class="toggle-group ${i ? "disabled" : ""}" data-group="market">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="market"
-              .checked="${s === "checked"}"
-              @change="${(o) => this._handleGroupChange("market", o.target.checked)}"
-            >
-            Market
-          </label>
-        </div>
-      ` : e === "recon" ? p`
-        <div class="toggle-group ${i ? "disabled" : ""}" data-group="recon">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="recon"
-              .checked="${s === "checked"}"
-              @change="${(o) => this._handleGroupChange("recon", o.target.checked)}"
-            >
-            Recon
-          </label>
-        </div>
-      ` : e === "photos" ? p`
-        <div class="toggle-group ${i ? "disabled" : ""}" data-group="photos">
-          <label class="group-header">
-            <input
-              type="checkbox"
-              data-group="photos"
-              .checked="${s === "checked"}"
-              @change="${(o) => this._handleGroupChange("photos", o.target.checked)}"
-            >
-            Photos
-          </label>
-        </div>
-      ` : u;
+        </div>` : p`
+      <div class="toggle-group ${i ? "disabled" : ""}" data-group="${e}">
+        ${n}
+      </div>`;
   }
   _renderPill(e, t, i) {
     const s = this._pills[e];
@@ -1654,8 +1663,9 @@ q(X, "properties", {
   _pdfUrl: { type: String, state: !0 },
   _pdfVehicle: { type: Object, state: !0 },
   _savedConfirm: { type: Boolean, state: !0 },
-  _confirmReset: { type: Boolean, state: !0 }
-}), q(X, "styles", ze`
+  _confirmReset: { type: Boolean, state: !0 },
+  _locks: { type: Object, state: !0 }
+}), q(X, "styles", Re`
     :host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #EEEEEE; color: #222222; min-height: 100vh; }
 
     * { box-sizing: border-box; }
@@ -1906,6 +1916,7 @@ q(X, "properties", {
     .btn-reopen:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-green { background: #35BB9C; color: #fff; }
     .btn-green:hover { background: #2a9880; }
+    .btn-green:disabled { background: #d0d5dd; color: #98a2b3; cursor: not-allowed; }
 
     /* Status */
     .status { margin-top: 10px; font-size: 13px; min-height: 18px; text-align: center; }
@@ -2219,6 +2230,27 @@ q(X, "properties", {
     .action-msg { font-size: 12px; line-height: 1.4; margin-top: 10px; text-align: center; }
     .action-msg.success { color: #27ae60; }
     .action-msg.error   { color: #c0392b; }
+
+    /* Lock controls */
+    .lock-btn {
+      width: 26px; height: 26px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: 1.5px solid #d0d5dd; border-radius: 6px;
+      cursor: pointer; color: #98a2b3; transition: all 0.15s; padding: 0;
+    }
+    .lock-btn:hover { background: #f2f4f7; color: #344054; border-color: #b0b8c4; }
+    .lock-btn.locked { background: #fff3cd; border-color: #f59f00; color: #b45309; }
+    .lock-indicator {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; color: #b0b8c4; flex-shrink: 0;
+    }
+    .ctrl-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .ctrl-group.locked > :first-child { opacity: 0.5; pointer-events: none; }
+    .group-row { display: flex; align-items: center; justify-content: space-between; }
+    .group-row label.group-header { flex: 1; }
+    .group-row-locked label.group-header { opacity: 0.5; }
+    .group-row-locked input[type="checkbox"] { pointer-events: none; }
+    .pill-group.locked { opacity: 0.45; pointer-events: none; }
 
     .reset-btn {
       width: 100%; padding: 9px 20px; background: transparent; color: #667085;
