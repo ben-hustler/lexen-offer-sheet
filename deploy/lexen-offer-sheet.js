@@ -25,14 +25,14 @@ let ye = class {
     return this.cssText;
   }
 };
-const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Re = (a, ...e) => {
+const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Le = (a, ...e) => {
   const t = a.length === 1 ? a[0] : e.reduce((i, s, o) => i + ((r) => {
     if (r._$cssResult$ === !0) return r.cssText;
     if (typeof r == "number") return r;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(s) + a[o + 1], a[0]);
   return new ye(t, a, te);
-}, Le = (a, e) => {
+}, Re = (a, e) => {
   if (ee) a.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
     const i = document.createElement("style"), s = j.litNonce;
@@ -48,7 +48,7 @@ const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Re = (a
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Be, getPrototypeOf: Ie } = Object, k = globalThis, le = k.trustedTypes, He = le ? le.emptyScript : "", W = k.reactiveElementPolyfillSupport, L = (a, e) => a, Q = { toAttribute(a, e) {
+const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Be, getPrototypeOf: Ie } = Object, k = globalThis, le = k.trustedTypes, He = le ? le.emptyScript : "", W = k.reactiveElementPolyfillSupport, R = (a, e) => a, Q = { toAttribute(a, e) {
   switch (e) {
     case Boolean:
       a = a ? He : null;
@@ -106,13 +106,13 @@ let E = class extends HTMLElement {
     return this.elementProperties.get(e) ?? de;
   }
   static _$Ei() {
-    if (this.hasOwnProperty(L("elementProperties"))) return;
+    if (this.hasOwnProperty(R("elementProperties"))) return;
     const e = Ie(this);
     e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
   }
   static finalize() {
-    if (this.hasOwnProperty(L("finalized"))) return;
-    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(L("properties"))) {
+    if (this.hasOwnProperty(R("finalized"))) return;
+    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(R("properties"))) {
       const t = this.properties, i = [...Ne(t), ...Be(t)];
       for (const s of i) this.createProperty(s, t[s]);
     }
@@ -162,7 +162,7 @@ let E = class extends HTMLElement {
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Le(e, this.constructor.elementStyles), e;
+    return Re(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     var e;
@@ -281,14 +281,14 @@ let E = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[L("elementProperties")] = /* @__PURE__ */ new Map(), E[L("finalized")] = /* @__PURE__ */ new Map(), W == null || W({ ReactiveElement: E }), (k.reactiveElementVersions ?? (k.reactiveElementVersions = [])).push("2.1.2");
+E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[R("elementProperties")] = /* @__PURE__ */ new Map(), E[R("finalized")] = /* @__PURE__ */ new Map(), W == null || W({ ReactiveElement: E }), (k.reactiveElementVersions ?? (k.reactiveElementVersions = [])).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const T = globalThis, ce = (a) => a, F = T.trustedTypes, pe = F ? F.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, $e = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, ke = "?" + $, je = `<${ke}>`, P = document, U = () => P.createComment(""), N = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
-\f\r]`, R = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, w = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
+\f\r]`, L = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, w = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, Ge = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = Ge(1), C = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
 function Se(a, e) {
   if (!ie(a) || !a.hasOwnProperty("raw")) throw Error("invalid template strings array");
@@ -296,13 +296,13 @@ function Se(a, e) {
 }
 const Ve = (a, e) => {
   const t = a.length - 1, i = [];
-  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = R;
+  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = L;
   for (let n = 0; n < t; n++) {
     const l = a[n];
     let f, h, c = -1, g = 0;
-    for (; g < l.length && (r.lastIndex = g, h = r.exec(l), h !== null); ) g = r.lastIndex, r === R ? h[1] === "!--" ? r = he : h[1] !== void 0 ? r = ue : h[2] !== void 0 ? (we.test(h[2]) && (s = RegExp("</" + h[2], "g")), r = w) : h[3] !== void 0 && (r = w) : r === w ? h[0] === ">" ? (r = s ?? R, c = -1) : h[1] === void 0 ? c = -2 : (c = r.lastIndex - h[2].length, f = h[1], r = h[3] === void 0 ? w : h[3] === '"' ? _e : fe) : r === _e || r === fe ? r = w : r === he || r === ue ? r = R : (r = w, s = void 0);
+    for (; g < l.length && (r.lastIndex = g, h = r.exec(l), h !== null); ) g = r.lastIndex, r === L ? h[1] === "!--" ? r = he : h[1] !== void 0 ? r = ue : h[2] !== void 0 ? (we.test(h[2]) && (s = RegExp("</" + h[2], "g")), r = w) : h[3] !== void 0 && (r = w) : r === w ? h[0] === ">" ? (r = s ?? L, c = -1) : h[1] === void 0 ? c = -2 : (c = r.lastIndex - h[2].length, f = h[1], r = h[3] === void 0 ? w : h[3] === '"' ? _e : fe) : r === _e || r === fe ? r = w : r === he || r === ue ? r = L : (r = w, s = void 0);
     const b = r === w && a[n + 1].startsWith("/>") ? " " : "";
-    o += r === R ? l + je : c >= 0 ? (i.push(f), l.slice(0, c) + $e + l.slice(c) + $ + b) : l + $ + (c === -2 ? n : b);
+    o += r === L ? l + je : c >= 0 ? (i.push(f), l.slice(0, c) + $e + l.slice(c) + $ + b) : l + $ + (c === -2 ? n : b);
   }
   return [Se(a, o + (a[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
@@ -682,6 +682,7 @@ class X extends M {
       signature: "checked"
     }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
       mode: !1,
+      condition: !1,
       value_display: !1,
       tax_rate_pct: !1,
       profit_label: !1,
@@ -1393,10 +1394,11 @@ class X extends M {
           <div class="section-body">
             <!-- Header group (no checkbox) -->
             <div class="toggle-group">
-              <div class="group-header">
+              <div class="group-row">
                 <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#222222;cursor:default;">Header</label>
+                ${this._lk("condition")}
               </div>
-              <div class="pill-group">
+              <div class="pill-group ${this._isLocked("condition") ? "locked" : ""}">
                 <span
                   class="pill ${this._pills["general.condition"] ? "active" : ""}"
                   @click="${() => this._handlePillClick("general.condition", null)}"
@@ -1665,7 +1667,7 @@ q(X, "properties", {
   _savedConfirm: { type: Boolean, state: !0 },
   _confirmReset: { type: Boolean, state: !0 },
   _locks: { type: Object, state: !0 }
-}), q(X, "styles", Re`
+}), q(X, "styles", Le`
     :host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #EEEEEE; color: #222222; min-height: 100vh; }
 
     * { box-sizing: border-box; }
@@ -1724,7 +1726,7 @@ q(X, "properties", {
       align-items: flex-start;
     }
 
-    .sidebar { flex: 1 1 380px; min-width: 280px; }
+    .sidebar { flex: 1 1 440px; min-width: 320px; }
     .preview-pane { flex: 9999 1 280px; min-width: 280px; }
 
     @media (max-width: 768px) {
@@ -1897,6 +1899,7 @@ q(X, "properties", {
       padding: 12px 20px;
       font-size: 14px;
       font-weight: 600;
+      font-family: inherit;
       border: none;
       border-radius: 8px;
       cursor: pointer;

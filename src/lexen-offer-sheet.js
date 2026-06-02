@@ -228,7 +228,7 @@ export class LexenOfferSheet extends LitElement {
       align-items: flex-start;
     }
 
-    .sidebar { flex: 1 1 380px; min-width: 280px; }
+    .sidebar { flex: 1 1 440px; min-width: 320px; }
     .preview-pane { flex: 9999 1 280px; min-width: 280px; }
 
     @media (max-width: 768px) {
@@ -401,6 +401,7 @@ export class LexenOfferSheet extends LitElement {
       padding: 12px 20px;
       font-size: 14px;
       font-weight: 600;
+      font-family: inherit;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -878,6 +879,7 @@ export class LexenOfferSheet extends LitElement {
     this._confirmReset  = false;
     this._locks = {
       mode:           false,
+      condition:      false,
       value_display:  false,
       tax_rate_pct:   false,
       profit_label:   false,
@@ -1941,10 +1943,11 @@ export class LexenOfferSheet extends LitElement {
           <div class="section-body">
             <!-- Header group (no checkbox) -->
             <div class="toggle-group">
-              <div class="group-header">
+              <div class="group-row">
                 <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#222222;cursor:default;">Header</label>
+                ${this._lk('condition')}
               </div>
-              <div class="pill-group">
+              <div class="pill-group ${this._isLocked('condition') ? 'locked' : ''}">
                 <span
                   class="pill ${this._pills['general.condition'] ? 'active' : ''}"
                   @click="${() => this._handlePillClick('general.condition', null)}"
