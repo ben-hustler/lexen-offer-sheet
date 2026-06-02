@@ -163,6 +163,7 @@ export class LexenOfferSheet extends LitElement {
     _pdfUrl:            { type: String,  state: true },
     _pdfVehicle:        { type: Object,  state: true },
     _savedConfirm:      { type: Boolean, state: true },
+    _confirmReset:      { type: Boolean, state: true },
   };
 
   static styles = css`
@@ -726,6 +727,34 @@ export class LexenOfferSheet extends LitElement {
       color: #c0392b;
     }
 
+    .reset-btn {
+      width: 100%; padding: 9px 20px; background: transparent; color: #667085;
+      border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit; margin-top: 8px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
+
+    .confirm-reset {
+      margin-top: 8px; padding: 10px 12px;
+      background: #fff8e1; border: 1px solid #f59f00; border-radius: 8px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .confirm-reset-msg { font-size: 12px; color: #344054; font-weight: 500; }
+    .confirm-reset-btns { display: flex; gap: 6px; }
+    .confirm-reset-yes {
+      flex: 1; padding: 6px; background: #d92d20; color: #fff;
+      border: none; border-radius: 6px; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .confirm-reset-yes:hover { background: #b42318; }
+    .confirm-reset-no {
+      flex: 1; padding: 6px; background: transparent; color: #344054;
+      border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .confirm-reset-no:hover { background: #f2f4f7; }
+
     .offer-header-row {
       display: flex;
       align-items: center;
@@ -816,7 +845,8 @@ export class LexenOfferSheet extends LitElement {
     this._statusError = false;
     this._pdfUrl = '';
     this._pdfVehicle = null;
-    this._savedConfirm = false;
+    this._savedConfirm  = false;
+    this._confirmReset  = false;
 
     // Drag-and-drop internal (non-reactive)
     this._dragSrcSection = null;
@@ -1229,12 +1259,18 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _handleReset() {
+    this._confirmReset = false;
     if (this.sharedDisplay || this.pdfDisplay) {
       if (this.sharedDisplay) this._applySharedDisplay(this.sharedDisplay);
       if (this.pdfDisplay)    this._applyPdfDisplay(this.pdfDisplay);
     } else {
       this._resetToggles();
     }
+    // Null values signal Bubble to clear instance-level overrides.
+    this.dispatchEvent(new CustomEvent('display-save', {
+      detail: { shared: null, pdf: null, employee: null },
+      bubbles: true, composed: true,
+    }));
   }
 
   _resetToggles() {
@@ -1564,6 +1600,10 @@ export class LexenOfferSheet extends LitElement {
     if (this.templateMode) {
       await this._handleGenerate(false);
       this._dispatchDisplaySave();
+      this.dispatchEvent(new CustomEvent('template-save', {
+        detail: { shared: this._buildSharedState(), pdf: this._buildPdfState() },
+        bubbles: true, composed: true,
+      }));
     } else {
       this._finalizing = true;
       await this._handleGenerate(false);
@@ -1884,18 +1924,25 @@ export class LexenOfferSheet extends LitElement {
           class="btn btn-green"
           ?disabled="${this._generating || this._finalizing}"
           @click="${this._handleApply}"
-        >Apply</button>
+        >${this.templateMode
+            ? (this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template')
+            : (this._generating || this._finalizing ? 'Generating…' : 'Apply')}</button>
 
-        ${this._savedConfirm ? html`
+        ${this._savedConfirm && !this.templateMode ? html`
           <div style="text-align:center;margin-top:10px;font-size:13px;color:#222222;font-weight:500;">Changes saved!</div>
         ` : nothing}
 
-        <div style="text-align:center; margin-top:20px;">
-          <button
-            style="background:none;border:none;padding:0;font-size:14px;color:#98a2b3;cursor:pointer;text-decoration:underline;text-underline-offset:2px;"
-            @click="${this._handleReset}"
-          >Reset</button>
-        </div>
+        ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
+          <div class="confirm-reset">
+            <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
+            <div class="confirm-reset-btns">
+              <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
+              <button class="confirm-reset-no"  @click="${() => { this._confirmReset = false; }}">Cancel</button>
+            </div>
+          </div>
+        ` : html`
+          <button class="reset-btn" @click="${() => { this._confirmReset = true; }}">Reset to template</button>
+        `) : nothing}
       </div>
     `;
   }
