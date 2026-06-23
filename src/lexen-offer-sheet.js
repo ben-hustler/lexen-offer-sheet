@@ -1807,8 +1807,7 @@ export class LexenOfferSheet extends LitElement {
     if (this._doneSentVia) return null; // main button inert after sending; dropdown handles resends
     const c = this.payload?.customer || {};
     if (this._sendVia) return this._sendVia;
-    if (c.email)  return 'email';
-    if (c.phone)  return 'sms';
+    if (c.email) return 'email';
     return null;
   }
 
@@ -2236,53 +2235,21 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _renderSendInline() {
-    const customer   = this.payload?.customer || {};
-    const hasPhone   = !!customer.phone;
-    const hasEmail   = !!customer.email;
-    const primary    = this._primaryAction;
-    const hasPdf     = !!this._pdfUrl && !this._generating;
+    const hasEmail = !!this.payload?.customer?.email;
+    const hasPdf   = !!this._pdfUrl && !this._generating;
 
-    if (!hasPhone && !hasEmail) return nothing;
+    if (!hasEmail) return nothing;
 
-    const LABELS = { sms: 'Send via SMS', email: 'Send via Email' };
-    const SENT   = { sms: 'SMS Sent ✓',  email: 'Email Sent ✓'  };
-
-    const mainLabel = this._doneSentVia
-      ? SENT[this._doneSentVia]
-      : (primary ? LABELS[primary] : 'Send PDF');
-
-    const alternatives = [];
-    if (!this._doneSentVia) {
-      if (primary !== 'sms'   && hasPhone) alternatives.push({ via: 'sms',   label: 'Send via SMS' });
-      if (primary !== 'email' && hasEmail) alternatives.push({ via: 'email', label: 'Send via Email' });
-    }
-
-    const canSend = hasPdf && !!primary;
+    const mainLabel = this._doneSentVia ? 'Email Sent ✓' : 'Send via Email';
+    const canSend   = hasPdf && !this._doneSentVia;
 
     return html`
-      <div class="split-btn-wrap">
-        <button
-          class="split-main ${this._doneSentVia ? 'done' : ''}"
-          style="${alternatives.length === 0 ? 'border-radius:8px;' : ''}"
-          ?disabled="${!canSend}"
-          @click="${() => primary && this._handleSend(primary)}"
-        >${mainLabel}</button>
-        ${alternatives.length > 0 ? html`
-          <button
-            class="split-arrow-btn"
-            ?disabled="${!hasPdf}"
-            @click="${(e) => { e.stopPropagation(); this._splitOpen = !this._splitOpen; }}"
-            aria-label="More send options"
-          >▾</button>
-          ${this._splitOpen ? html`
-            <div class="split-menu">
-              ${alternatives.map(a => html`
-                <button class="split-menu-item" @click="${() => this._handleSend(a.via)}">${a.label}</button>
-              `)}
-            </div>
-          ` : nothing}
-        ` : nothing}
-      </div>
+      <button
+        class="split-main ${this._doneSentVia ? 'done' : ''}"
+        style="border-radius:8px;width:100%;padding:10px 16px;font-size:13px;"
+        ?disabled="${!canSend}"
+        @click="${() => this._handleSend('email')}"
+      >${mainLabel}</button>
       ${!hasPdf ? html`
         <div class="send-no-contact" style="margin-top:4px;">Preview is generating…</div>
       ` : nothing}
