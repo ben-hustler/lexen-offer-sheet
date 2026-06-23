@@ -822,8 +822,8 @@ export class LexenOfferSheet extends LitElement {
     }
     .split-main:hover:not(:disabled) { background: #2a9880; }
     .split-main:disabled { opacity: 0.6; cursor: not-allowed; }
-    .split-main.done { background: #27ae60; border-radius: 8px; }
-    .split-main.done:hover { background: #219150; }
+    .split-main.done { background: #d0d5dd; color: #667085; border-radius: 8px; cursor: default; }
+    .split-main.done:hover { background: #d0d5dd; }
     .split-arrow-btn {
       width: 34px; flex-shrink: 0; padding: 0;
       background: #2a9880; color: #fff; border: none;
@@ -2135,9 +2135,6 @@ export class LexenOfferSheet extends LitElement {
         ` : nothing}
 
         ${this.templateMode ? html`
-          ${this._savedConfirm ? html`
-            <div class="action-msg success">Template saved.</div>
-          ` : nothing}
           <button
             class="btn btn-green"
             ?disabled="${this._generating || this._finalizing}"
@@ -2237,12 +2234,7 @@ export class LexenOfferSheet extends LitElement {
       : (primary ? LABELS[primary] : 'Send PDF');
 
     const alternatives = [];
-    if (this._doneSentVia) {
-      alternatives.push({ via: this._doneSentVia, label: `Resend ${this._doneSentVia === 'sms' ? 'SMS' : 'Email'}` });
-      const other = this._doneSentVia === 'sms' ? 'email' : 'sms';
-      if (other === 'sms'   && hasPhone) alternatives.push({ via: 'sms',   label: 'Send via SMS' });
-      if (other === 'email' && hasEmail) alternatives.push({ via: 'email', label: 'Send via Email' });
-    } else {
+    if (!this._doneSentVia) {
       if (primary !== 'sms'   && hasPhone) alternatives.push({ via: 'sms',   label: 'Send via SMS' });
       if (primary !== 'email' && hasEmail) alternatives.push({ via: 'email', label: 'Send via Email' });
     }
