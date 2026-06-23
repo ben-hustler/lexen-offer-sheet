@@ -816,23 +816,23 @@ export class LexenOfferSheet extends LitElement {
     .split-btn-wrap { display: flex; gap: 0; position: relative; width: 100%; }
     .split-main {
       flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
-      background: #006073; color: #fff; border: none;
+      background: #35BB9C; color: #fff; border: none;
       border-radius: 8px 0 0 8px; cursor: pointer; font-family: inherit;
       transition: background 0.15s; text-align: center;
     }
-    .split-main:hover:not(:disabled) { background: #004f5f; }
+    .split-main:hover:not(:disabled) { background: #2a9880; }
     .split-main:disabled { opacity: 0.6; cursor: not-allowed; }
     .split-main.done { background: #27ae60; border-radius: 8px; }
     .split-main.done:hover { background: #219150; }
     .split-arrow-btn {
       width: 34px; flex-shrink: 0; padding: 0;
-      background: #004f5f; color: #fff; border: none;
+      background: #2a9880; color: #fff; border: none;
       border-left: 1px solid rgba(255,255,255,0.25);
       border-radius: 0 8px 8px 0; cursor: pointer;
       font-size: 10px; transition: background 0.15s;
       display: flex; align-items: center; justify-content: center;
     }
-    .split-arrow-btn:hover { background: #003d4a; }
+    .split-arrow-btn:hover { background: #1e7a68; }
 
     .split-menu {
       position: absolute; top: calc(100% + 4px); right: 0; z-index: 10;
@@ -1797,8 +1797,8 @@ export class LexenOfferSheet extends LitElement {
     if (this._doneSentVia) return null; // main button inert after sending; dropdown handles resends
     const c = this.payload?.customer || {};
     if (this._sendVia) return this._sendVia;
-    if (c.phone)  return 'sms';
     if (c.email)  return 'email';
+    if (c.phone)  return 'sms';
     return null;
   }
 
@@ -1813,12 +1813,7 @@ export class LexenOfferSheet extends LitElement {
     };
 
     console.log('[pdf-send] send_via:', sendVia);
-    console.log('[pdf-send] payload.filename:', payload.filename);
-    console.log('[pdf-send] payload.font_size_delta:', payload.font_size_delta);
-    console.log('[pdf-send] payload.photos_per_row:', payload.photos_per_row);
-    console.log('[pdf-send] payload.section_order:', payload.section_order);
-    console.log('[pdf-send] payload.display:', payload.display);
-    console.log('[pdf-send] payload.raw_payload:', payload.raw_payload);
+    console.log('[pdf-send] payload:', payload);
 
     this.dispatchEvent(new CustomEvent('pdf-send', {
       detail: { send_via: sendVia, payload },
@@ -2150,6 +2145,8 @@ export class LexenOfferSheet extends LitElement {
           >${this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template'}</button>
         ` : nothing}
 
+        ${!this.templateMode ? this._renderSendInline() : nothing}
+
         ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
           <div class="confirm-reset">
             <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
@@ -2223,71 +2220,62 @@ export class LexenOfferSheet extends LitElement {
     `;
   }
 
-  _renderSendCard() {
-    if (this.templateMode) return nothing;
-
+  _renderSendInline() {
     const customer   = this.payload?.customer || {};
     const hasPhone   = !!customer.phone;
     const hasEmail   = !!customer.email;
     const primary    = this._primaryAction;
     const hasPdf     = !!this._pdfUrl && !this._generating;
 
+    if (!hasPhone && !hasEmail) return nothing;
+
     const LABELS = { sms: 'Send via SMS', email: 'Send via Email' };
-    const SENT   = { sms: 'SMS Sent ✓', email: 'Email Sent ✓' };
+    const SENT   = { sms: 'SMS Sent ✓',  email: 'Email Sent ✓'  };
 
     const mainLabel = this._doneSentVia
       ? SENT[this._doneSentVia]
       : (primary ? LABELS[primary] : 'Send PDF');
 
-    // Build dropdown alternatives
     const alternatives = [];
     if (this._doneSentVia) {
-      // After sending: offer resend + the other method if available
       alternatives.push({ via: this._doneSentVia, label: `Resend ${this._doneSentVia === 'sms' ? 'SMS' : 'Email'}` });
       const other = this._doneSentVia === 'sms' ? 'email' : 'sms';
-      if (other === 'sms'   && hasPhone)  alternatives.push({ via: 'sms',   label: 'Send via SMS' });
-      if (other === 'email' && hasEmail)  alternatives.push({ via: 'email', label: 'Send via Email' });
+      if (other === 'sms'   && hasPhone) alternatives.push({ via: 'sms',   label: 'Send via SMS' });
+      if (other === 'email' && hasEmail) alternatives.push({ via: 'email', label: 'Send via Email' });
     } else {
-      if (primary !== 'sms'   && hasPhone)  alternatives.push({ via: 'sms',   label: 'Send via SMS' });
-      if (primary !== 'email' && hasEmail)  alternatives.push({ via: 'email', label: 'Send via Email' });
+      if (primary !== 'sms'   && hasPhone) alternatives.push({ via: 'sms',   label: 'Send via SMS' });
+      if (primary !== 'email' && hasEmail) alternatives.push({ via: 'email', label: 'Send via Email' });
     }
 
     const canSend = hasPdf && !!primary;
 
     return html`
-      <div class="card send-card">
-        <h2>Send PDF</h2>
-        ${!hasPhone && !hasEmail ? html`
-          <div class="send-no-contact">No customer contact info available</div>
-        ` : html`
-          <div class="split-btn-wrap">
-            <button
-              class="split-main ${this._doneSentVia ? 'done' : ''}"
-              style="${alternatives.length === 0 ? 'border-radius:8px;' : ''}"
-              ?disabled="${!canSend}"
-              @click="${() => primary && this._handleSend(primary)}"
-            >${mainLabel}</button>
-            ${alternatives.length > 0 ? html`
-              <button
-                class="split-arrow-btn"
-                ?disabled="${!hasPdf}"
-                @click="${(e) => { e.stopPropagation(); this._splitOpen = !this._splitOpen; }}"
-                aria-label="More send options"
-              >▾</button>
-              ${this._splitOpen ? html`
-                <div class="split-menu">
-                  ${alternatives.map(a => html`
-                    <button class="split-menu-item" @click="${() => this._handleSend(a.via)}">${a.label}</button>
-                  `)}
-                </div>
-              ` : nothing}
-            ` : nothing}
-          </div>
-        `}
-        ${!hasPdf && (hasPhone || hasEmail) ? html`
-          <div class="send-no-contact">Preview is generating…</div>
+      <div class="split-btn-wrap" style="margin-top:4px;">
+        <button
+          class="split-main ${this._doneSentVia ? 'done' : ''}"
+          style="${alternatives.length === 0 ? 'border-radius:8px;' : ''}"
+          ?disabled="${!canSend}"
+          @click="${() => primary && this._handleSend(primary)}"
+        >${mainLabel}</button>
+        ${alternatives.length > 0 ? html`
+          <button
+            class="split-arrow-btn"
+            ?disabled="${!hasPdf}"
+            @click="${(e) => { e.stopPropagation(); this._splitOpen = !this._splitOpen; }}"
+            aria-label="More send options"
+          >▾</button>
+          ${this._splitOpen ? html`
+            <div class="split-menu">
+              ${alternatives.map(a => html`
+                <button class="split-menu-item" @click="${() => this._handleSend(a.via)}">${a.label}</button>
+              `)}
+            </div>
+          ` : nothing}
         ` : nothing}
       </div>
+      ${!hasPdf ? html`
+        <div class="send-no-contact" style="margin-top:4px;">Preview is generating…</div>
+      ` : nothing}
     `;
   }
 
@@ -2356,7 +2344,6 @@ export class LexenOfferSheet extends LitElement {
             <div class="sidebar">
               ${this._renderOfferCard()}
               ${this._renderCustomizeCard()}
-              ${this._renderSendCard()}
             </div>
             ${this._renderPreviewPane()}
           </div>
