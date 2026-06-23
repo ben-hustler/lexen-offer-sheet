@@ -167,6 +167,12 @@ export class LexenOfferSheet extends LitElement {
     _savedConfirm:      { type: Boolean, state: true },
     _confirmReset:      { type: Boolean, state: true },
     _locks:             { type: Object,  state: true },
+
+    // Send UI
+    _splitOpen:   { type: Boolean, state: true },
+    _sendVia:     { type: String,  state: true },
+    _doneSentVia: { type: String,  state: true },
+    _pdfSent:     { type: Boolean, state: true },
   };
 
   static styles = css`
@@ -802,6 +808,47 @@ export class LexenOfferSheet extends LitElement {
     }
 
     .customize-header-row h2 { margin-bottom: 0; }
+
+    /* ── Send card ─────────────────────────────────────────────────────────── */
+    .send-card { display: flex; flex-direction: column; gap: 10px; }
+    .send-card h2 { margin-bottom: 0; }
+
+    .split-btn-wrap { display: flex; gap: 0; position: relative; width: 100%; }
+    .split-main {
+      flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+      background: #006073; color: #fff; border: none;
+      border-radius: 8px 0 0 8px; cursor: pointer; font-family: inherit;
+      transition: background 0.15s; text-align: center;
+    }
+    .split-main:hover:not(:disabled) { background: #004f5f; }
+    .split-main:disabled { opacity: 0.6; cursor: not-allowed; }
+    .split-main.done { background: #27ae60; border-radius: 8px; }
+    .split-main.done:hover { background: #219150; }
+    .split-arrow-btn {
+      width: 34px; flex-shrink: 0; padding: 0;
+      background: #004f5f; color: #fff; border: none;
+      border-left: 1px solid rgba(255,255,255,0.25);
+      border-radius: 0 8px 8px 0; cursor: pointer;
+      font-size: 10px; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .split-arrow-btn:hover { background: #003d4a; }
+
+    .split-menu {
+      position: absolute; top: calc(100% + 4px); right: 0; z-index: 10;
+      background: #fff; border: 1.5px solid #d0d5dd; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12); min-width: 160px; overflow: hidden;
+    }
+    .split-menu-item {
+      display: block; width: 100%; padding: 9px 14px; font-size: 13px;
+      background: none; border: none; cursor: pointer; text-align: left;
+      color: #344054; font-family: inherit; transition: background 0.1s;
+    }
+    .split-menu-item:hover { background: #f2f4f7; }
+
+    .send-no-contact {
+      font-size: 12px; color: #98a2b3; text-align: center; padding: 4px 0;
+    }
   `;
 
   constructor() {
@@ -867,6 +914,14 @@ export class LexenOfferSheet extends LitElement {
     // Auto-preview on initial load (non-reactive)
     this._autoPreviewDone = false;
     this._autoPreviewTimer = null;
+    // Auto-refresh on settings change (non-reactive)
+    this._autoRefreshTimer = null;
+
+    // Send UI
+    this._splitOpen   = false;
+    this._sendVia     = null;
+    this._doneSentVia = null;
+    this._pdfSent     = false;
 
     // Generate state
     this._generating = false;
@@ -875,6 +930,7 @@ export class LexenOfferSheet extends LitElement {
     this._statusError = false;
     this._pdfUrl = '';
     this._pdfVehicle = null;
+    this._lastPrintoutRequest = null; // stored after each successful generate, fired in pdf-send
     this._savedConfirm  = false;
     this._confirmReset  = false;
     this._locks = {
@@ -999,11 +1055,6 @@ export class LexenOfferSheet extends LitElement {
         this._disclaimerText = this.disclaimerText;
       }
     }
-    // Re-generate when profitLabel arrives after initial auto-preview in template mode
-    if (changedProps.has('profitLabel') && this.templateMode && this._autoPreviewDone && this.apiBaseUrl) {
-      this._handleGenerate();
-    }
-
     // Auto-select the current employee when the employees list arrives
     if (changedProps.has('employees') && this.employees?.length && this.payload?.employee?.name) {
       const idx = this.employees.findIndex(e => e.name === this.payload.employee.name);
@@ -1036,6 +1087,26 @@ export class LexenOfferSheet extends LitElement {
             this._handleGenerate();
           }
         }, 300);
+      }
+    }
+
+    // Auto-refresh: debounce regeneration whenever settings change after the initial load.
+    // Skip when the change came from external prop assignment (sharedDisplay, pdfDisplay, payload,
+    // employees) since those paths already schedule their own generate calls above.
+    if (this._autoPreviewDone && this.apiBaseUrl && !this._finalized) {
+      const isDataLoad = changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay')
+        || changedProps.has('payload') || changedProps.has('employees');
+      const settingKeys = [
+        '_mode', '_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
+        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay',
+        '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex',
+      ];
+      if (!isDataLoad && settingKeys.some(k => changedProps.has(k))) {
+        clearTimeout(this._autoRefreshTimer);
+        this._autoRefreshTimer = setTimeout(() => {
+          this._handleGenerate();
+          if (!this.templateMode) this._dispatchDisplaySave();
+        }, 800);
       }
     }
 
@@ -1599,6 +1670,15 @@ export class LexenOfferSheet extends LitElement {
 
       const requestBody = { ...commonFields, raw_payload: payloadData };
 
+      // Snapshot the printout inputs so _handleSend can include them in the pdf-send event.
+      this._lastPrintoutRequest = {
+        raw_payload:    payloadData,
+        display,
+        font_size_delta: FONT_SIZE_OPTIONS[this._fontSizeIndex].delta,
+        photos_per_row:  this._photosPerRow,
+        section_order:   [...this._sectionOrder],
+      };
+
       const headers = { 'Content-Type': 'application/json', 'Accept': 'application/pdf' };
       if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
 
@@ -1709,6 +1789,33 @@ export class LexenOfferSheet extends LitElement {
     } catch (_) {
       window.open(this._pdfUrl, '_blank');
     }
+  }
+
+  // ── Send ───────────────────────────────────────────────────────────────────
+
+  get _primaryAction() {
+    if (this._doneSentVia) return null; // main button inert after sending; dropdown handles resends
+    const c = this.payload?.customer || {};
+    if (this._sendVia) return this._sendVia;
+    if (c.phone)  return 'sms';
+    if (c.email)  return 'email';
+    return null;
+  }
+
+  _handleSend(sendVia) {
+    this._splitOpen   = false;
+    this._doneSentVia = sendVia;
+    this._pdfSent     = true;
+    this.dispatchEvent(new CustomEvent('pdf-send', {
+      detail: {
+        send_via: sendVia,
+        payload: {
+          ...this._lastPrintoutRequest,
+          filename: this._pdfFilename || null,
+        },
+      },
+      bubbles: true, composed: true,
+    }));
   }
 
   // ── Render helpers ─────────────────────────────────────────────────────────
@@ -2023,16 +2130,17 @@ export class LexenOfferSheet extends LitElement {
         ${this._statusError && this._statusMsg ? html`
           <div class="action-msg error">${this._statusMsg}</div>
         ` : nothing}
-        ${this._savedConfirm ? html`
-          <div class="action-msg success">${this.templateMode ? 'Template saved.' : 'Changes saved!'}</div>
+
+        ${this.templateMode ? html`
+          ${this._savedConfirm ? html`
+            <div class="action-msg success">Template saved.</div>
+          ` : nothing}
+          <button
+            class="btn btn-green"
+            ?disabled="${this._generating || this._finalizing}"
+            @click="${this._handleApply}"
+          >${this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template'}</button>
         ` : nothing}
-        <button
-          class="btn btn-green"
-          ?disabled="${this._generating || this._finalizing}"
-          @click="${this._handleApply}"
-        >${this.templateMode
-            ? (this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template')
-            : (this._generating || this._finalizing ? 'Generating…' : 'Apply')}</button>
 
         ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
           <div class="confirm-reset">
@@ -2107,6 +2215,74 @@ export class LexenOfferSheet extends LitElement {
     `;
   }
 
+  _renderSendCard() {
+    if (this.templateMode) return nothing;
+
+    const customer   = this.payload?.customer || {};
+    const hasPhone   = !!customer.phone;
+    const hasEmail   = !!customer.email;
+    const primary    = this._primaryAction;
+    const hasPdf     = !!this._pdfUrl && !this._generating;
+
+    const LABELS = { sms: 'Send via SMS', email: 'Send via Email' };
+    const SENT   = { sms: 'SMS Sent ✓', email: 'Email Sent ✓' };
+
+    const mainLabel = this._doneSentVia
+      ? SENT[this._doneSentVia]
+      : (primary ? LABELS[primary] : 'Send PDF');
+
+    // Build dropdown alternatives
+    const alternatives = [];
+    if (this._doneSentVia) {
+      // After sending: offer resend + the other method if available
+      alternatives.push({ via: this._doneSentVia, label: `Resend ${this._doneSentVia === 'sms' ? 'SMS' : 'Email'}` });
+      const other = this._doneSentVia === 'sms' ? 'email' : 'sms';
+      if (other === 'sms'   && hasPhone)  alternatives.push({ via: 'sms',   label: 'Send via SMS' });
+      if (other === 'email' && hasEmail)  alternatives.push({ via: 'email', label: 'Send via Email' });
+    } else {
+      if (primary !== 'sms'   && hasPhone)  alternatives.push({ via: 'sms',   label: 'Send via SMS' });
+      if (primary !== 'email' && hasEmail)  alternatives.push({ via: 'email', label: 'Send via Email' });
+    }
+
+    const canSend = hasPdf && !!primary;
+
+    return html`
+      <div class="card send-card">
+        <h2>Send PDF</h2>
+        ${!hasPhone && !hasEmail ? html`
+          <div class="send-no-contact">No customer contact info available</div>
+        ` : html`
+          <div class="split-btn-wrap">
+            <button
+              class="split-main ${this._doneSentVia ? 'done' : ''}"
+              style="${alternatives.length === 0 ? 'border-radius:8px;' : ''}"
+              ?disabled="${!canSend}"
+              @click="${() => primary && this._handleSend(primary)}"
+            >${mainLabel}</button>
+            ${alternatives.length > 0 ? html`
+              <button
+                class="split-arrow-btn"
+                ?disabled="${!hasPdf}"
+                @click="${(e) => { e.stopPropagation(); this._splitOpen = !this._splitOpen; }}"
+                aria-label="More send options"
+              >▾</button>
+              ${this._splitOpen ? html`
+                <div class="split-menu">
+                  ${alternatives.map(a => html`
+                    <button class="split-menu-item" @click="${() => this._handleSend(a.via)}">${a.label}</button>
+                  `)}
+                </div>
+              ` : nothing}
+            ` : nothing}
+          </div>
+        `}
+        ${!hasPdf && (hasPhone || hasEmail) ? html`
+          <div class="send-no-contact">Preview is generating…</div>
+        ` : nothing}
+      </div>
+    `;
+  }
+
   _renderPreviewPane() {
     const hasPdf = !!this._pdfUrl;
     const busy = this._generating || this._finalizing;
@@ -2132,7 +2308,7 @@ export class LexenOfferSheet extends LitElement {
             </div>
           ` : nothing}
           ${!showLoading && !hasPdf ? html`
-            <div class="empty-preview">Select a payload and click Refresh Preview</div>
+            <div class="empty-preview">Preview will appear once a payload is loaded</div>
           ` : nothing}
           ${hasPdf && !busy && canInlinePdf ? html`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
@@ -2166,12 +2342,13 @@ export class LexenOfferSheet extends LitElement {
   render() {
     return html`
       ${this._renderHeader()}
-      <main>
+      <main @click="${() => { if (this._splitOpen) this._splitOpen = false; }}">
         <div class="wrap">
           <div class="layout">
             <div class="sidebar">
               ${this._renderOfferCard()}
               ${this._renderCustomizeCard()}
+              ${this._renderSendCard()}
             </div>
             ${this._renderPreviewPane()}
           </div>
