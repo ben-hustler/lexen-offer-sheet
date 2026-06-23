@@ -1806,14 +1806,22 @@ export class LexenOfferSheet extends LitElement {
     this._splitOpen   = false;
     this._doneSentVia = sendVia;
     this._pdfSent     = true;
+
+    const payload = {
+      ...this._lastPrintoutRequest,
+      filename: this._pdfFilename || null,
+    };
+
+    console.log('[pdf-send] send_via:', sendVia);
+    console.log('[pdf-send] payload.filename:', payload.filename);
+    console.log('[pdf-send] payload.font_size_delta:', payload.font_size_delta);
+    console.log('[pdf-send] payload.photos_per_row:', payload.photos_per_row);
+    console.log('[pdf-send] payload.section_order:', payload.section_order);
+    console.log('[pdf-send] payload.display:', payload.display);
+    console.log('[pdf-send] payload.raw_payload:', payload.raw_payload);
+
     this.dispatchEvent(new CustomEvent('pdf-send', {
-      detail: {
-        send_via: sendVia,
-        payload: {
-          ...this._lastPrintoutRequest,
-          filename: this._pdfFilename || null,
-        },
-      },
+      detail: { send_via: sendVia, payload },
       bubbles: true, composed: true,
     }));
   }
