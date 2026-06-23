@@ -169,10 +169,11 @@ export class LexenOfferSheet extends LitElement {
     _locks:             { type: Object,  state: true },
 
     // Send UI
-    _splitOpen:   { type: Boolean, state: true },
-    _sendVia:     { type: String,  state: true },
-    _doneSentVia: { type: String,  state: true },
-    _pdfSent:     { type: Boolean, state: true },
+    _splitOpen:    { type: Boolean, state: true },
+    _sendVia:      { type: String,  state: true },
+    _doneSentVia:  { type: String,  state: true },
+    _pdfSent:      { type: Boolean, state: true },
+    _previewStale: { type: Boolean, state: true },
   };
 
   static styles = css`
@@ -771,6 +772,19 @@ export class LexenOfferSheet extends LitElement {
     }
     .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
 
+    .refresh-btn {
+      width: 100%; padding: 9px 20px; background: transparent; color: #667085;
+      border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit; margin-top: 4px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .refresh-btn:hover:not(:disabled) { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
+    .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .refresh-btn.stale {
+      color: #35BB9C; border-color: #35BB9C; font-weight: 600;
+    }
+    .refresh-btn.stale:hover { background: #effcff; }
+
     .confirm-reset {
       margin-top: 8px; padding: 10px 12px;
       background: #fff8e1; border: 1px solid #f59f00; border-radius: 8px;
@@ -918,10 +932,11 @@ export class LexenOfferSheet extends LitElement {
     this._autoRefreshTimer = null;
 
     // Send UI
-    this._splitOpen   = false;
-    this._sendVia     = null;
-    this._doneSentVia = null;
-    this._pdfSent     = false;
+    this._splitOpen    = false;
+    this._sendVia      = null;
+    this._doneSentVia  = null;
+    this._pdfSent      = false;
+    this._previewStale = false;
 
     // Generate state
     this._generating = false;
@@ -1090,9 +1105,8 @@ export class LexenOfferSheet extends LitElement {
       }
     }
 
-    // Auto-refresh: debounce regeneration whenever settings change after the initial load.
-    // Skip when the change came from external prop assignment (sharedDisplay, pdfDisplay, payload,
-    // employees) since those paths already schedule their own generate calls above.
+    // Mark preview stale when settings change after the initial generate.
+    // User must click Refresh Preview to regenerate.
     if (this._autoPreviewDone && this.apiBaseUrl && !this._finalized) {
       const isDataLoad = changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay')
         || changedProps.has('payload') || changedProps.has('employees');
@@ -1102,11 +1116,7 @@ export class LexenOfferSheet extends LitElement {
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex',
       ];
       if (!isDataLoad && settingKeys.some(k => changedProps.has(k))) {
-        clearTimeout(this._autoRefreshTimer);
-        this._autoRefreshTimer = setTimeout(() => {
-          this._handleGenerate();
-          if (!this.templateMode) this._dispatchDisplaySave();
-        }, 800);
+        this._previewStale = true;
       }
     }
 
@@ -1701,6 +1711,7 @@ export class LexenOfferSheet extends LitElement {
         const blobUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
+        this._previewStale = false;
         this.dispatchEvent(new CustomEvent('offer-generated', {
           detail: { pdfUrl: blobUrl, blob },
           bubbles: true, composed: true,
@@ -1732,6 +1743,7 @@ export class LexenOfferSheet extends LitElement {
         this._currentBlobUrl = blobUrl;
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
+        this._previewStale = false;
         this.dispatchEvent(new CustomEvent('offer-generated', {
           detail: { pdfUrl: rawUrl },
           bubbles: true, composed: true,
@@ -2140,6 +2152,14 @@ export class LexenOfferSheet extends LitElement {
             ?disabled="${this._generating || this._finalizing}"
             @click="${this._handleApply}"
           >${this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template'}</button>
+        ` : nothing}
+
+        ${!this.templateMode ? html`
+          <button
+            class="refresh-btn ${this._previewStale ? 'stale' : ''}"
+            ?disabled="${this._generating || this._finalizing}"
+            @click="${() => this._handleGenerate()}"
+          >${this._generating ? 'Refreshing…' : this._previewStale ? 'Refresh Preview ↻' : 'Refresh Preview'}</button>
         ` : nothing}
 
         ${!this.templateMode ? this._renderSendInline() : nothing}
