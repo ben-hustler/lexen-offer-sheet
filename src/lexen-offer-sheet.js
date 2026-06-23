@@ -767,23 +767,21 @@ export class LexenOfferSheet extends LitElement {
     .reset-btn {
       width: 100%; padding: 9px 20px; background: transparent; color: #667085;
       border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
-      cursor: pointer; font-family: inherit; margin-top: 8px;
+      cursor: pointer; font-family: inherit;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
 
     .refresh-btn {
-      width: 100%; padding: 9px 20px; background: transparent; color: #667085;
-      border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
-      cursor: pointer; font-family: inherit; margin-top: 4px;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      width: 100%; padding: 10px 20px; background: #35BB9C; color: #fff;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.15s, opacity 0.15s;
     }
-    .refresh-btn:hover:not(:disabled) { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
+    .refresh-btn:hover:not(:disabled) { background: #2a9880; }
     .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    .refresh-btn.stale {
-      color: #35BB9C; border-color: #35BB9C; font-weight: 600;
-    }
-    .refresh-btn.stale:hover { background: #effcff; }
+
+    .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
     .confirm-reset {
       margin-top: 8px; padding: 10px 12px;
@@ -2155,26 +2153,26 @@ export class LexenOfferSheet extends LitElement {
         ` : nothing}
 
         ${!this.templateMode ? html`
-          <button
-            class="refresh-btn ${this._previewStale ? 'stale' : ''}"
-            ?disabled="${this._generating || this._finalizing}"
-            @click="${() => this._handleGenerate()}"
-          >${this._generating ? 'Refreshing…' : this._previewStale ? 'Refresh Preview ↻' : 'Refresh Preview'}</button>
-        ` : nothing}
-
-        ${!this.templateMode ? this._renderSendInline() : nothing}
-
-        ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
-          <div class="confirm-reset">
-            <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
-            <div class="confirm-reset-btns">
-              <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
-              <button class="confirm-reset-no"  @click="${() => { this._confirmReset = false; }}">Cancel</button>
-            </div>
+          <div class="action-btns">
+            <button
+              class="refresh-btn"
+              ?disabled="${this._generating || this._finalizing}"
+              @click="${() => this._handleGenerate()}"
+            >${this._generating ? 'Refreshing…' : this._previewStale ? 'Refresh Preview ↻' : 'Refresh Preview'}</button>
+            ${this._renderSendInline()}
+            ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
+              <div class="confirm-reset">
+                <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
+                <div class="confirm-reset-btns">
+                  <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
+                  <button class="confirm-reset-no"  @click="${() => { this._confirmReset = false; }}">Cancel</button>
+                </div>
+              </div>
+            ` : html`
+              <button class="reset-btn" @click="${() => { this._confirmReset = true; }}">Reset to template</button>
+            `) : nothing}
           </div>
-        ` : html`
-          <button class="reset-btn" @click="${() => { this._confirmReset = true; }}">Reset to template</button>
-        `) : nothing}
+        ` : nothing}
       </div>
     `;
   }
@@ -2262,7 +2260,7 @@ export class LexenOfferSheet extends LitElement {
     const canSend = hasPdf && !!primary;
 
     return html`
-      <div class="split-btn-wrap" style="margin-top:4px;">
+      <div class="split-btn-wrap">
         <button
           class="split-main ${this._doneSentVia ? 'done' : ''}"
           style="${alternatives.length === 0 ? 'border-radius:8px;' : ''}"
