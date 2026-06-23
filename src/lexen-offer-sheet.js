@@ -773,12 +773,12 @@ export class LexenOfferSheet extends LitElement {
     .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
 
     .refresh-btn {
-      width: 100%; padding: 10px 20px; background: #35BB9C; color: #fff;
+      width: 100%; padding: 10px 20px; background: #006073; color: #fff;
       border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
       cursor: pointer; font-family: inherit;
       transition: background 0.15s, opacity 0.15s;
     }
-    .refresh-btn:hover:not(:disabled) { background: #2a9880; }
+    .refresh-btn:hover:not(:disabled) { background: #004f5f; }
     .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
