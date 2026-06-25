@@ -1747,6 +1747,8 @@ export class LexenOfferSheet extends LitElement {
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
         this._previewStale = false;
+        this._doneSentVia  = null;
+        this._pdfSent      = false;
         this.dispatchEvent(new CustomEvent('offer-generated', {
           detail: { pdfUrl: blobUrl, blob },
           bubbles: true, composed: true,
@@ -1779,6 +1781,8 @@ export class LexenOfferSheet extends LitElement {
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
         this._previewStale = false;
+        this._doneSentVia  = null;
+        this._pdfSent      = false;
         this.dispatchEvent(new CustomEvent('offer-generated', {
           detail: { pdfUrl: rawUrl },
           bubbles: true, composed: true,
