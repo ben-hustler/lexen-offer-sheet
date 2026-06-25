@@ -295,7 +295,7 @@ export class LexenOfferSheet extends LitElement {
     .vehicle-info .desc { color: #006073; }
 
     /* Toggle groups */
-    .toggle-group { margin-bottom: 16px; }
+    .toggle-group { margin-bottom: 4px; }
     .toggle-group:last-child { margin-bottom: 0; }
 
     .group-header {
@@ -1288,28 +1288,37 @@ export class LexenOfferSheet extends LitElement {
     const isOnePage = value === 'one_page';
 
     if (isOnePage) {
-      // Disable disclosures/recon/photos groups
+      this._preOnePageState = {
+        groups: { ...this._groups },
+        marketDisplay: this._marketDisplay,
+        sectionOrder: [...this._sectionOrder],
+      };
+
       const newGroups = { ...this._groups };
-      ['disclosures', 'recon', 'photos'].forEach(g => {
-        newGroups[g] = 'unchecked';
-      });
+      ['disclosures', 'recon', 'photos'].forEach(g => { newGroups[g] = 'unchecked'; });
       this._groups = newGroups;
       this._marketDisplay = 'summary';
 
-      // Push disabled sections to bottom, preserving relative order within each group
-      const disabledSections = ['disclosures', 'recon', 'photos'];
-      const enabled = this._sectionOrder.filter(s => !disabledSections.includes(s));
-      const disabled = this._sectionOrder.filter(s => disabledSections.includes(s));
-      this._sectionOrder = [...enabled, ...disabled];
+      const disabled = ['disclosures', 'recon', 'photos'];
+      const enabled = this._sectionOrder.filter(s => !disabled.includes(s));
+      const disabledOrdered = this._sectionOrder.filter(s => disabled.includes(s));
+      this._sectionOrder = [...enabled, ...disabledOrdered];
     } else {
-      // Restore defaults
-      const newGroups = { ...this._groups };
-      ['disclosures', 'recon', 'photos'].forEach(g => {
-        newGroups[g] = 'checked';
-      });
-      this._groups = newGroups;
-      this._marketDisplay = 'full';
-      this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
+      if (this._preOnePageState) {
+        const saved = this._preOnePageState;
+        const newGroups = { ...this._groups };
+        ['disclosures', 'recon', 'photos'].forEach(g => { newGroups[g] = saved.groups[g] ?? 'checked'; });
+        this._groups = newGroups;
+        this._marketDisplay = saved.marketDisplay;
+        this._sectionOrder = saved.sectionOrder;
+        this._preOnePageState = null;
+      } else {
+        const newGroups = { ...this._groups };
+        ['disclosures', 'recon', 'photos'].forEach(g => { newGroups[g] = 'checked'; });
+        this._groups = newGroups;
+        this._marketDisplay = 'full';
+        this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
+      }
     }
   }
 
@@ -1397,6 +1406,7 @@ export class LexenOfferSheet extends LitElement {
     } else {
       this._resetToggles();
     }
+    this._previewStale = true;
     // Null values signal Bubble to clear instance-level overrides.
     this.dispatchEvent(new CustomEvent('display-save', {
       detail: { shared: null, pdf: null, employee: null },
@@ -1638,7 +1648,7 @@ export class LexenOfferSheet extends LitElement {
       // Override employee from selector if available
       if (this.employees && this.employees.length > 0) {
         const emp = this.employees[this._selectedEmployeeIndex] || this.employees[0];
-        payloadData.employee = { name: emp.name || '', phone: fmtPhone(emp.phone || '') };
+        payloadData.employee = { name: emp.name || '', phone: fmtPhone(emp.phone || ''), email: emp.email || '' };
       }
 
       // Filter disclosures with no answer
@@ -1898,6 +1908,20 @@ export class LexenOfferSheet extends LitElement {
           </div>
         </div>
 
+        ${!this.templateMode && this.employees && this.employees.length > 0 ? html`
+          <div class="config-row" style="margin-top:8px;">
+            <span>Sales Rep</span>
+            <select
+              style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
+              @change="${(e) => { this._selectedEmployeeIndex = parseInt(e.target.value); }}"
+            >
+              ${this.employees.map((emp, i) => html`
+                <option value="${i}" ?selected="${i === this._selectedEmployeeIndex}">${emp.name}</option>
+              `)}
+            </select>
+          </div>
+        ` : nothing}
+
         <!-- General -->
         <div class="collapsible-section ${this._generalOpen ? '' : 'collapsed'}">
           <div class="section-header" @click="${() => { this._generalOpen = !this._generalOpen; }}">
@@ -1956,19 +1980,6 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('profit_label')}
               </div>
             </div>
-            ${!this.templateMode && this.employees && this.employees.length > 0 ? html`
-              <div class="config-row">
-                <span>Employee</span>
-                <select
-                  style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
-                  @change="${(e) => { this._selectedEmployeeIndex = parseInt(e.target.value); }}"
-                >
-                  ${this.employees.map((emp, i) => html`
-                    <option value="${i}" ?selected="${i === this._selectedEmployeeIndex}">${emp.name}</option>
-                  `)}
-                </select>
-              </div>
-            ` : nothing}
             <div class="config-row">
               <span>Font size</span>
               <div class="ctrl-group ${this._isLocked('font_size') ? 'locked' : ''}">
@@ -2007,20 +2018,6 @@ export class LexenOfferSheet extends LitElement {
                           @click="${() => this._handleSegmentedClick('disc-layout', 'horizontal')}">Horizontal</button>
                 </div>
                 ${this._lk('disc_layout')}
-              </div>
-            </div>
-            <div class="config-row ${onePage ? 'disabled' : ''}">
-              <span>Market</span>
-              <div class="ctrl-group ${this._isLocked('market_display') ? 'locked' : ''}">
-                <div class="segmented-control ${onePage ? 'disabled' : ''}">
-                  <button class="seg-btn ${this._marketDisplay === 'summary' ? 'active' : ''}"
-                          ?disabled="${this._isLocked('market_display')}"
-                          @click="${() => this._handleSegmentedClick('market-display', 'summary')}">Summary</button>
-                  <button class="seg-btn ${this._marketDisplay === 'full' ? 'active' : ''}"
-                          ?disabled="${this._isLocked('market_display')}"
-                          @click="${() => this._handleSegmentedClick('market-display', 'full')}">Full</button>
-                </div>
-                ${this._lk('market_display')}
               </div>
             </div>
             <div style="padding:8px 0 4px;">
@@ -2157,7 +2154,7 @@ export class LexenOfferSheet extends LitElement {
               class="refresh-btn"
               ?disabled="${this._generating || this._finalizing}"
               @click="${() => this._handleGenerate()}"
-            >${this._generating ? 'Refreshing…' : this._previewStale ? 'Refresh Preview ↻' : 'Refresh Preview'}</button>
+            >${this._previewStale ? 'Refresh Preview ↻' : 'Refresh Preview'}</button>
             ${this._renderSendInline()}
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
@@ -2216,6 +2213,28 @@ export class LexenOfferSheet extends LitElement {
             ${this._renderPill('sections.observations_highlights', 'Highlights', 'observations')}
             ${this._renderPill('sections.observations_comments', 'Comments', 'observations')}
           </div>
+        </div>`;
+    }
+    if (section === 'market') {
+      const marketLocked = this._isLocked('market_display');
+      return html`
+        <div class="toggle-group" data-group="market">
+          ${row}
+          ${this._groups.market !== 'unchecked' && !onePage ? html`
+            <div class="pill-group">
+              <div class="ctrl-group ${marketLocked ? 'locked' : ''}">
+                <div class="segmented-control">
+                  <button class="seg-btn ${this._marketDisplay === 'summary' ? 'active' : ''}"
+                          ?disabled="${marketLocked}"
+                          @click="${() => this._handleSegmentedClick('market-display', 'summary')}">Summary</button>
+                  <button class="seg-btn ${this._marketDisplay === 'full' ? 'active' : ''}"
+                          ?disabled="${marketLocked}"
+                          @click="${() => this._handleSegmentedClick('market-display', 'full')}">Full</button>
+                </div>
+                ${this._lk('market_display')}
+              </div>
+            </div>
+          ` : nothing}
         </div>`;
     }
     return html`
