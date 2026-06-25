@@ -971,6 +971,9 @@ export class LexenOfferSheet extends LitElement {
     this._dragSrcSection = null;
     this._dragSrcIndex = -1;
     this._placeholder = null;
+
+    // Suppress auto display-save during data-load reactive cascades (non-reactive)
+    this._pendingDataLoad = false;
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
@@ -1027,6 +1030,14 @@ export class LexenOfferSheet extends LitElement {
   }
 
   updated(changedProps) {
+    // Track data-load cycles to avoid firing display-save during reactive cascades
+    const wasDataLoad = this._pendingDataLoad;
+    if (changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay')) {
+      this._pendingDataLoad = true;
+    } else if (this._pendingDataLoad) {
+      this._pendingDataLoad = false;
+    }
+
     if (changedProps.has('sharedDisplay') && this.sharedDisplay) {
       this._applySharedDisplay(this.sharedDisplay);
     }
@@ -1115,6 +1126,19 @@ export class LexenOfferSheet extends LitElement {
       ];
       if (!isDataLoad && settingKeys.some(k => changedProps.has(k))) {
         this._previewStale = true;
+      }
+    }
+
+    // Auto-dispatch display-save on every config change (mirrors customizer behaviour)
+    if (this._autoPreviewDone && !wasDataLoad
+        && !changedProps.has('sharedDisplay') && !changedProps.has('pdfDisplay')) {
+      const CONFIG_KEYS = [
+        '_mode', '_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
+        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay',
+        '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex', '_locks',
+      ];
+      if (CONFIG_KEYS.some(k => changedProps.has(k))) {
+        this._dispatchDisplaySave();
       }
     }
 
@@ -1400,6 +1424,7 @@ export class LexenOfferSheet extends LitElement {
 
   _handleReset() {
     this._confirmReset = false;
+    this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
     if (this.sharedDisplay || this.pdfDisplay) {
       if (this.sharedDisplay) this._applySharedDisplay(this.sharedDisplay);
       if (this.pdfDisplay)    this._applyPdfDisplay(this.pdfDisplay);
@@ -2269,9 +2294,6 @@ export class LexenOfferSheet extends LitElement {
         ?disabled="${!canSend}"
         @click="${() => this._handleSend('email')}"
       >${mainLabel}</button>
-      ${!hasPdf ? html`
-        <div class="send-no-contact" style="margin-top:4px;">Preview is generating…</div>
-      ` : nothing}
     `;
   }
 
