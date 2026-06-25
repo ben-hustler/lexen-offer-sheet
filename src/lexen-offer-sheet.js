@@ -1017,6 +1017,7 @@ export class LexenOfferSheet extends LitElement {
     if (d.disclaimer_text != null)  this._disclaimerText        = d.disclaimer_text;
     if (d.disclaimer_punct != null) this._disclaimerPunct       = d.disclaimer_punct;
     if (d.selected_emp_idx != null) this._selectedEmployeeIndex = d.selected_emp_idx;
+    if (d.signature != null)        this._groups = { ...this._groups, signature: d.signature ? 'checked' : 'unchecked' };
     if (d.locks)                    this._locks = { ...this._locks, ...d.locks };
   }
 
@@ -1266,6 +1267,7 @@ export class LexenOfferSheet extends LitElement {
       disclaimer_text:  this._disclaimerText || '',
       disclaimer_punct: this._disclaimerPunct ?? ',',
       selected_emp_idx: this._selectedEmployeeIndex,
+      signature:        this._groups.signature !== 'unchecked',
       locks:            { ...this._locks },
     };
   }
@@ -1933,20 +1935,6 @@ export class LexenOfferSheet extends LitElement {
           </div>
         </div>
 
-        ${!this.templateMode && this.employees && this.employees.length > 0 ? html`
-          <div class="config-row" style="margin-top:8px;">
-            <span>Sales Rep</span>
-            <select
-              style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
-              @change="${(e) => { this._selectedEmployeeIndex = parseInt(e.target.value); }}"
-            >
-              ${this.employees.map((emp, i) => html`
-                <option value="${i}" ?selected="${i === this._selectedEmployeeIndex}">${emp.name}</option>
-              `)}
-            </select>
-          </div>
-        ` : nothing}
-
         <!-- General -->
         <div class="collapsible-section ${this._generalOpen ? '' : 'collapsed'}">
           <div class="section-header" @click="${() => { this._generalOpen = !this._generalOpen; }}">
@@ -1954,6 +1942,19 @@ export class LexenOfferSheet extends LitElement {
             <div class="section-chevron">${chevronSvg}</div>
           </div>
           <div class="section-body">
+            ${!this.templateMode && this.employees && this.employees.length > 0 ? html`
+              <div class="config-row">
+                <span>Sales Rep</span>
+                <select
+                  style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
+                  @change="${(e) => { this._selectedEmployeeIndex = parseInt(e.target.value); }}"
+                >
+                  ${this.employees.map((emp, i) => html`
+                    <option value="${i}" ?selected="${i === this._selectedEmployeeIndex}">${emp.name}</option>
+                  `)}
+                </select>
+              </div>
+            ` : nothing}
             <div class="config-row">
               <span>Display offer as</span>
               <div class="ctrl-group ${this._isLocked('value_display') ? 'locked' : ''}">
