@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lexen-offer-sheet dev</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f2f4f7; color: #222; }
+
+    .dev-shell { display: flex; height: 100dvh; overflow: hidden; }
+
+    /* ── Controls panel ── */
+    .controls {
+      width: 340px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e4e7ec;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .controls-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid #e4e7ec;
+      font-size: 13px;
+      font-weight: 700;
+      color: #344054;
+      letter-spacing: 0.3px;
+    }
+
+    .field { padding: 10px 20px; display: flex; flex-direction: column; gap: 5px; border-bottom: 1px solid #f2f4f7; }
+    .field label { font-size: 11px; font-weight: 600; color: #667085; text-transform: uppercase; letter-spacing: 0.4px; }
+    .field input, .field textarea, .field select {
+      font-size: 13px;
+      padding: 7px 10px;
+      border: 1.5px solid #d0d5dd;
+      border-radius: 7px;
+      outline: none;
+      font-family: inherit;
+      color: #222;
+      background: #fff;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: #35BB9C; }
+    .field textarea { font-family: ui-monospace, monospace; font-size: 11px; resize: vertical; height: 140px; }
+    #payloadJson { height: 320px; }
+
+    .field-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .field-row label { font-size: 12px; color: #344054; text-transform: none; }
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; background: #d0d5dd; border-radius: 10px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute; left: 3px; top: 3px;
+      width: 14px; height: 14px; border-radius: 50%; background: #fff;
+      transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #35BB9C; }
+    .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
+
+    .parse-error { font-size: 11px; color: #f04438; margin-top: 4px; display: none; }
+    .parse-error.visible { display: block; }
+
+    .actions { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 16px; font-size: 13px; font-weight: 600; font-family: inherit;
+      border: none; border-radius: 8px; cursor: pointer; transition: background 0.15s;
+      width: 100%;
+    }
+    .btn-primary { background: #35BB9C; color: #fff; }
+    .btn-primary:hover { background: #2a9880; }
+    .btn-secondary { background: #f2f4f7; color: #344054; border: 1.5px solid #d0d5dd; }
+    .btn-secondary:hover { background: #e4e7ec; }
+
+    .event-log { padding: 8px 20px 20px; font-size: 11px; font-family: ui-monospace, monospace; color: #667085; }
+    .event-log-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #98a2b3; margin-bottom: 4px; }
+    .event-entry { padding: 2px 0; word-break: break-all; }
+    .event-entry.highlight { color: #35BB9C; }
+
+    /* ── Preview ── */
+    .preview { flex: 1; overflow: auto; }
+    lexen-offer-sheet { display: block; min-height: 100%; }
+  </style>
+</head>
+<body>
+  <div class="dev-shell">
+    <div class="controls">
+      <div class="controls-header">lexen-offer-sheet dev harness</div>
+
+      <div class="field">
+        <label>API Base URL</label>
+        <input id="apiBaseUrl" value="https://sbox-api.lexen.io/printout" />
+      </div>
+
+      <div class="field">
+        <label>Auth Token</label>
+        <input id="authToken" placeholder="optional" />
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label>Template Mode</label>
+          <label class="toggle">
+            <input type="checkbox" id="templateMode" />
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label>Locked</label>
+          <label class="toggle">
+            <input type="checkbox" id="locked" />
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tax Rate (%)</label>
+        <input id="taxRate" type="number" step="0.01" placeholder="e.g. 12" />
+      </div>
+
+      <div class="field">
+        <label>Profit Label</label>
+        <input id="profitLabel" placeholder="Target Profit" />
+      </div>
+
+      <div class="field">
+        <label>Disclaimer Text</label>
+        <input id="disclaimerText" placeholder="subject to Carfax History..." />
+      </div>
+
+      <div class="field">
+        <label>Payload (JSON) <small style="font-weight:400;text-transform:none">— blank = built-in template payload</small></label>
+        <textarea id="payloadJson" placeholder="leave blank to use the component's built-in template payload">{
+  "dealer": {
+    "name": "The Shire Automotive",
+    "location": "The Shire Automotive",
+    "logo_url": "//4855cde796d8a579780d6d5dc6ee6ab5.cdn.bubble.io/f1763067771437x638350971999507100/Marvel_Logo.svg.png",
+    "address": "328 Nova Scotia Trunk 1, Dayton, NS B5A 5A1, Canada"
+  },
+  "employee": { "name": "Arthur Dent", "phone": "0212012012" },
+  "customer": { "name": "Testing Tester" },
+  "vehicle": {
+    "year": 2024, "make": "Chevrolet", "model": "Colorado", "trim": "Trail Boss",
+    "color": "Black", "vin": "1GCPTEEK6R1132037", "mileage_km": 123455
+  },
+  "offer": {
+    "amount": 38885, "valid_until": "2026-06-25",
+    "appraisal_date": "2026-05-26", "classification": "Certified Pre-Owned"
+  },
+  "valuation": {
+    "retail_value": 43496, "recon_total": 2000, "fixed_overhead": 111,
+    "target_profit": { "amount": 2500, "label": "Target Profit" },
+    "tax_savings": { "rate_pct": 12, "amount": 4666.2, "gross_value": 43551.2 }
+  },
+  "disclosures": [
+    { "question": "What condition is this vehicle in?", "description": "", "answer": "Good" },
+    { "question": "Is there any damage to the vehicle?", "description": "", "answer": "" },
+    { "question": "What type of damage?", "description": "", "answer": "" },
+    { "question": "What accessories does this vehicle have?", "description": "", "answer": "" }
+  ],
+  "observations": {
+    "highlights": "Coolio", "comments": "Idk man",
+    "claims": { "count": 0, "amount": 0 }
+  },
+  "market": {
+    "summary": {
+      "comparables_count": 6, "avg_mileage_km": 61839.33, "avg_price": 42746,
+      "avg_distance_km": 137.15, "avg_days": 2
+    },
+    "comparables": [
+      { "description": "2023 Chevrolet Colorado", "trim": "Crew Cab Short Box 4-Wheel Drive Trail Boss", "vin": "1GCPTEEK5P1174924", "dealer": "Kentville Toyota", "mileage_km": 105306, "price": 37995, "distance_km": 181.83, "days_on_market": 81 },
+      { "description": "2023 Chevrolet Colorado", "trim": "4WD TRAIL BOSS", "vin": "1GCPTEEK0P1138901", "dealer": "Fredericton Nissan", "mileage_km": 76899, "price": 40997, "distance_km": 235.09, "days_on_market": 0 },
+      { "description": "2024 Chevrolet Colorado", "trim": "Crew Cab Short Box 4-Wheel Drive Trail Boss", "vin": "1GCPTEEK6R1214561", "dealer": "Kentville Toyota", "mileage_km": 50050, "price": 42094, "distance_km": 181.83, "days_on_market": 137 },
+      { "description": "2024 Chevrolet Colorado", "trim": "4WD TRAIL BOSS", "vin": "1GCPTEEK5R1198093", "dealer": "Bruce Nissan", "mileage_km": 46431, "price": 43400, "distance_km": 3.58, "days_on_market": 53 },
+      { "description": "2024 Chevrolet Colorado", "trim": "4WD Trail Boss", "vin": "1GCPTEEK0R1148203", "dealer": "Little Chevrolet", "mileage_km": 40066, "price": 44995, "distance_km": 2.91, "days_on_market": 32 },
+      { "description": "2023 Chevrolet Colorado", "trim": "Crew Cab Short Box 4-Wheel Drive Trail Boss DEAL PENDING!", "vin": "1GCPTEEK3P1128198", "dealer": "Cars R Us", "mileage_km": 52284, "price": 46995, "distance_km": 217.64, "days_on_market": 53 }
+    ]
+  },
+  "recon": {
+    "items": [ { "description": "Visible Damage (0)", "amount": 0 } ],
+    "total": 2000
+  },
+  "photos": [
+    { "url": "https://lexen-uploader-bucket-dev.s3.us-west-2.amazonaws.com/Marvel Motors-The Shire Automotive -images/cf0268d0-38b8-4857-a274-e93c42414395_1779747618462x633351177985065000-Exterior_th_biddg.jpg534x800.jpg", "caption": "Highlight\nCoolio" }
+  ]
+}</textarea>
+        <div class="parse-error" id="payloadError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>Employees (JSON)</label>
+        <textarea id="employeesJson" style="height:80px">[
+  { "name": "Ben Hustler", "phone": "6045551234", "email": "ben@example.com" }
+]</textarea>
+        <div class="parse-error" id="employeesError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>Shared Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null</small></label>
+        <textarea id="sharedDisplayJson" style="height:80px"></textarea>
+        <div class="parse-error" id="sharedError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>PDF Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null</small></label>
+        <textarea id="pdfDisplayJson" style="height:80px"></textarea>
+        <div class="parse-error" id="pdfError">Invalid JSON</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="applyBtn">Apply &amp; Load</button>
+        <button class="btn btn-secondary" id="reloadBtn">Force Re-render</button>
+      </div>
+
+      <div class="event-log">
+        <div class="event-log-title">Events</div>
+        <div id="eventLog"></div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <lexen-offer-sheet id="sheet"></lexen-offer-sheet>
+    </div>
+  </div>
+
+  <script type="module" src="/src/lexen-offer-sheet.js"></script>
+  <script>
+    const sheet = document.getElementById('sheet');
+
+    const apiBaseUrlEl     = document.getElementById('apiBaseUrl');
+    const authTokenEl      = document.getElementById('authToken');
+    const templateModeEl   = document.getElementById('templateMode');
+    const lockedEl         = document.getElementById('locked');
+    const taxRateEl        = document.getElementById('taxRate');
+    const profitLabelEl    = document.getElementById('profitLabel');
+    const disclaimerTextEl = document.getElementById('disclaimerText');
+    const payloadJsonEl    = document.getElementById('payloadJson');
+    const employeesJsonEl  = document.getElementById('employeesJson');
+    const sharedDisplayEl  = document.getElementById('sharedDisplayJson');
+    const pdfDisplayEl     = document.getElementById('pdfDisplayJson');
+
+    const payloadError   = document.getElementById('payloadError');
+    const employeesError = document.getElementById('employeesError');
+    const sharedError    = document.getElementById('sharedError');
+    const pdfError       = document.getElementById('pdfError');
+
+    const eventLog = document.getElementById('eventLog');
+
+    function logEvent(name, detail, highlight = false) {
+      const el = document.createElement('div');
+      el.className = 'event-entry' + (highlight ? ' highlight' : '');
+      let detailStr = '';
+      if (detail !== undefined && detail !== null) {
+        try { detailStr = ' ' + JSON.stringify(detail); } catch (_) { detailStr = ' [unserializable]'; }
+      }
+      el.textContent = `${new Date().toLocaleTimeString()} → ${name}${detailStr}`;
+      eventLog.prepend(el);
+    }
+
+    ['component-ready', 'offer-generated', 'display-save', 'template-save', 'pdf-send'].forEach(name => {
+      sheet.addEventListener(name, e => logEvent(name, e.detail, name !== 'component-ready'));
+    });
+
+    function parseJsonField(el, errorEl, fallback) {
+      const raw = el.value.trim();
+      if (!raw) { errorEl.classList.remove('visible'); return fallback; }
+      try {
+        const parsed = JSON.parse(raw);
+        errorEl.classList.remove('visible');
+        return parsed;
+      } catch (_) {
+        errorEl.classList.add('visible');
+        return undefined;
+      }
+    }
+
+    function apply() {
+      const payload       = parseJsonField(payloadJsonEl, payloadError, null);
+      const employees     = parseJsonField(employeesJsonEl, employeesError, []);
+      const sharedDisplay = parseJsonField(sharedDisplayEl, sharedError, null);
+      const pdfDisplay    = parseJsonField(pdfDisplayEl, pdfError, null);
+
+      if (payload === undefined || employees === undefined || sharedDisplay === undefined || pdfDisplay === undefined) {
+        return; // one of the JSON fields is invalid — bail without touching the component
+      }
+
+      sheet.apiBaseUrl     = apiBaseUrlEl.value.trim();
+      sheet.authToken      = authTokenEl.value.trim();
+      sheet.templateMode   = templateModeEl.checked;
+      sheet.locked         = lockedEl.checked;
+      sheet.taxRate        = taxRateEl.value.trim() === '' ? null : parseFloat(taxRateEl.value);
+      sheet.profitLabel    = profitLabelEl.value.trim() || null;
+      sheet.disclaimerText = disclaimerTextEl.value.trim() || null;
+      sheet.employees      = employees;
+      sheet.sharedDisplay  = sharedDisplay;
+      sheet.pdfDisplay     = pdfDisplay;
+      sheet.payload        = payload;
+
+      logEvent('harness:applied', null);
+    }
+
+    document.getElementById('applyBtn').addEventListener('click', apply);
+    document.getElementById('reloadBtn').addEventListener('click', () => location.reload());
+
+    // Auto-apply once on load so the component renders immediately with defaults.
+    apply();
+  </script>
+</body>
+</html>
