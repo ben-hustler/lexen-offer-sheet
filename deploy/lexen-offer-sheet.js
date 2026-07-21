@@ -1,12 +1,12 @@
-var Ce = Object.defineProperty;
-var Oe = (a, e, t) => e in a ? Ce(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
-var q = (a, e, t) => Oe(a, typeof e != "symbol" ? e + "" : e, t);
+var Oe = Object.defineProperty;
+var Ce = (a, e, t) => e in a ? Oe(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
+var q = (a, e, t) => Ce(a, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const j = globalThis, ee = j.ShadowRoot && (j.ShadyCSS === void 0 || j.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, te = Symbol(), ae = /* @__PURE__ */ new WeakMap();
+const F = globalThis, ee = F.ShadowRoot && (F.ShadyCSS === void 0 || F.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, te = Symbol(), ae = /* @__PURE__ */ new WeakMap();
 let ye = class {
   constructor(e, t, i) {
     if (this._$cssResult$ = !0, i !== te) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
@@ -35,7 +35,7 @@ const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Le = (a
 }, Re = (a, e) => {
   if (ee) a.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
-    const i = document.createElement("style"), s = j.litNonce;
+    const i = document.createElement("style"), s = F.litNonce;
     s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, a.appendChild(i);
   }
 }, ne = ee ? (a) => a : (a) => a instanceof CSSStyleSheet ? ((e) => {
@@ -48,7 +48,7 @@ const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Le = (a
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Be, getPrototypeOf: Ie } = Object, k = globalThis, le = k.trustedTypes, He = le ? le.emptyScript : "", W = k.reactiveElementPolyfillSupport, R = (a, e) => a, Q = { toAttribute(a, e) {
+const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Ie, getPrototypeOf: Be } = Object, $ = globalThis, le = $.trustedTypes, He = le ? le.emptyScript : "", K = $.reactiveElementPolyfillSupport, T = (a, e) => a, Q = { toAttribute(a, e) {
   switch (e) {
     case Boolean:
       a = a ? He : null;
@@ -77,7 +77,7 @@ const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnProperty
   }
   return t;
 } }, xe = (a, e) => !Te(a, e), de = { attribute: !0, type: String, converter: Q, reflect: !1, useDefault: !1, hasChanged: xe };
-Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), k.litPropertyMetadata ?? (k.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), $.litPropertyMetadata ?? ($.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
 let E = class extends HTMLElement {
   static addInitializer(e) {
     this._$Ei(), (this.l ?? (this.l = [])).push(e);
@@ -106,14 +106,14 @@ let E = class extends HTMLElement {
     return this.elementProperties.get(e) ?? de;
   }
   static _$Ei() {
-    if (this.hasOwnProperty(R("elementProperties"))) return;
-    const e = Ie(this);
+    if (this.hasOwnProperty(T("elementProperties"))) return;
+    const e = Be(this);
     e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
   }
   static finalize() {
-    if (this.hasOwnProperty(R("finalized"))) return;
-    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(R("properties"))) {
-      const t = this.properties, i = [...Ne(t), ...Be(t)];
+    if (this.hasOwnProperty(T("finalized"))) return;
+    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(T("properties"))) {
+      const t = this.properties, i = [...Ne(t), ...Ie(t)];
       for (const s of i) this.createProperty(s, t[s]);
     }
     const e = this[Symbol.metadata];
@@ -197,8 +197,8 @@ let E = class extends HTMLElement {
     if (s !== void 0 && this._$Em !== s) {
       const n = i.getPropertyOptions(s), l = typeof n.converter == "function" ? { fromAttribute: n.converter } : ((o = n.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? n.converter : Q;
       this._$Em = s;
-      const f = l.fromAttribute(t, n.type);
-      this[s] = f ?? ((r = this._$Ej) == null ? void 0 : r.get(s)) ?? f, this._$Em = null;
+      const u = l.fromAttribute(t, n.type);
+      this[s] = u ?? ((r = this._$Ej) == null ? void 0 : r.get(s)) ?? u, this._$Em = null;
     }
   }
   requestUpdate(e, t, i, s = !1, o) {
@@ -281,15 +281,15 @@ let E = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[R("elementProperties")] = /* @__PURE__ */ new Map(), E[R("finalized")] = /* @__PURE__ */ new Map(), W == null || W({ ReactiveElement: E }), (k.reactiveElementVersions ?? (k.reactiveElementVersions = [])).push("2.1.2");
+E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[T("elementProperties")] = /* @__PURE__ */ new Map(), E[T("finalized")] = /* @__PURE__ */ new Map(), K == null || K({ ReactiveElement: E }), ($.reactiveElementVersions ?? ($.reactiveElementVersions = [])).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const T = globalThis, ce = (a) => a, F = T.trustedTypes, pe = F ? F.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, $e = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, ke = "?" + $, je = `<${ke}>`, P = document, U = () => P.createComment(""), N = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
-\f\r]`, L = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, w = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, Ge = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = Ge(1), C = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
+const M = globalThis, ce = (a) => a, j = M.trustedTypes, pe = j ? j.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, ke = "$lit$", k = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + k, Fe = `<${$e}>`, P = document, N = () => P.createComment(""), I = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, je = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", W = `[ 	
+\f\r]`, L = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, w = RegExp(`>|${W}(?:([^\\s"'>=/]+)(${W}*=${W}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, Ge = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = Ge(1), O = Symbol.for("lit-noChange"), h = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
 function Se(a, e) {
   if (!ie(a) || !a.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return pe !== void 0 ? pe.createHTML(e) : e;
@@ -299,10 +299,10 @@ const Ve = (a, e) => {
   let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = L;
   for (let n = 0; n < t; n++) {
     const l = a[n];
-    let f, h, c = -1, g = 0;
-    for (; g < l.length && (r.lastIndex = g, h = r.exec(l), h !== null); ) g = r.lastIndex, r === L ? h[1] === "!--" ? r = he : h[1] !== void 0 ? r = ue : h[2] !== void 0 ? (we.test(h[2]) && (s = RegExp("</" + h[2], "g")), r = w) : h[3] !== void 0 && (r = w) : r === w ? h[0] === ">" ? (r = s ?? L, c = -1) : h[1] === void 0 ? c = -2 : (c = r.lastIndex - h[2].length, f = h[1], r = h[3] === void 0 ? w : h[3] === '"' ? _e : fe) : r === _e || r === fe ? r = w : r === he || r === ue ? r = L : (r = w, s = void 0);
-    const b = r === w && a[n + 1].startsWith("/>") ? " " : "";
-    o += r === L ? l + je : c >= 0 ? (i.push(f), l.slice(0, c) + $e + l.slice(c) + $ + b) : l + $ + (c === -2 ? n : b);
+    let u, g, d = -1, f = 0;
+    for (; f < l.length && (r.lastIndex = f, g = r.exec(l), g !== null); ) f = r.lastIndex, r === L ? g[1] === "!--" ? r = he : g[1] !== void 0 ? r = ue : g[2] !== void 0 ? (we.test(g[2]) && (s = RegExp("</" + g[2], "g")), r = w) : g[3] !== void 0 && (r = w) : r === w ? g[0] === ">" ? (r = s ?? L, d = -1) : g[1] === void 0 ? d = -2 : (d = r.lastIndex - g[2].length, u = g[1], r = g[3] === void 0 ? w : g[3] === '"' ? _e : fe) : r === _e || r === fe ? r = w : r === he || r === ue ? r = L : (r = w, s = void 0);
+    const m = r === w && a[n + 1].startsWith("/>") ? " " : "";
+    o += r === L ? l + Fe : d >= 0 ? (i.push(u), l.slice(0, d) + ke + l.slice(d) + k + m) : l + k + (d === -2 ? n : m);
   }
   return [Se(a, o + (a[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
@@ -311,29 +311,29 @@ class B {
     let s;
     this.parts = [];
     let o = 0, r = 0;
-    const n = e.length - 1, l = this.parts, [f, h] = Ve(e, t);
-    if (this.el = B.createElement(f, i), S.currentNode = this.el.content, t === 2 || t === 3) {
-      const c = this.el.content.firstChild;
-      c.replaceWith(...c.childNodes);
+    const n = e.length - 1, l = this.parts, [u, g] = Ve(e, t);
+    if (this.el = B.createElement(u, i), S.currentNode = this.el.content, t === 2 || t === 3) {
+      const d = this.el.content.firstChild;
+      d.replaceWith(...d.childNodes);
     }
     for (; (s = S.nextNode()) !== null && l.length < n; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith($e)) {
-          const g = h[r++], b = s.getAttribute(c).split($), d = /([.?@])?(.*)/.exec(g);
-          l.push({ type: 1, index: o, name: d[2], strings: b, ctor: d[1] === "." ? We : d[1] === "?" ? Ke : d[1] === "@" ? Ze : G }), s.removeAttribute(c);
-        } else c.startsWith($) && (l.push({ type: 6, index: o }), s.removeAttribute(c));
+        if (s.hasAttributes()) for (const d of s.getAttributeNames()) if (d.endsWith(ke)) {
+          const f = g[r++], m = s.getAttribute(d).split(k), c = /([.?@])?(.*)/.exec(f);
+          l.push({ type: 1, index: o, name: c[2], strings: m, ctor: c[1] === "." ? Ke : c[1] === "?" ? We : c[1] === "@" ? Ye : G }), s.removeAttribute(d);
+        } else d.startsWith(k) && (l.push({ type: 6, index: o }), s.removeAttribute(d));
         if (we.test(s.tagName)) {
-          const c = s.textContent.split($), g = c.length - 1;
-          if (g > 0) {
-            s.textContent = F ? F.emptyScript : "";
-            for (let b = 0; b < g; b++) s.append(c[b], U()), S.nextNode(), l.push({ type: 2, index: ++o });
-            s.append(c[g], U());
+          const d = s.textContent.split(k), f = d.length - 1;
+          if (f > 0) {
+            s.textContent = j ? j.emptyScript : "";
+            for (let m = 0; m < f; m++) s.append(d[m], N()), S.nextNode(), l.push({ type: 2, index: ++o });
+            s.append(d[f], N());
           }
         }
-      } else if (s.nodeType === 8) if (s.data === ke) l.push({ type: 2, index: o });
+      } else if (s.nodeType === 8) if (s.data === $e) l.push({ type: 2, index: o });
       else {
-        let c = -1;
-        for (; (c = s.data.indexOf($, c + 1)) !== -1; ) l.push({ type: 7, index: o }), c += $.length - 1;
+        let d = -1;
+        for (; (d = s.data.indexOf(k, d + 1)) !== -1; ) l.push({ type: 7, index: o }), d += k.length - 1;
       }
       o++;
     }
@@ -343,12 +343,12 @@ class B {
     return i.innerHTML = e, i;
   }
 }
-function O(a, e, t = a, i) {
+function C(a, e, t = a, i) {
   var r, n;
-  if (e === C) return e;
+  if (e === O) return e;
   let s = i !== void 0 ? (r = t._$Co) == null ? void 0 : r[i] : t._$Cl;
-  const o = N(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== o && ((n = s == null ? void 0 : s._$AO) == null || n.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = O(a, s._$AS(a, e.values), s, i)), e;
+  const o = I(e) ? void 0 : e._$litDirective$;
+  return (s == null ? void 0 : s.constructor) !== o && ((n = s == null ? void 0 : s._$AO) == null || n.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = C(a, s._$AS(a, e.values), s, i)), e;
 }
 class qe {
   constructor(e, t) {
@@ -366,8 +366,8 @@ class qe {
     let o = S.nextNode(), r = 0, n = 0, l = i[0];
     for (; l !== void 0; ) {
       if (r === l.index) {
-        let f;
-        l.type === 2 ? f = new I(o, o.nextSibling, this, e) : l.type === 1 ? f = new l.ctor(o, l.name, l.strings, this, e) : l.type === 6 && (f = new Ye(o, this, e)), this._$AV.push(f), l = i[++n];
+        let u;
+        l.type === 2 ? u = new H(o, o.nextSibling, this, e) : l.type === 1 ? u = new l.ctor(o, l.name, l.strings, this, e) : l.type === 6 && (u = new Ze(o, this, e)), this._$AV.push(u), l = i[++n];
       }
       r !== (l == null ? void 0 : l.index) && (o = S.nextNode(), r++);
     }
@@ -378,13 +378,13 @@ class qe {
     for (const i of this._$AV) i !== void 0 && (i.strings !== void 0 ? (i._$AI(e, i, t), t += i.strings.length - 2) : i._$AI(e[t])), t++;
   }
 }
-class I {
+class H {
   get _$AU() {
     var e;
     return ((e = this._$AM) == null ? void 0 : e._$AU) ?? this._$Cv;
   }
   constructor(e, t, i, s) {
-    this.type = 2, this._$AH = u, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = i, this.options = s, this._$Cv = (s == null ? void 0 : s.isConnected) ?? !0;
+    this.type = 2, this._$AH = h, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = i, this.options = s, this._$Cv = (s == null ? void 0 : s.isConnected) ?? !0;
   }
   get parentNode() {
     let e = this._$AA.parentNode;
@@ -398,7 +398,7 @@ class I {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = O(this, e, t), N(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== C && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Fe(e) ? this.k(e) : this._(e);
+    e = C(this, e, t), I(e) ? e === h || e == null || e === "" ? (this._$AH !== h && this._$AR(), this._$AH = h) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : je(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -407,7 +407,7 @@ class I {
     this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
   }
   _(e) {
-    this._$AH !== u && N(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
+    this._$AH !== h && I(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
   }
   $(e) {
     var o;
@@ -426,7 +426,7 @@ class I {
     ie(this._$AH) || (this._$AH = [], this._$AR());
     const t = this._$AH;
     let i, s = 0;
-    for (const o of e) s === t.length ? t.push(i = new I(this.O(U()), this.O(U()), this, this.options)) : i = t[s], i._$AI(o), s++;
+    for (const o of e) s === t.length ? t.push(i = new H(this.O(N()), this.O(N()), this, this.options)) : i = t[s], i._$AI(o), s++;
     s < t.length && (this._$AR(i && i._$AB.nextSibling, s), t.length = s);
   }
   _$AR(e = this._$AA.nextSibling, t) {
@@ -449,46 +449,46 @@ class G {
     return this._$AM._$AU;
   }
   constructor(e, t, i, s, o) {
-    this.type = 1, this._$AH = u, this._$AN = void 0, this.element = e, this.name = t, this._$AM = s, this.options = o, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = u;
+    this.type = 1, this._$AH = h, this._$AN = void 0, this.element = e, this.name = t, this._$AM = s, this.options = o, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = h;
   }
   _$AI(e, t = this, i, s) {
     const o = this.strings;
     let r = !1;
-    if (o === void 0) e = O(this, e, t, 0), r = !N(e) || e !== this._$AH && e !== C, r && (this._$AH = e);
+    if (o === void 0) e = C(this, e, t, 0), r = !I(e) || e !== this._$AH && e !== O, r && (this._$AH = e);
     else {
       const n = e;
-      let l, f;
-      for (e = o[0], l = 0; l < o.length - 1; l++) f = O(this, n[i + l], t, l), f === C && (f = this._$AH[l]), r || (r = !N(f) || f !== this._$AH[l]), f === u ? e = u : e !== u && (e += (f ?? "") + o[l + 1]), this._$AH[l] = f;
+      let l, u;
+      for (e = o[0], l = 0; l < o.length - 1; l++) u = C(this, n[i + l], t, l), u === O && (u = this._$AH[l]), r || (r = !I(u) || u !== this._$AH[l]), u === h ? e = h : e !== h && (e += (u ?? "") + o[l + 1]), this._$AH[l] = u;
     }
     r && !s && this.j(e);
   }
   j(e) {
-    e === u ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
-  }
-}
-class We extends G {
-  constructor() {
-    super(...arguments), this.type = 3;
-  }
-  j(e) {
-    this.element[this.name] = e === u ? void 0 : e;
+    e === h ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
 class Ke extends G {
   constructor() {
+    super(...arguments), this.type = 3;
+  }
+  j(e) {
+    this.element[this.name] = e === h ? void 0 : e;
+  }
+}
+class We extends G {
+  constructor() {
     super(...arguments), this.type = 4;
   }
   j(e) {
-    this.element.toggleAttribute(this.name, !!e && e !== u);
+    this.element.toggleAttribute(this.name, !!e && e !== h);
   }
 }
-class Ze extends G {
+class Ye extends G {
   constructor(e, t, i, s, o) {
     super(e, t, i, s, o), this.type = 5;
   }
   _$AI(e, t = this) {
-    if ((e = O(this, e, t, 0) ?? u) === C) return;
-    const i = this._$AH, s = e === u && i !== u || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== u && (i === u || s);
+    if ((e = C(this, e, t, 0) ?? h) === O) return;
+    const i = this._$AH, s = e === h && i !== h || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== h && (i === h || s);
     s && this.element.removeEventListener(this.name, this, i), o && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
   handleEvent(e) {
@@ -496,7 +496,7 @@ class Ze extends G {
     typeof this._$AH == "function" ? this._$AH.call(((t = this.options) == null ? void 0 : t.host) ?? this.element, e) : this._$AH.handleEvent(e);
   }
 }
-class Ye {
+class Ze {
   constructor(e, t, i) {
     this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = i;
   }
@@ -504,17 +504,17 @@ class Ye {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    O(this, e);
+    C(this, e);
   }
 }
-const Z = T.litHtmlPolyfillSupport;
-Z == null || Z(B, I), (T.litHtmlVersions ?? (T.litHtmlVersions = [])).push("3.3.3");
+const Y = M.litHtmlPolyfillSupport;
+Y == null || Y(B, H), (M.litHtmlVersions ?? (M.litHtmlVersions = [])).push("3.3.3");
 const Je = (a, e, t) => {
   const i = (t == null ? void 0 : t.renderBefore) ?? e;
   let s = i._$litPart$;
   if (s === void 0) {
     const o = (t == null ? void 0 : t.renderBefore) ?? null;
-    i._$litPart$ = s = new I(e.insertBefore(U(), o), o, void 0, t ?? {});
+    i._$litPart$ = s = new H(e.insertBefore(N(), o), o, void 0, t ?? {});
   }
   return s._$AI(a), s;
 };
@@ -523,8 +523,8 @@ const Je = (a, e, t) => {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const A = globalThis;
-class M extends E {
+const D = globalThis;
+class U extends E {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -546,14 +546,14 @@ class M extends E {
     super.disconnectedCallback(), (e = this._$Do) == null || e.setConnected(!1);
   }
   render() {
-    return C;
+    return O;
   }
 }
-var be;
-M._$litElement$ = !0, M.finalized = !0, (be = A.litElementHydrateSupport) == null || be.call(A, { LitElement: M });
-const Y = A.litElementPolyfillSupport;
-Y == null || Y({ LitElement: M });
-(A.litElementVersions ?? (A.litElementVersions = [])).push("4.2.2");
+var ve;
+U._$litElement$ = !0, U.finalized = !0, (ve = D.litElementHydrateSupport) == null || ve.call(D, { LitElement: U });
+const Z = D.litElementPolyfillSupport;
+Z == null || Z({ LitElement: U });
+(D.litElementVersions ?? (D.litElementVersions = [])).push("4.2.2");
 function me(a) {
   const e = String(a || "").replace(/\D/g, "");
   return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : a || "";
@@ -647,23 +647,23 @@ City, PR`,
     disclaimer: ", subject to Carfax History and Lien Report"
   };
 }
-const H = [
+const R = [
   { label: "Extra Small", delta: -1 },
   { label: "Small", delta: 0 },
   { label: "Medium", delta: 1 },
   { label: "Large", delta: 2 },
   { label: "Extra Large", delta: 3 }
-], D = ["valuation", "disclosures", "observations", "market", "recon", "photos"], Xe = {
+], A = ["valuation", "disclosures", "observations", "market", "recon", "photos"], Xe = {
   valuation: "Valuation",
   disclosures: "Disclosures",
   observations: "Observations",
   market: "Market",
   recon: "Recon",
   photos: "Photos"
-}, J = p`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, ve = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`, et = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-class X extends M {
+}, J = p`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, be = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`, et = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+class X extends U {
   constructor() {
-    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...D], this._pills = {
+    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...A], this._pills = {
       "general.condition": !0,
       "valuation.retail_value": !0,
       "valuation.recon": !0,
@@ -680,7 +680,7 @@ class X extends M {
       recon: "checked",
       photos: "checked",
       signature: "checked"
-    }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
+    }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._previewStale = !1, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
       mode: !1,
       condition: !1,
       value_display: !1,
@@ -699,7 +699,7 @@ class X extends M {
       recon: !1,
       photos: !1,
       signature: !1
-    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null;
+    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1;
   }
   // ── Public API ─────────────────────────────────────────────────────────────
   /** Returns the full current customization state. Save this to restore later. */
@@ -721,10 +721,10 @@ class X extends M {
     const t = ["valuation", "disclosures", "observations", "market", "recon", "photos"], i = e.sections || {}, s = { ...this._groups };
     t.forEach((o) => {
       i[o] != null && (s[o] = i[o] ? "checked" : "unchecked");
-    }), this._groups = s, e.pills != null && (this._pills = { ...this._pills, ...e.pills }), e.section_order != null && (this._sectionOrder = e.section_order.filter((o) => D.includes(o))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full");
+    }), this._groups = s, e.pills != null && (this._pills = { ...this._pills, ...e.pills }), e.section_order != null && (this._sectionOrder = e.section_order.filter((o) => A.includes(o))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full");
   }
   _applyPdfDisplay(e) {
-    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.locks && (this._locks = { ...this._locks, ...e.locks }));
+    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.signature != null && (this._groups = { ...this._groups, signature: e.signature ? "checked" : "unchecked" }), e.locks && (this._locks = { ...this._locks, ...e.locks }));
   }
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   firstUpdated() {
@@ -734,16 +734,17 @@ class X extends M {
     }));
   }
   updated(e) {
-    var s, o, r, n, l, f;
-    if (e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    var o, r, n, l, u, g;
+    const t = this._pendingDataLoad;
+    if (e.has("sharedDisplay") || e.has("pdfDisplay") ? this._pendingDataLoad = !0 : this._pendingDataLoad && (this._pendingDataLoad = !1), e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const h = (r = (o = (s = this.payload) == null ? void 0 : s.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : r.rate_pct;
-      this._taxRatePct = h != null ? parseFloat(parseFloat(h).toFixed(2)) : 0;
+      const d = (n = (r = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : r.tax_savings) == null ? void 0 : n.rate_pct;
+      this._taxRatePct = d != null ? parseFloat(parseFloat(d).toFixed(2)) : 0;
     }
-    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("profitLabel") && this.templateMode && this._autoPreviewDone && this.apiBaseUrl && this._handleGenerate(), e.has("employees") && ((n = this.employees) != null && n.length) && ((f = (l = this.payload) == null ? void 0 : l.employee) != null && f.name)) {
-      const h = this.employees.findIndex((c) => c.name === this.payload.employee.name);
-      h !== -1 && (this._selectedEmployeeIndex = h);
+    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((l = this.employees) != null && l.length) && ((g = (u = this.payload) == null ? void 0 : u.employee) != null && g.name)) {
+      const d = this.employees.findIndex((f) => f.name === this.payload.employee.name);
+      d !== -1 && (this._selectedEmployeeIndex = d);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -761,14 +762,45 @@ class X extends M {
       "_groups",
       "_selectedEmployeeIndex",
       "_locks"
-    ].some((c) => e.has(c)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((h) => e.has(h)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    ].some((f) => e.has(f)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((d) => e.has(d)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
-    }, 300));
-    const i = this.shadowRoot;
-    if (i)
-      for (const [h, c] of Object.entries(this._groups)) {
-        const g = i.querySelector(`input[data-group="${h}"]`);
-        g && (g.indeterminate = c === "indeterminate", g.checked = c === "checked" || c === "indeterminate");
+    }, 300)), this._autoPreviewDone && this.apiBaseUrl && !this._finalized && !(e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
+      "_mode",
+      "_valueDisplay",
+      "_taxRatePct",
+      "_profitName",
+      "_disclaimerText",
+      "_disclaimerPunct",
+      "_fontSizeIndex",
+      "_photosPerRow",
+      "_discLayout",
+      "_marketDisplay",
+      "_sectionOrder",
+      "_pills",
+      "_groups",
+      "_selectedEmployeeIndex"
+    ].some((m) => e.has(m)) && (this._previewStale = !0), this._autoPreviewDone && !t && !e.has("sharedDisplay") && !e.has("pdfDisplay") && [
+      "_mode",
+      "_valueDisplay",
+      "_taxRatePct",
+      "_profitName",
+      "_disclaimerText",
+      "_disclaimerPunct",
+      "_fontSizeIndex",
+      "_photosPerRow",
+      "_discLayout",
+      "_marketDisplay",
+      "_sectionOrder",
+      "_pills",
+      "_groups",
+      "_selectedEmployeeIndex",
+      "_locks"
+    ].some((f) => e.has(f)) && this._dispatchDisplaySave();
+    const s = this.shadowRoot;
+    if (s)
+      for (const [d, f] of Object.entries(this._groups)) {
+        const m = s.querySelector(`input[data-group="${d}"]`);
+        m && (m.indeterminate = f === "indeterminate", m.checked = f === "checked" || f === "indeterminate");
       }
   }
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -804,7 +836,7 @@ class X extends M {
   }
   _restoreLayoutOrder(e) {
     var r, n;
-    const t = (n = (r = this.sharedDisplay) == null ? void 0 : r.section_order) != null && n.length ? this.sharedDisplay.section_order : D, i = [...this._sectionOrder].filter((l) => l !== e), s = t.indexOf(e), o = i.findIndex((l) => t.indexOf(l) > s);
+    const t = (n = (r = this.sharedDisplay) == null ? void 0 : r.section_order) != null && n.length ? this.sharedDisplay.section_order : A, i = [...this._sectionOrder].filter((l) => l !== e), s = t.indexOf(e), o = i.findIndex((l) => t.indexOf(l) > s);
     o === -1 ? i.push(e) : i.splice(o, 0, e), this._sectionOrder = i;
   }
   _isOnePage() {
@@ -842,6 +874,7 @@ class X extends M {
       disclaimer_text: this._disclaimerText || "",
       disclaimer_punct: this._disclaimerPunct ?? ",",
       selected_emp_idx: this._selectedEmployeeIndex,
+      signature: this._groups.signature !== "unchecked",
       locks: { ...this._locks }
     };
   }
@@ -878,17 +911,27 @@ class X extends M {
   // ── Event handlers ─────────────────────────────────────────────────────────
   _handleModeChange(e) {
     if (this._mode = e, e === "one_page") {
+      this._preOnePageState = {
+        groups: { ...this._groups },
+        marketDisplay: this._marketDisplay,
+        sectionOrder: [...this._sectionOrder]
+      };
       const i = { ...this._groups };
       ["disclosures", "recon", "photos"].forEach((n) => {
         i[n] = "unchecked";
       }), this._groups = i, this._marketDisplay = "summary";
       const s = ["disclosures", "recon", "photos"], o = this._sectionOrder.filter((n) => !s.includes(n)), r = this._sectionOrder.filter((n) => s.includes(n));
       this._sectionOrder = [...o, ...r];
+    } else if (this._preOnePageState) {
+      const i = this._preOnePageState, s = { ...this._groups };
+      ["disclosures", "recon", "photos"].forEach((o) => {
+        s[o] = i.groups[o] ?? "checked";
+      }), this._groups = s, this._marketDisplay = i.marketDisplay, this._sectionOrder = i.sectionOrder, this._preOnePageState = null;
     } else {
       const i = { ...this._groups };
       ["disclosures", "recon", "photos"].forEach((s) => {
         i[s] = "checked";
-      }), this._groups = i, this._marketDisplay = "full", this._sectionOrder = [...D];
+      }), this._groups = i, this._marketDisplay = "full", this._sectionOrder = [...A];
     }
   }
   _handleGroupChange(e, t) {
@@ -907,7 +950,7 @@ class X extends M {
   }
   _handleFontSizeStep(e) {
     const t = this._fontSizeIndex + e;
-    t >= 0 && t < H.length && (this._fontSizeIndex = t);
+    t >= 0 && t < R.length && (this._fontSizeIndex = t);
   }
   _handlePhotosPerRowStep(e) {
     const t = this._photosPerRow + e;
@@ -927,7 +970,7 @@ class X extends M {
     this._disclaimerText = e.target.value;
   }
   _handleReset() {
-    this._confirmReset = !1, this.sharedDisplay || this.pdfDisplay ? (this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay)) : this._resetToggles(), this.dispatchEvent(new CustomEvent("display-save", {
+    this._confirmReset = !1, this._pendingDataLoad = !0, this.sharedDisplay || this.pdfDisplay ? (this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay)) : this._resetToggles(), this._previewStale = !0, this.dispatchEvent(new CustomEvent("display-save", {
       detail: { shared: null, pdf: null, employee: null },
       bubbles: !0,
       composed: !0
@@ -937,7 +980,7 @@ class X extends M {
     var t, i, s;
     this._mode = "full", this._valueDisplay = "offer";
     const e = (s = (i = (t = this.payload) == null ? void 0 : t.valuation) == null ? void 0 : i.tax_savings) == null ? void 0 : s.rate_pct;
-    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...D], this._pills = {
+    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...A], this._pills = {
       "general.condition": !0,
       "valuation.retail_value": !0,
       "valuation.recon": !0,
@@ -1017,8 +1060,8 @@ class X extends M {
                 @click="${(s) => {
       s.stopPropagation(), this._locks = { ...this._locks, [e]: !t };
     }}">
-          ${t ? ve : et}
-        </button>` : t ? p`<span class="lock-indicator" title="Locked by template">${ve}</span>` : u;
+          ${t ? be : et}
+        </button>` : t ? p`<span class="lock-indicator" title="Locked by template">${be}</span>` : h;
   }
   // ── Save Settings ──────────────────────────────────────────────────────────
   _handleSaveSettings() {
@@ -1034,62 +1077,70 @@ class X extends M {
   }
   // ── Generate ───────────────────────────────────────────────────────────────
   async _handleGenerate(e = !1) {
-    var t, i, s, o, r, n, l, f, h, c;
+    var t, i, s, o, r, n, l, u, g, d;
     this._generating = !0, this._statusMsg = "Generating…", this._statusError = !1;
     try {
-      const g = this._buildDisplay(), b = {
+      const f = this._buildDisplay(), m = {
         mode: this._mode,
-        display: g,
+        display: f,
         preview_logo: !0,
         preview_photos: !0,
         font_roboto: !0,
-        font_size_delta: H[this._fontSizeIndex].delta,
+        font_size_delta: R[this._fontSizeIndex].delta,
         photos_per_row: this._photosPerRow,
         section_order: this._sectionOrder,
         watermark: e
-      }, d = { ...this._getPayloadData() }, se = this._profitName != null ? this._profitName : this.profitLabel;
-      se != null && ((t = d.valuation) != null && t.target_profit) && (d.valuation = {
-        ...d.valuation,
-        target_profit: { ...d.valuation.target_profit, label: se || "Target Profit" }
+      }, c = { ...this._getPayloadData() }, se = this._profitName != null ? this._profitName : this.profitLabel;
+      se != null && ((t = c.valuation) != null && t.target_profit) && (c.valuation = {
+        ...c.valuation,
+        target_profit: { ...c.valuation.target_profit, label: se || "Target Profit" }
       });
       const V = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
       if (V !== null) {
         const _ = this._disclaimerPunct ?? ".", v = V ? V.replace(/\.+$/, "") : "";
-        d.disclaimer = v ? _ + " " + v : "";
+        c.disclaimer = v ? _ + " " + v : "";
       }
-      if ((s = (i = d.dealer) == null ? void 0 : i.logo_url) != null && s.startsWith("//") && (d.dealer = { ...d.dealer, logo_url: "https:" + d.dealer.logo_url }), (o = d.employee) != null && o.phone && (d.employee = { ...d.employee, phone: me(d.employee.phone) }), this.employees && this.employees.length > 0) {
+      if ((s = (i = c.dealer) == null ? void 0 : i.logo_url) != null && s.startsWith("//") && (c.dealer = { ...c.dealer, logo_url: "https:" + c.dealer.logo_url }), (o = c.employee) != null && o.phone && (c.employee = { ...c.employee, phone: me(c.employee.phone) }), this.employees && this.employees.length > 0) {
         const _ = this.employees[this._selectedEmployeeIndex] || this.employees[0];
-        d.employee = { name: _.name || "", phone: me(_.phone || "") };
+        c.employee = { name: _.name || "", phone: me(_.phone || ""), email: _.email || "" };
       }
-      if (d.disclosures && (d.disclosures = d.disclosures.filter((_) => _.answer && _.answer.trim() !== "")), (r = d.market) != null && r.comparables) {
-        const _ = d.market.comparables.map((m) => ({
-          ...m,
-          days_on_market: m.listing_type === "delisted" && m.delisted_days || m.days_on_market
-        })), v = _.map((m) => m.days_on_market).filter((m) => m != null), y = v.length > 0 ? Math.round(v.reduce((m, x) => m + x, 0) / v.length) : (n = d.market.summary) == null ? void 0 : n.avg_days;
-        d.market = {
-          ...d.market,
+      if (c.disclosures && (c.disclosures = c.disclosures.filter((_) => _.answer && _.answer.trim() !== "")), (r = c.market) != null && r.comparables) {
+        const _ = c.market.comparables.map((b) => ({
+          ...b,
+          days_on_market: b.listing_type === "delisted" && b.delisted_days || b.days_on_market
+        })), v = _.map((b) => b.days_on_market).filter((b) => b != null), y = v.length > 0 ? Math.round(v.reduce((b, x) => b + x, 0) / v.length) : (n = c.market.summary) == null ? void 0 : n.avg_days;
+        c.market = {
+          ...c.market,
           comparables: _,
-          summary: { ...d.market.summary, avg_days: y }
+          summary: { ...c.market.summary, avg_days: y }
         };
       }
-      if (this._taxRatePct !== null && ((l = d.valuation) != null && l.tax_savings) && ((f = d.offer) == null ? void 0 : f.amount) != null) {
-        const _ = Math.round(d.offer.amount * this._taxRatePct / 100);
-        d.valuation = {
-          ...d.valuation,
+      if (this._taxRatePct !== null && ((l = c.valuation) != null && l.tax_savings) && ((u = c.offer) == null ? void 0 : u.amount) != null) {
+        const _ = Math.round(c.offer.amount * this._taxRatePct / 100);
+        c.valuation = {
+          ...c.valuation,
           tax_savings: {
-            ...d.valuation.tax_savings,
+            ...c.valuation.tax_savings,
             rate_pct: this._taxRatePct,
             amount: _,
-            gross_value: d.offer.amount + _
+            gross_value: c.offer.amount + _
           }
         };
       }
-      const Ae = { ...b, raw_payload: d }, oe = { "Content-Type": "application/json", Accept: "application/pdf" };
+      const De = { ...m, raw_payload: c };
+      this._lastPrintoutRequest = {
+        raw_payload: c,
+        display: f,
+        font_size_delta: R[this._fontSizeIndex].delta,
+        photos_per_row: this._photosPerRow,
+        section_order: [...this._sectionOrder]
+      };
+      const oe = { "Content-Type": "application/json", Accept: "application/pdf" };
       this.authToken && (oe.Authorization = `Bearer ${this.authToken}`);
       const z = await fetch(`${this.apiBaseUrl}/printout-offer`, {
         method: "POST",
         headers: oe,
-        body: JSON.stringify(Ae)
+        body: JSON.stringify(De)
       });
       if (this.apiMode === "binary") {
         if (!z.ok) {
@@ -1100,11 +1151,11 @@ class X extends M {
           }
           throw new Error(y);
         }
-        const _ = await z.blob(), v = await new Promise((y, m) => {
+        const _ = await z.blob(), v = await new Promise((y, b) => {
           const x = new FileReader();
-          x.onload = () => y(x.result), x.onerror = m, x.readAsDataURL(_);
+          x.onload = () => y(x.result), x.onerror = b, x.readAsDataURL(_);
         });
-        this._pdfUrl = v, this._statusMsg = "", this.dispatchEvent(new CustomEvent("offer-generated", {
+        this._pdfUrl = v, this._statusMsg = "", this._previewStale = !1, this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
           detail: { pdfUrl: v, blob: _ },
           bubbles: !0,
           composed: !0
@@ -1121,20 +1172,20 @@ class X extends M {
         this._pdfVehicle = _.vehicle;
         const y = { "ngrok-skip-browser-warning": "true" };
         this.authToken && (y.Authorization = `Bearer ${this.authToken}`);
-        const x = await (await fetch(v, { headers: y })).blob(), Pe = (((h = d.customer) == null ? void 0 : h.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), De = ((c = _.vehicle) == null ? void 0 : c.vin) || "offer";
-        this._pdfFilename = `${Pe}_${De}.pdf`;
+        const x = await (await fetch(v, { headers: y })).blob(), Pe = (((g = c.customer) == null ? void 0 : g.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Ae = ((d = _.vehicle) == null ? void 0 : d.vin) || "offer";
+        this._pdfFilename = `${Pe}_${Ae}.pdf`;
         const Ee = new File([x], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
         const re = URL.createObjectURL(Ee);
-        this._currentBlobUrl = re, this._pdfUrl = re, this._statusMsg = "", this.dispatchEvent(new CustomEvent("offer-generated", {
+        this._currentBlobUrl = re, this._pdfUrl = re, this._statusMsg = "", this._previewStale = !1, this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
           detail: { pdfUrl: v },
           bubbles: !0,
           composed: !0
         }));
       }
-    } catch (g) {
-      this._statusMsg = g.message, this._statusError = !0, this.dispatchEvent(new CustomEvent("offer-error", {
-        detail: { error: g.message },
+    } catch (f) {
+      this._statusMsg = f.message, this._statusError = !0, this.dispatchEvent(new CustomEvent("offer-error", {
+        detail: { error: f.message },
         bubbles: !0,
         composed: !0
       }));
@@ -1164,6 +1215,25 @@ class X extends M {
       window.open(this._pdfUrl, "_blank");
     }
   }
+  // ── Send ───────────────────────────────────────────────────────────────────
+  get _primaryAction() {
+    var t;
+    if (this._doneSentVia) return null;
+    const e = ((t = this.payload) == null ? void 0 : t.customer) || {};
+    return this._sendVia ? this._sendVia : e.email ? "email" : null;
+  }
+  _handleSend(e) {
+    this._splitOpen = !1, this._doneSentVia = e, this._pdfSent = !0;
+    const t = {
+      ...this._lastPrintoutRequest,
+      filename: this._pdfFilename || null
+    };
+    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] payload:", t), this.dispatchEvent(new CustomEvent("pdf-send", {
+      detail: { send_via: e, payload: t },
+      bubbles: !0,
+      composed: !0
+    }));
+  }
   // ── Render helpers ─────────────────────────────────────────────────────────
   _renderHeader() {
     return p`
@@ -1192,14 +1262,14 @@ class X extends M {
           <div class="vehicle-info">
             <div class="amount">${e.amount}</div>
             <div class="desc">${e.desc}</div>
-            ${e.vin ? p`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
+            ${e.vin ? p`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : h}
           </div>
         ` : p`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
       </div>
     `;
   }
   _renderCustomizeCard() {
-    const e = this._isOnePage(), t = H[this._fontSizeIndex].label, i = D.map((s) => this._renderShowHideGroup(s));
+    const e = this._isOnePage(), t = R[this._fontSizeIndex].label, i = A.map((s) => this._renderShowHideGroup(s));
     return p`
       <div class="card">
         <div>
@@ -1232,19 +1302,19 @@ class X extends M {
           </div>
           <div class="section-body">
             <div class="config-row">
-              <span>Display offer as</span>
+              <span>$ Amount (header)</span>
               <div class="ctrl-group ${this._isLocked("value_display") ? "locked" : ""}">
                 <div class="segmented-control">
                   <button
                     class="seg-btn ${this._valueDisplay === "offer" ? "active" : ""}"
                     ?disabled="${this._isLocked("value_display")}"
                     @click="${() => this._handleSegmentedClick("value-display", "offer")}"
-                  >Amount</button>
+                  >Offer</button>
                   <button
                     class="seg-btn ${this._valueDisplay === "tax_savings" ? "active" : ""}"
                     ?disabled="${this._isLocked("value_display")}"
                     @click="${() => this._handleSegmentedClick("value-display", "tax_savings")}"
-                  >+ Tax Savings</button>
+                  >Tax Savings</button>
                 </div>
                 ${this._lk("value_display")}
               </div>
@@ -1296,7 +1366,7 @@ class X extends M {
                   `)}
                 </select>
               </div>
-            ` : u}
+            ` : h}
             <div class="config-row">
               <span>Font size</span>
               <div class="ctrl-group ${this._isLocked("font_size") ? "locked" : ""}">
@@ -1304,7 +1374,7 @@ class X extends M {
                   <button class="step-btn" ?disabled="${this._fontSizeIndex <= 0 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(-1)}">−</button>
                   <span class="stepper-value font-size-display">${t}</span>
-                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= H.length - 1 || this._isLocked("font_size")}"
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= R.length - 1 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(1)}">+</button>
                 </div>
                 ${this._lk("font_size")}
@@ -1475,31 +1545,41 @@ class X extends M {
 
         ${this._statusError && this._statusMsg ? p`
           <div class="action-msg error">${this._statusMsg}</div>
-        ` : u}
-        ${this._savedConfirm ? p`
-          <div class="action-msg success">${this.templateMode ? "Template saved." : "Changes saved!"}</div>
-        ` : u}
-        <button
-          class="btn btn-green"
-          ?disabled="${this._generating || this._finalizing}"
-          @click="${this._handleApply}"
-        >${this.templateMode ? this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template" : this._generating || this._finalizing ? "Generating…" : "Apply"}</button>
+        ` : h}
 
-        ${!this.templateMode && (this.sharedDisplay || this.pdfDisplay) ? this._confirmReset ? p`
-          <div class="confirm-reset">
-            <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
-            <div class="confirm-reset-btns">
-              <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
-              <button class="confirm-reset-no"  @click="${() => {
+        ${this.templateMode ? p`
+          <button
+            class="btn btn-green"
+            ?disabled="${this._generating || this._finalizing}"
+            @click="${this._handleApply}"
+          >${this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template"}</button>
+        ` : h}
+
+        ${this.templateMode ? h : p`
+          <div class="action-btns">
+            <button
+              class="refresh-btn"
+              ?disabled="${this._generating || this._finalizing}"
+              @click="${() => this._handleGenerate()}"
+            >${this._previewStale ? "Refresh Preview ↻" : "Refresh Preview"}</button>
+            ${this._renderSendInline()}
+            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? p`
+              <div class="confirm-reset">
+                <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
+                <div class="confirm-reset-btns">
+                  <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
+                  <button class="confirm-reset-no"  @click="${() => {
       this._confirmReset = !1;
     }}">Cancel</button>
-            </div>
-          </div>
-        ` : p`
-          <button class="reset-btn" @click="${() => {
+                </div>
+              </div>
+            ` : p`
+              <button class="reset-btn" @click="${() => {
       this._confirmReset = !0;
     }}">Reset to template</button>
-        ` : u}
+            ` : h}
+          </div>
+        `}
       </div>
     `;
   }
@@ -1546,6 +1626,20 @@ class X extends M {
       >${t}</span>
     `;
   }
+  _renderSendInline() {
+    var o, r;
+    const e = !!((r = (o = this.payload) == null ? void 0 : o.customer) != null && r.email), t = !!this._pdfUrl && !this._generating;
+    if (!e) return h;
+    const i = this._doneSentVia ? "Email Sent ✓" : "Send via Email", s = t && !this._doneSentVia;
+    return p`
+      <button
+        class="split-main ${this._doneSentVia ? "done" : ""}"
+        style="border-radius:8px;width:100%;padding:10px 16px;font-size:13px;"
+        ?disabled="${!s}"
+        @click="${() => this._handleSend("email")}"
+      >${i}</button>
+    `;
+  }
   _renderPreviewPane() {
     const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e, o = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
     return p`
@@ -1555,7 +1649,7 @@ class X extends M {
             <h2>${o ? "Preview" : "PDF"}</h2>
             ${!this.templateMode && e && !t && o ? p`
               <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
-            ` : u}
+            ` : h}
           </div>
           ${i ? p`
             <div class="preview-loading">
@@ -1564,13 +1658,13 @@ class X extends M {
               </div>
               Generating preview…
             </div>
-          ` : u}
+          ` : h}
           ${!i && !e ? p`
-            <div class="empty-preview">Select a payload and click Refresh Preview</div>
-          ` : u}
+            <div class="empty-preview">Preview will appear once a payload is loaded</div>
+          ` : h}
           ${e && !t && o ? p`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
-          ` : u}
+          ` : h}
           ${e && !t && !o ? p`
             <div style="display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
               ${window.natively ? p`
@@ -1590,7 +1684,7 @@ class X extends M {
                 >Open PDF</a>
               `}
             </div>
-          ` : u}
+          ` : h}
         </div>
       </div>
     `;
@@ -1599,7 +1693,9 @@ class X extends M {
   render() {
     return p`
       ${this._renderHeader()}
-      <main>
+      <main @click="${() => {
+      this._splitOpen && (this._splitOpen = !1);
+    }}">
         <div class="wrap">
           <div class="layout">
             <div class="sidebar">
@@ -1666,7 +1762,13 @@ q(X, "properties", {
   _pdfVehicle: { type: Object, state: !0 },
   _savedConfirm: { type: Boolean, state: !0 },
   _confirmReset: { type: Boolean, state: !0 },
-  _locks: { type: Object, state: !0 }
+  _locks: { type: Object, state: !0 },
+  // Send UI
+  _splitOpen: { type: Boolean, state: !0 },
+  _sendVia: { type: String, state: !0 },
+  _doneSentVia: { type: String, state: !0 },
+  _pdfSent: { type: Boolean, state: !0 },
+  _previewStale: { type: Boolean, state: !0 }
 }), q(X, "styles", Le`
     :host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #EEEEEE; color: #222222; min-height: 100vh; }
 
@@ -1786,7 +1888,7 @@ q(X, "properties", {
     .vehicle-info .desc { color: #006073; }
 
     /* Toggle groups */
-    .toggle-group { margin-bottom: 16px; }
+    .toggle-group { margin-bottom: 4px; }
     .toggle-group:last-child { margin-bottom: 0; }
 
     .group-header {
@@ -2258,10 +2360,21 @@ q(X, "properties", {
     .reset-btn {
       width: 100%; padding: 9px 20px; background: transparent; color: #667085;
       border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
-      cursor: pointer; font-family: inherit; margin-top: 8px;
+      cursor: pointer; font-family: inherit;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
+
+    .refresh-btn {
+      width: 100%; padding: 10px 20px; background: #006073; color: #fff;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .refresh-btn:hover:not(:disabled) { background: #004f5f; }
+    .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
     .confirm-reset {
       margin-top: 8px; padding: 10px 12px;
@@ -2300,6 +2413,47 @@ q(X, "properties", {
     }
 
     .customize-header-row h2 { margin-bottom: 0; }
+
+    /* ── Send card ─────────────────────────────────────────────────────────── */
+    .send-card { display: flex; flex-direction: column; gap: 10px; }
+    .send-card h2 { margin-bottom: 0; }
+
+    .split-btn-wrap { display: flex; gap: 0; position: relative; width: 100%; }
+    .split-main {
+      flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+      background: #35BB9C; color: #fff; border: none;
+      border-radius: 8px 0 0 8px; cursor: pointer; font-family: inherit;
+      transition: background 0.15s; text-align: center;
+    }
+    .split-main:hover:not(:disabled) { background: #2a9880; }
+    .split-main:disabled { opacity: 0.6; cursor: not-allowed; }
+    .split-main.done { background: #d0d5dd; color: #667085; border-radius: 8px; cursor: default; }
+    .split-main.done:hover { background: #d0d5dd; }
+    .split-arrow-btn {
+      width: 34px; flex-shrink: 0; padding: 0;
+      background: #2a9880; color: #fff; border: none;
+      border-left: 1px solid rgba(255,255,255,0.25);
+      border-radius: 0 8px 8px 0; cursor: pointer;
+      font-size: 10px; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .split-arrow-btn:hover { background: #1e7a68; }
+
+    .split-menu {
+      position: absolute; top: calc(100% + 4px); right: 0; z-index: 10;
+      background: #fff; border: 1.5px solid #d0d5dd; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12); min-width: 160px; overflow: hidden;
+    }
+    .split-menu-item {
+      display: block; width: 100%; padding: 9px 14px; font-size: 13px;
+      background: none; border: none; cursor: pointer; text-align: left;
+      color: #344054; font-family: inherit; transition: background 0.1s;
+    }
+    .split-menu-item:hover { background: #f2f4f7; }
+
+    .send-no-contact {
+      font-size: 12px; color: #98a2b3; text-align: center; padding: 4px 0;
+    }
   `);
 customElements.define("lexen-offer-sheet", X);
 export {

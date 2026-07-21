@@ -1947,19 +1947,19 @@ export class LexenOfferSheet extends LitElement {
           </div>
           <div class="section-body">
             <div class="config-row">
-              <span>Display offer as</span>
+              <span>$ Amount (header)</span>
               <div class="ctrl-group ${this._isLocked('value_display') ? 'locked' : ''}">
                 <div class="segmented-control">
                   <button
                     class="seg-btn ${this._valueDisplay === 'offer' ? 'active' : ''}"
                     ?disabled="${this._isLocked('value_display')}"
                     @click="${() => this._handleSegmentedClick('value-display', 'offer')}"
-                  >Amount</button>
+                  >Offer</button>
                   <button
                     class="seg-btn ${this._valueDisplay === 'tax_savings' ? 'active' : ''}"
                     ?disabled="${this._isLocked('value_display')}"
                     @click="${() => this._handleSegmentedClick('value-display', 'tax_savings')}"
-                  >+ Tax Savings</button>
+                  >Tax Savings</button>
                 </div>
                 ${this._lk('value_display')}
               </div>
