@@ -36,6 +36,7 @@ const DEFAULT_PILLS = {
   'valuation.tax_savings': true,
   'sections.observations_highlights': true,
   'sections.observations_comments': true,
+  'market.scenarios': false, // new feature — legacy records never had it, so default off
 };
 
 const DEFAULT_LOCKS = {

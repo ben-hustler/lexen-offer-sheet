@@ -31,6 +31,7 @@ var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
     'valuation.tax_savings': true,
     'sections.observations_highlights': true,
     'sections.observations_comments': true,
+    'market.scenarios': false, // new feature — legacy records never had it, so default off
   };
 
   var DEFAULT_LOCKS = {

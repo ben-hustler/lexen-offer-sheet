@@ -908,6 +908,7 @@ export class LexenOfferSheet extends LitElement {
       'valuation.tax_savings': true,
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
+      'market.scenarios': false,
     };
 
     // Group states
@@ -1294,6 +1295,7 @@ export class LexenOfferSheet extends LitElement {
         observations_comments: p['sections.observations_comments'],
         market_summary: (g.market === 'checked') && (this._isOnePage() || this._marketDisplay === 'summary'),
         market_comparables: (g.market === 'checked') && !this._isOnePage() && this._marketDisplay === 'full',
+        market_scenarios: (g.market === 'checked') && p['market.scenarios'],
         recon_breakdown: this._isOnePage() ? false : (g.recon === 'checked'),
         photos: this._isOnePage() ? false : (g.photos === 'checked'),
       },
@@ -1465,6 +1467,7 @@ export class LexenOfferSheet extends LitElement {
       'valuation.tax_savings': true,
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
+      'market.scenarios': false,
     };
     this._groups = {
       valuation: 'checked', disclosures: 'checked', observations: 'checked',
@@ -2256,6 +2259,15 @@ export class LexenOfferSheet extends LitElement {
           <div class="pill-group ${locked ? 'locked' : ''}">
             ${this._renderPill('sections.observations_highlights', 'Highlights', 'observations')}
             ${this._renderPill('sections.observations_comments', 'Comments', 'observations')}
+          </div>
+        </div>`;
+    }
+    if (section === 'market') {
+      return html`
+        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="market">
+          ${row}
+          <div class="pill-group ${locked ? 'locked' : ''}">
+            ${this._renderPill('market.scenarios', 'Market Scenarios', null)}
           </div>
         </div>`;
     }
