@@ -476,6 +476,34 @@ export class LexenOfferSheet extends LitElement {
     .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
     .preview-actions .btn { width: auto; flex: 1; }
 
+    .preview-title-group { display: flex; align-items: center; gap: 8px; }
+
+    .preview-status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #35BB9C;
+      flex-shrink: 0;
+    }
+    .preview-status-dot.stale { background: #f59f00; }
+
+    .refresh-inline-btn {
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      background: #006073;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .refresh-inline-btn:hover:not(:disabled) { background: #004f5f; }
+    .refresh-inline-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
     .empty-preview {
       display: flex;
       align-items: center;
@@ -771,15 +799,6 @@ export class LexenOfferSheet extends LitElement {
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
-
-    .refresh-btn {
-      width: 100%; padding: 10px 20px; background: #006073; color: #fff;
-      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
-      cursor: pointer; font-family: inherit;
-      transition: background 0.15s, opacity 0.15s;
-    }
-    .refresh-btn:hover:not(:disabled) { background: #004f5f; }
-    .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
@@ -2203,11 +2222,6 @@ export class LexenOfferSheet extends LitElement {
 
         ${!this.templateMode ? html`
           <div class="action-btns">
-            <button
-              class="refresh-btn"
-              ?disabled="${this._generating || this._finalizing}"
-              @click="${() => this._handleGenerate()}"
-            >${this._previewStale ? 'Refresh Preview ↻' : 'Refresh Preview'}</button>
             ${this._renderSendInline()}
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
@@ -2334,7 +2348,20 @@ export class LexenOfferSheet extends LitElement {
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
-            <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+            <div class="preview-title-group">
+              <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+              <span
+                class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
+                title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"
+              ></span>
+              ${this._previewStale && !this.templateMode ? html`
+                <button
+                  class="refresh-inline-btn"
+                  ?disabled="${this._generating || this._finalizing}"
+                  @click="${() => this._handleGenerate()}"
+                >Refresh ↻</button>
+              ` : nothing}
+            </div>
             ${!this.templateMode && hasPdf && !busy && canInlinePdf ? html`
               <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
             ` : nothing}
