@@ -115,7 +115,7 @@ var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
 
   var result = convertLegacyDisplay(legacyDisplayRaw);
 
-  bubble_fn_migration_aid(
+  bubble_fn_migrationAid(
     result.sharedDisplay ? JSON.stringify(result.sharedDisplay) : '',
     result.pdfDisplay ? JSON.stringify(result.pdfDisplay) : ''
   );
