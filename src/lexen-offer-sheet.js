@@ -908,7 +908,6 @@ export class LexenOfferSheet extends LitElement {
       'valuation.tax_savings': true,
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
-      'market.scenarios': false,
     };
 
     // Group states
@@ -917,6 +916,7 @@ export class LexenOfferSheet extends LitElement {
       disclosures: 'checked',
       observations: 'checked',
       market: 'checked',
+      market_scenarios: 'unchecked', // new feature — off by default
       recon: 'checked',
       photos: 'checked',
       signature: 'checked',
@@ -959,13 +959,14 @@ export class LexenOfferSheet extends LitElement {
       market_display: false,
       disclaimer:     false,
       section_order:  false,
-      valuation:      false,
-      disclosures:    false,
-      observations:   false,
-      market:         false,
-      recon:          false,
-      photos:         false,
-      signature:      false,
+      valuation:        false,
+      disclosures:      false,
+      observations:     false,
+      market:           false,
+      market_scenarios: false,
+      recon:            false,
+      photos:           false,
+      signature:        false,
     };
 
     // Drag-and-drop internal (non-reactive)
@@ -996,7 +997,7 @@ export class LexenOfferSheet extends LitElement {
 
   _applySharedDisplay(d) {
     if (!d) return;
-    const GROUP_KEYS = ['valuation','disclosures','observations','market','recon','photos'];
+    const GROUP_KEYS = ['valuation','disclosures','observations','market','market_scenarios','recon','photos'];
     const sec = d.sections || {};
     const newGroups = { ...this._groups };
     GROUP_KEYS.forEach(k => { if (sec[k] != null) newGroups[k] = sec[k] ? 'checked' : 'unchecked'; });
@@ -1243,12 +1244,13 @@ export class LexenOfferSheet extends LitElement {
     const g = this._groups;
     return {
       sections: {
-        valuation:    g.valuation    !== 'unchecked',
-        disclosures:  g.disclosures  !== 'unchecked',
-        observations: g.observations !== 'unchecked',
-        market:       g.market       !== 'unchecked',
-        recon:        g.recon        !== 'unchecked',
-        photos:       g.photos       !== 'unchecked',
+        valuation:        g.valuation        !== 'unchecked',
+        disclosures:      g.disclosures      !== 'unchecked',
+        observations:     g.observations     !== 'unchecked',
+        market:           g.market           !== 'unchecked',
+        market_scenarios: g.market_scenarios === 'checked',
+        recon:            g.recon            !== 'unchecked',
+        photos:           g.photos           !== 'unchecked',
       },
       market_view:   this._marketDisplay,
       pills:         { ...this._pills },
@@ -1295,7 +1297,7 @@ export class LexenOfferSheet extends LitElement {
         observations_comments: p['sections.observations_comments'],
         market_summary: (g.market === 'checked') && (this._isOnePage() || this._marketDisplay === 'summary'),
         market_comparables: (g.market === 'checked') && !this._isOnePage() && this._marketDisplay === 'full',
-        market_scenarios: (g.market === 'checked') && p['market.scenarios'],
+        market_scenarios: g.market_scenarios === 'checked',
         recon_breakdown: this._isOnePage() ? false : (g.recon === 'checked'),
         photos: this._isOnePage() ? false : (g.photos === 'checked'),
       },
@@ -1369,7 +1371,7 @@ export class LexenOfferSheet extends LitElement {
       this._pills = newPills;
     }
 
-    if (group !== 'signature') {
+    if (group !== 'signature' && group !== 'market_scenarios') {
       if (!checked) {
         this._syncLayoutOrder(group);
       } else {
@@ -1467,11 +1469,11 @@ export class LexenOfferSheet extends LitElement {
       'valuation.tax_savings': true,
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
-      'market.scenarios': false,
     };
     this._groups = {
       valuation: 'checked', disclosures: 'checked', observations: 'checked',
-      market: 'checked', recon: 'checked', photos: 'checked', signature: 'checked',
+      market: 'checked', market_scenarios: 'unchecked',
+      recon: 'checked', photos: 'checked', signature: 'checked',
     };
   }
 
@@ -1918,7 +1920,11 @@ export class LexenOfferSheet extends LitElement {
     const fontLabel = FONT_SIZE_OPTIONS[this._fontSizeIndex].label;
 
     // Show/hide groups always in default order
-    const sectionGroups = DEFAULT_LAYOUT_ORDER.map(sec => this._renderShowHideGroup(sec));
+    const sectionGroups = DEFAULT_LAYOUT_ORDER.flatMap(sec => {
+      const rows = [this._renderShowHideGroup(sec)];
+      if (sec === 'market') rows.push(this._renderMarketScenariosGroup());
+      return rows;
+    });
 
     return html`
       <div class="card">
@@ -2225,7 +2231,7 @@ export class LexenOfferSheet extends LitElement {
     const groupDisabled = onePage && ['disclosures', 'recon', 'photos'].includes(section);
     const locked     = this._isLocked(section);
     const groupState = this._groups[section];
-    const LABELS     = { valuation:'Valuation', disclosures:'Disclosures', observations:'Observations', market:'Market', recon:'Recon', photos:'Photos' };
+    const LABELS     = { valuation:'Valuation', disclosures:'Disclosures', observations:'Observations', market:'Market Comparables', recon:'Recon', photos:'Photos' };
 
     const row = html`
       <div class="group-row ${locked ? 'group-row-locked' : ''}">
@@ -2262,18 +2268,29 @@ export class LexenOfferSheet extends LitElement {
           </div>
         </div>`;
     }
-    if (section === 'market') {
-      return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="market">
-          ${row}
-          <div class="pill-group ${locked ? 'locked' : ''}">
-            ${this._renderPill('market.scenarios', 'Market Scenarios', null)}
-          </div>
-        </div>`;
-    }
     return html`
       <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="${section}">
         ${row}
+      </div>`;
+  }
+
+  /** Independent toggle — not nested under Market Comparables, not part of the
+   * draggable section order (mirrors how Signature is handled). */
+  _renderMarketScenariosGroup() {
+    const locked = this._isLocked('market_scenarios');
+    const checked = this._groups.market_scenarios === 'checked';
+    return html`
+      <div class="toggle-group" data-group="market_scenarios">
+        <div class="group-row ${locked ? 'group-row-locked' : ''}">
+          <label class="group-header">
+            <input type="checkbox" data-group="market_scenarios"
+              .checked="${checked}"
+              ?disabled="${locked}"
+              @change="${(e) => this._handleGroupChange('market_scenarios', e.target.checked)}"
+            >Market Scenarios
+          </label>
+          ${this._lk('market_scenarios')}
+        </div>
       </div>`;
   }
 

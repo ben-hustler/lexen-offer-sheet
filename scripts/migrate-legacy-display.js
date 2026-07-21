@@ -36,7 +36,6 @@ const DEFAULT_PILLS = {
   'valuation.tax_savings': true,
   'sections.observations_highlights': true,
   'sections.observations_comments': true,
-  'market.scenarios': false, // new feature — legacy records never had it, so default off
 };
 
 const DEFAULT_LOCKS = {
@@ -44,7 +43,7 @@ const DEFAULT_LOCKS = {
   profit_label: false, font_size: false, photos_per_row: false, disc_layout: false,
   market_display: false, disclaimer: false, section_order: false,
   valuation: false, disclosures: false, observations: false,
-  market: false, recon: false, photos: false, signature: false,
+  market: false, market_scenarios: false, recon: false, photos: false, signature: false,
 };
 
 /** Bubble sometimes hands back an already-parsed object, sometimes a raw JSON string. */
@@ -64,6 +63,8 @@ function toSections(groups = {}) {
   for (const key of ['valuation', 'disclosures', 'observations', 'market', 'recon', 'photos']) {
     sections[key] = (groups[key] ?? 'checked') !== 'unchecked';
   }
+  // New feature — legacy records never had this group; default off unless explicitly checked.
+  sections.market_scenarios = groups.market_scenarios === 'checked';
   return sections;
 }
 
