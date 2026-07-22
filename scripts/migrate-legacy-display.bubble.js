@@ -20,7 +20,7 @@ var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
 
 (function (legacyDisplayRaw) {
 
-  var DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'recon', 'photos'];
+  var DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'market_scenarios', 'selected_scenarios', 'recon', 'photos'];
 
   var DEFAULT_PILLS = {
     'general.condition': true,

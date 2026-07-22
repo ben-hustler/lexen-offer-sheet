@@ -87,8 +87,11 @@
     .event-entry.highlight { color: #35BB9C; }
 
     /* ── Preview ── */
-    .preview { flex: 1; overflow: auto; }
-    lexen-offer-sheet { display: block; min-height: 100%; }
+    /* overflow: hidden here (not auto) — the component scrolls its own two
+       panes internally now; this wrapper should just hand it a definite
+       height to fill, not become a second, competing scroll container. */
+    .preview { flex: 1; overflow: hidden; }
+    lexen-offer-sheet { display: block; height: 100%; }
   </style>
 </head>
 <body>
@@ -98,7 +101,8 @@
 
       <div class="field">
         <label>API Base URL</label>
-        <input id="apiBaseUrl" value="https://sbox-api.lexen.io/printout" />
+        <input id="apiBaseUrl" value="http://localhost:8787" />
+        <small style="font-weight:400;color:#98a2b3;">local_server.py default — swap for the sbox URL to test against real AWS</small>
       </div>
 
       <div class="field">
@@ -145,57 +149,114 @@
         <label>Payload (JSON) <small style="font-weight:400;text-transform:none">— blank = built-in template payload</small></label>
         <textarea id="payloadJson" placeholder="leave blank to use the component's built-in template payload">{
   "dealer": {
-    "name": "The Shire Automotive",
-    "location": "The Shire Automotive",
-    "logo_url": "//4855cde796d8a579780d6d5dc6ee6ab5.cdn.bubble.io/f1763067771437x638350971999507100/Marvel_Logo.svg.png",
-    "address": "328 Nova Scotia Trunk 1, Dayton, NS B5A 5A1, Canada"
+    "name": "Dealership Name",
+    "location": "Dealership Name",
+    "address": "1234 Street\nCity, PR",
+    "phone": null,
+    "logo_url": null
   },
-  "employee": { "name": "Arthur Dent", "phone": "0212012012" },
-  "customer": { "name": "Testing Tester" },
+  "employee": { "name": "Employee Name", "phone": "(000) 000-0000" },
+  "customer": { "name": "Customer Name" },
   "vehicle": {
-    "year": 2024, "make": "Chevrolet", "model": "Colorado", "trim": "Trail Boss",
-    "color": "Black", "vin": "1GCPTEEK6R1132037", "mileage_km": 123455
+    "year": 2024, "make": "Make", "model": "Model", "trim": "Trim",
+    "color": "Colour", "vin": "1A2B3C4D5E6F7G8H9", "mileage_km": 50000
   },
   "offer": {
-    "amount": 38885, "valid_until": "2026-06-25",
-    "appraisal_date": "2026-05-26", "classification": "Certified Pre-Owned"
+    "amount": 25000, "valid_until": "2026-08-21",
+    "appraisal_date": "2026-07-22", "classification": "Good Condition"
   },
   "valuation": {
-    "retail_value": 43496, "recon_total": 2000, "fixed_overhead": 111,
+    "retail_value": 32000, "recon_total": 2500, "fixed_overhead": 500,
     "target_profit": { "amount": 2500, "label": "Target Profit" },
-    "tax_savings": { "rate_pct": 12, "amount": 4666.2, "gross_value": 43551.2 }
+    "tax_savings": { "rate_pct": 13.0, "amount": 3250, "gross_value": 28250 }
   },
   "disclosures": [
-    { "question": "What condition is this vehicle in?", "description": "", "answer": "Good" },
-    { "question": "Is there any damage to the vehicle?", "description": "", "answer": "" },
-    { "question": "What type of damage?", "description": "", "answer": "" },
-    { "question": "What accessories does this vehicle have?", "description": "", "answer": "" }
+    { "question": "Disclosure Question #1", "answer": "Answer #1" },
+    { "question": "Disclosure Question #2", "answer": "Answer #2" },
+    { "question": "Disclosure Question #3", "answer": "Answer #3" }
   ],
   "observations": {
-    "highlights": "Coolio", "comments": "Idk man",
+    "highlights": "Vehicle Highlights",
+    "comments": "Vehicle Comments",
     "claims": { "count": 0, "amount": 0 }
   },
   "market": {
     "summary": {
-      "comparables_count": 6, "avg_mileage_km": 61839.33, "avg_price": 42746,
-      "avg_distance_km": 137.15, "avg_days": 2
+      "comparables_count": 6, "avg_mileage_km": 45000,
+      "avg_price": 35000, "avg_distance_km": 100, "avg_days": 90
     },
     "comparables": [
-      { "description": "2023 Chevrolet Colorado", "trim": "Crew Cab Short Box 4-Wheel Drive Trail Boss", "vin": "1GCPTEEK5P1174924", "dealer": "Kentville Toyota", "mileage_km": 105306, "price": 37995, "distance_km": 181.83, "days_on_market": 81 },
-      { "description": "2023 Chevrolet Colorado", "trim": "4WD TRAIL BOSS", "vin": "1GCPTEEK0P1138901", "dealer": "Fredericton Nissan", "mileage_km": 76899, "price": 40997, "distance_km": 235.09, "days_on_market": 0 },
-      { "description": "2024 Chevrolet Colorado", "trim": "Crew Cab Short Box 4-Wheel Drive Trail Boss", "vin": "1GCPTEEK6R1214561", "dealer": "Kentville Toyota", "mileage_km": 50050, "price": 42094, "distance_km": 181.83, "days_on_market": 137 },
-      { "description": "2024 Chevrolet Colorado", "trim": "4WD TRAIL BOSS", "vin": "1GCPTEEK5R1198093", "dealer": "Bruce Nissan", "mileage_km": 46431, "price": 43400, "distance_km": 3.58, "days_on_market": 53 },
-      { "description": "2024 Chevrolet Colorado", "trim": "4WD Trail Boss", "vin": "1GCPTEEK0R1148203", "dealer": "Little Chevrolet", "mileage_km": 40066, "price": 44995, "distance_km": 2.91, "days_on_market": 32 },
-      { "description": "2023 Chevrolet Colorado", "trim": "Crew Cab Short Box 4-Wheel Drive Trail Boss DEAL PENDING!", "vin": "1GCPTEEK3P1128198", "dealer": "Cars R Us", "mileage_km": 52284, "price": 46995, "distance_km": 217.64, "days_on_market": 53 }
+      { "year": 2024, "description": "Make Model", "trim": "Trim A", "vin": "1A2B3C4D5E6F7G8H1", "dealer": "Dealer Name", "mileage_km": 42000, "price": 36500, "distance_km": 85,  "days_on_market": 45 },
+      { "year": 2024, "description": "Make Model", "trim": "Trim B", "vin": "1A2B3C4D5E6F7G8H2", "dealer": "Dealer Name", "mileage_km": 38000, "price": 37200, "distance_km": 120, "days_on_market": 30 },
+      { "year": 2024, "description": "Make Model", "trim": "Trim C", "vin": "1A2B3C4D5E6F7G8H3", "dealer": "Dealer Name", "mileage_km": 51000, "price": 34800, "distance_km": 60,  "days_on_market": 90 },
+      { "year": 2023, "description": "Make Model", "trim": "Trim A", "vin": "1A2B3C4D5E6F7G8H4", "dealer": "Dealer Name", "mileage_km": 65000, "price": 33000, "distance_km": 95,  "days_on_market": 120 },
+      { "year": 2023, "description": "Make Model", "trim": "Trim D", "vin": "1A2B3C4D5E6F7G8H5", "dealer": "Dealer Name", "mileage_km": 47000, "price": 35500, "distance_km": 150, "days_on_market": 60 },
+      { "year": 2024, "description": "Make Model", "trim": "Trim B", "vin": "1A2B3C4D5E6F7G8H6", "dealer": "Dealer Name", "mileage_km": 29000, "price": 38000, "distance_km": 110, "days_on_market": 15 }
     ]
   },
+  "scenarios": {
+    "market": {
+      "vehicles": 318,
+      "avgRetail": "$25,608",
+      "avgMileage": "45,913",
+      "listedDays": "86",
+      "prcMkt": "100%",
+      "prcMktAdj": "92%",
+      "costMkt": "100%",
+      "priceRank": "156 of 319",
+      "mileageRank": "46 of 319",
+      "perception": "49 of 319",
+      "retail": "$25,608",
+      "ACV": "$22,608"
+    },
+    "selected": {
+      "vehicles": "2",
+      "avgRetail": "$20,493",
+      "avgMileage": "105,501",
+      "listedDays": 64,
+      "prcMkt": "115%",
+      "prcMktAdj": "98%",
+      "costMkt": "115%",
+      "priceRank": "3 of 3",
+      "mileageRank": "1 of 3",
+      "perception": "3 of 3",
+      "retail": "$25,608",
+      "ACV": "$22,608"
+    }
+  },
   "recon": {
-    "items": [ { "description": "Visible Damage (0)", "amount": 0 } ],
-    "total": 2000
+    "items": [
+      { "description": "Recon Item #1", "amount": 1000 },
+      { "description": "Recon Item #2", "amount": 1000 },
+      { "description": "Recon Item #3", "amount": 500 }
+    ],
+    "total": 2500
   },
   "photos": [
-    { "url": "https://lexen-uploader-bucket-dev.s3.us-west-2.amazonaws.com/Marvel Motors-The Shire Automotive -images/cf0268d0-38b8-4857-a274-e93c42414395_1779747618462x633351177985065000-Exterior_th_biddg.jpg534x800.jpg", "caption": "Highlight\nCoolio" }
-  ]
+    { "url": "placeholder", "category": "Exterior", "caption": null },
+    { "url": "placeholder", "category": "Exterior", "caption": null },
+    { "url": "placeholder", "category": "Exterior", "caption": null },
+    { "url": "placeholder", "category": "Interior", "caption": null },
+    { "url": "placeholder", "category": "Interior", "caption": null },
+    { "url": "placeholder", "category": "Highlights", "caption": null },
+    { "url": "placeholder", "category": "Damages ($000)", "caption": "Sample Damage" }
+  ],
+  "disclaimer": ", subject to Carfax History and Lien Report",
+  "display": {
+    "valuation": {
+      "retail_value": true, "recon": true, "fixed_overhead": true,
+      "target_profit": true, "tax_savings": true
+    },
+    "sections": {
+      "valuation": false,
+      "disclosures": false, "disclosures_horizontal": false, "disclosures_signature": false,
+      "observations": false, "observations_highlights": false, "observations_comments": false,
+      "market_summary": true, "market_comparables": false,
+      "market_scenarios": true, "selected_scenarios": true,
+      "recon_breakdown": false, "photos": false
+    },
+    "general": { "offer_label": true, "condition": true, "value_display": "offer" }
+  }
 }</textarea>
         <div class="parse-error" id="payloadError">Invalid JSON</div>
       </div>
@@ -210,7 +271,7 @@
 
       <div class="field">
         <label>Shared Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null</small></label>
-        <textarea id="sharedDisplayJson" style="height:80px"></textarea>
+        <textarea id="sharedDisplayJson" style="height:80px">{ "sections": { "market_scenarios": true, "selected_scenarios": true } }</textarea>
         <div class="parse-error" id="sharedError">Invalid JSON</div>
       </div>
 
@@ -298,6 +359,7 @@
       }
 
       sheet.apiBaseUrl     = apiBaseUrlEl.value.trim();
+      sheet.apiMode        = 'binary'; // matches index.py's direct-PDF-in-response contract
       sheet.authToken      = authTokenEl.value.trim();
       sheet.templateMode   = templateModeEl.checked;
       sheet.locked         = lockedEl.checked;

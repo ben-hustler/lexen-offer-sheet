@@ -98,17 +98,37 @@ const FONT_SIZE_OPTIONS = [
   { label: 'Extra Large', delta:  3 },
 ];
 
-const DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'recon', 'photos'];
+const DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'market_scenarios', 'selected_scenarios', 'recon', 'photos'];
 
 const SECTION_LABELS = {
   valuation: 'Valuation', disclosures: 'Disclosures', observations: 'Observations',
-  market: 'Market', recon: 'Recon', photos: 'Photos',
+  market: 'Market Comparables', market_scenarios: 'Market Scenarios', selected_scenarios: 'Selected Scenarios',
+  recon: 'Recon', photos: 'Photos',
 };
+
+// Per-field pills for the Market/Selected Scenarios KPI grids — mirrors
+// SCENARIO_FIELD_DEFS in render.py. "{basis}" is replaced with "Market" or
+// "Selected" depending on which group the pill belongs to.
+const SCENARIO_FIELDS = [
+  { key: 'vehicles',    label: 'Vehicles' },
+  { key: 'avgRetail',   label: 'Average Retail' },
+  { key: 'avgMileage',  label: 'Average Mileage' },
+  { key: 'listedDays',  label: 'Listed Days' },
+  { key: 'prcMkt',      label: 'Price to {basis}' },
+  { key: 'prcMktAdj',   label: 'Adj. Price to {basis}' },
+  { key: 'costMkt',     label: 'Cost to {basis}' },
+  { key: 'priceRank',   label: 'Price Rank' },
+  { key: 'mileageRank', label: 'Mileage Rank' },
+  { key: 'perception',  label: 'Perception' },
+  { key: 'retail',      label: 'Retail' },
+  { key: 'ACV',         label: 'Actual Cash Value' },
+];
 
 // ── Chevron + lock SVG helpers ────────────────────────────────────────────────
 const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const undoSvg       = html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="9 14 4 9 9 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20v-7a4 4 0 0 0-4-4H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -149,6 +169,7 @@ export class LexenOfferSheet extends LitElement {
     _photosPerRow:      { type: Number,  state: true },
     _discLayout:        { type: String,  state: true },  // 'vertical' | 'horizontal'
     _marketDisplay:     { type: String,  state: true },  // 'summary' | 'full'
+    _scenarioLayout:    { type: String,  state: true },  // 'tiles' | 'rows'
 
     _sectionOrder:      { type: Array,   state: true },
 
@@ -156,6 +177,8 @@ export class LexenOfferSheet extends LitElement {
     _pills:             { type: Object,  state: true },
     // Group checkbox state: 'checked' | 'indeterminate' | 'unchecked'
     _groups:            { type: Object,  state: true },
+    // Pill-row expand/collapse, per group — { valuation: bool, market_scenarios: bool, selected_scenarios: bool }
+    _pillsOpen:         { type: Object,  state: true },
 
     _finalized:         { type: Boolean, state: true },
     _generating:        { type: Boolean, state: true },
@@ -177,11 +200,30 @@ export class LexenOfferSheet extends LitElement {
   };
 
   static styles = css`
-    :host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #EEEEEE; color: #222222; min-height: 100vh; }
+    /* Kept deliberately simple — a host page can (and here, does) target
+       "lexen-offer-sheet" by tag name from outside the shadow DOM, which can
+       override :host rules. The actual split-scroll layout lives on .shell
+       below instead, which light-DOM CSS can never reach. */
+    :host {
+      display: block;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #EEEEEE;
+      color: #222222;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
 
     * { box-sizing: border-box; }
 
     .component-header {
+      flex-shrink: 0;
       background: #fff;
       padding: 20px 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -226,21 +268,45 @@ export class LexenOfferSheet extends LitElement {
     .setup-toggle-btn.active { color: #344054; }
 
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    main { padding: 32px 0 64px; }
+
+    /* Split scroll: main is a fixed-height row (viewport minus the header),
+       and the sidebar / preview pane each scroll independently within it —
+       same pattern as lxn-customizer's .lxn-cust-split. */
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
 
     .layout {
       display: flex;
-      flex-wrap: wrap;
       gap: 24px;
-      align-items: flex-start;
+      align-items: stretch;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      min-height: 0;
+      overflow: hidden;
     }
 
-    .sidebar { flex: 1 1 440px; min-width: 320px; }
-    .preview-pane { flex: 9999 1 280px; min-width: 280px; }
+    .sidebar { flex: 1 1 440px; min-width: 320px; overflow-y: auto; min-height: 0; }
+    /* Never scrolls — the card inside fills this pane exactly (flex column) instead. */
+    .preview-pane { flex: 9999 1 280px; min-width: 280px; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
 
     @media (max-width: 768px) {
-      .sidebar, .preview-pane { flex: 1 1 100%; }
-      .preview-card { position: static; }
+      /* Below the breakpoint, drop the split-scroll and let the whole
+         component flow/scroll as one page instead — two independently
+         scrolling narrow columns don't work well stacked. */
+      :host { height: auto; overflow: visible; }
+      main { overflow: visible; }
+      .layout { flex-wrap: wrap; overflow: visible; }
+      .sidebar, .preview-pane { flex: 1 1 100%; overflow: visible; min-height: auto; display: block; }
+      .preview-card { flex: none; }
+      .preview-loading { flex: none; height: 300px; }
+      .empty-preview { flex: none; height: 400px; }
+      .pdf-frame { flex: none; height: 700px; }
     }
 
     /* Cards */
@@ -399,6 +465,8 @@ export class LexenOfferSheet extends LitElement {
       opacity: 0.6;
     }
 
+    .pill-toggle:hover { border-color: #98a2b3; color: #667085; }
+
     /* Buttons */
     .btn {
       display: inline-flex;
@@ -446,10 +514,16 @@ export class LexenOfferSheet extends LitElement {
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Preview */
-    .preview-card { position: sticky; top: 24px; }
+    .preview-card {
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
     .preview-loading {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 300px; gap: 14px; color: #888; font-size: 14px;
+      width: 100%; aspect-ratio: 612 / 792; gap: 14px; color: #888; font-size: 14px;
     }
     .pulse-dots { display: flex; gap: 7px; }
     .pulse-dots span {
@@ -465,20 +539,22 @@ export class LexenOfferSheet extends LitElement {
 
     .pdf-frame {
       width: 100%;
-      height: 700px;
+      aspect-ratio: 612 / 792; /* US Letter — matches render.py's PAGE_W/PAGE_H */
+      height: auto;
       border: 1px solid #dde1e8;
       border-radius: 8px;
       background: #e8e8e8;
     }
 
-    .preview-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .preview-card-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .preview-card-header h2 { margin: 0; }
     .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
     .preview-actions .btn { width: auto; flex: 1; }
 
     .preview-title-group { display: flex; align-items: center; gap: 8px; }
-    .preview-title-group h2 { line-height: 1; transition: color 0.15s; }
+    .preview-title-group h2 { line-height: 1; }
 
+    /* REMOVED (kept for reference — old clickable inline refresh trigger)
     .preview-refresh-trigger {
       display: flex;
       align-items: center;
@@ -488,13 +564,13 @@ export class LexenOfferSheet extends LitElement {
     .preview-refresh-trigger:hover:not(.busy) h2 { color: #004f5f; text-decoration: underline; }
     .preview-refresh-trigger:hover:not(.busy) .preview-refresh-icon { color: #004f5f; }
     .preview-refresh-trigger.busy { cursor: not-allowed; opacity: 0.45; }
-
     .preview-refresh-icon {
       display: flex;
       align-items: center;
       flex-shrink: 0;
       transition: color 0.15s;
     }
+    */
 
     .preview-status-dot {
       display: inline-block;
@@ -506,6 +582,31 @@ export class LexenOfferSheet extends LitElement {
     }
     .preview-status-dot.stale { background: #f59f00; }
 
+    /* Apply — greys out with no pending changes, lights up (with a Discard
+       split side-button) once something's been edited. Mirrors .split-btn-wrap
+       below, used for Send. */
+    .apply-btn-wrap { display: flex; gap: 0; width: 100%; }
+    .apply-main {
+      flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+      background: #35BB9C; color: #fff; border: none;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      transition: background 0.15s; text-align: center;
+    }
+    .apply-main.split { border-radius: 8px 0 0 8px; }
+    .apply-main:hover:not(:disabled) { background: #2a9880; }
+    .apply-main.inactive, .apply-main:disabled { background: #d0d5dd; color: #667085; cursor: not-allowed; }
+    .apply-discard-btn {
+      width: 34px; flex-shrink: 0; padding: 0;
+      background: #2a9880; color: #fff; border: none;
+      border-left: 1px solid rgba(255,255,255,0.25);
+      border-radius: 0 8px 8px 0; cursor: pointer;
+      font-size: 14px; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .apply-discard-btn:hover:not(:disabled) { background: #1e7a68; }
+    .apply-discard-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* REMOVED (kept for reference — old "Refresh Preview" text button)
     .refresh-text-btn {
       display: flex;
       align-items: center;
@@ -523,12 +624,14 @@ export class LexenOfferSheet extends LitElement {
     }
     .refresh-text-btn:hover:not(:disabled) { color: #004f5f; text-decoration: underline; }
     .refresh-text-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    */
 
     .empty-preview {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 400px;
+      width: 100%;
+      aspect-ratio: 612 / 792;
       color: #aab4c0;
       font-size: 14px;
       border: 2px dashed #dde1e8;
@@ -933,6 +1036,7 @@ export class LexenOfferSheet extends LitElement {
     this._photosPerRow = 3;
     this._discLayout = 'horizontal';
     this._marketDisplay = 'full';
+    this._scenarioLayout = 'tiles';
 
     // Layout order
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
@@ -947,6 +1051,10 @@ export class LexenOfferSheet extends LitElement {
       'valuation.tax_savings': true,
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
+      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
+        [`market_scenarios.${f.key}`, true],
+        [`selected_scenarios.${f.key}`, true],
+      ])),
     };
 
     // Group states
@@ -961,6 +1069,9 @@ export class LexenOfferSheet extends LitElement {
       photos: 'checked',
       signature: 'checked',
     };
+
+    // Pill-row expand/collapse — all groups start collapsed.
+    this._pillsOpen = { valuation: false, market_scenarios: false, selected_scenarios: false };
 
     // Finalized state
     this._finalized = false;
@@ -997,6 +1108,7 @@ export class LexenOfferSheet extends LitElement {
       photos_per_row: false,
       disc_layout:    false,
       market_display: false,
+      scenario_layout: false,
       disclaimer:     false,
       section_order:  false,
       valuation:        false,
@@ -1030,6 +1142,7 @@ export class LexenOfferSheet extends LitElement {
       photosPerRow: this._photosPerRow,
       discLayout: this._discLayout,
       marketDisplay: this._marketDisplay,
+      scenarioLayout: this._scenarioLayout,
       sectionOrder: [...this._sectionOrder],
       pills: { ...this._pills },
       groups: { ...this._groups },
@@ -1057,6 +1170,7 @@ export class LexenOfferSheet extends LitElement {
     if (d.font_size_index != null)  this._fontSizeIndex         = d.font_size_index;
     if (d.photos_per_row != null)   this._photosPerRow          = d.photos_per_row;
     if (d.disc_layout != null)      this._discLayout            = d.disc_layout;
+    if (d.scenario_layout != null)  this._scenarioLayout        = d.scenario_layout;
     if (d.disclaimer_text != null)  this._disclaimerText        = d.disclaimer_text;
     if (d.disclaimer_punct != null) this._disclaimerPunct       = d.disclaimer_punct;
     if (d.selected_emp_idx != null) this._selectedEmployeeIndex = d.selected_emp_idx;
@@ -1132,10 +1246,28 @@ export class LexenOfferSheet extends LitElement {
     // Clear "Changes saved" message when the user modifies any setting
     if (this._savedConfirm && !changedProps.has('_savedConfirm')) {
       const settingKeys = ['_mode', '_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
-        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay',
+        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay', '_scenarioLayout',
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex', '_locks'];
       if (settingKeys.some(k => changedProps.has(k))) {
         this._savedConfirm = false;
+      }
+    }
+
+    // Editing anything while in One-Page mode "bakes" the current (trimmed) state
+    // into Full and drops the tab back to Full — One-Page stops being a separate
+    // cached configuration the moment you touch something, rather than reverting
+    // to whatever Full was before you entered One-Page.
+    // !changedProps.has('_mode') excludes the mode-switch's own update (which sets
+    // _mode alongside its own group-forcing) — only a change on a LATER cycle,
+    // while already sitting in One-Page, should trigger this. !wasDataLoad excludes
+    // sharedDisplay/pdfDisplay data-load cascades (same guard used below).
+    if (this._mode === 'one_page' && !changedProps.has('_mode') && !wasDataLoad) {
+      const editKeys = ['_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
+        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay', '_scenarioLayout',
+        '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex'];
+      if (editKeys.some(k => changedProps.has(k))) {
+        this._mode = 'full';
+        this._preOnePageState = null;
       }
     }
 
@@ -1159,15 +1291,16 @@ export class LexenOfferSheet extends LitElement {
     }
 
     // Mark preview stale when settings change after the initial generate.
-    // User must click Refresh Preview to regenerate. (No longer gated on !_finalized —
-    // the visual "settings locked" overlay this used to pair with is currently unused,
-    // so settings stay editable after finalizing and staleness must still track that.)
+    // No auto-save, no auto-regenerate — the user must click Apply, which does
+    // both together. (No longer gated on !_finalized — the visual "settings
+    // locked" overlay this used to pair with is currently unused, so settings
+    // stay editable after finalizing and staleness must still track that.)
     if (this._autoPreviewDone && this.apiBaseUrl) {
-      const isDataLoad = changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay')
+      const isDataLoad = wasDataLoad || changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay')
         || changedProps.has('payload') || changedProps.has('employees');
       const settingKeys = [
         '_mode', '_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
-        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay',
+        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay', '_scenarioLayout',
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex',
       ];
       if (!isDataLoad && settingKeys.some(k => changedProps.has(k))) {
@@ -1175,6 +1308,7 @@ export class LexenOfferSheet extends LitElement {
       }
     }
 
+    /* ── REMOVED (kept for reference — revert here for auto-save-on-every-change) ──
     // Auto-dispatch display-save on every config change (mirrors customizer behaviour)
     if (this._autoPreviewDone && !wasDataLoad
         && !changedProps.has('sharedDisplay') && !changedProps.has('pdfDisplay')) {
@@ -1187,6 +1321,7 @@ export class LexenOfferSheet extends LitElement {
         this._dispatchDisplaySave();
       }
     }
+    ── end removed ────────────────────────────────────────────────────────────── */
 
     // Set indeterminate property on group checkboxes (can't be done via attribute)
     const root = this.shadowRoot;
@@ -1241,6 +1376,12 @@ export class LexenOfferSheet extends LitElement {
       if (active === 0) newGroups.observations = 'unchecked';
       else if (active === pillKeys.length) newGroups.observations = 'checked';
       else newGroups.observations = 'indeterminate';
+    } else if (group === 'market_scenarios' || group === 'selected_scenarios') {
+      const pillKeys = SCENARIO_FIELDS.map(f => `${group}.${f.key}`);
+      const active = pillKeys.filter(k => this._pills[k]).length;
+      if (active === 0) newGroups[group] = 'unchecked';
+      else if (active === pillKeys.length) newGroups[group] = 'checked';
+      else newGroups[group] = 'indeterminate';
     }
 
     this._groups = newGroups;
@@ -1277,7 +1418,6 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _isSectionDisabled(section) {
-    if (this._isOnePage() && ['disclosures', 'recon', 'photos'].includes(section)) return true;
     return this._groups[section] === 'unchecked';
   }
 
@@ -1291,8 +1431,8 @@ export class LexenOfferSheet extends LitElement {
         disclosures:      g.disclosures      !== 'unchecked',
         observations:     g.observations     !== 'unchecked',
         market:           g.market           !== 'unchecked',
-        market_scenarios: g.market_scenarios === 'checked',
-        selected_scenarios: g.selected_scenarios === 'checked',
+        market_scenarios: g.market_scenarios !== 'unchecked',
+        selected_scenarios: g.selected_scenarios !== 'unchecked',
         recon:            g.recon            !== 'unchecked',
         photos:           g.photos           !== 'unchecked',
       },
@@ -1311,6 +1451,7 @@ export class LexenOfferSheet extends LitElement {
       font_size_index:  this._fontSizeIndex,
       photos_per_row:   this._photosPerRow,
       disc_layout:      this._discLayout,
+      scenario_layout:  this._scenarioLayout,
       disclaimer_text:  this._disclaimerText || '',
       disclaimer_punct: this._disclaimerPunct ?? ',',
       selected_emp_idx: this._selectedEmployeeIndex,
@@ -1341,8 +1482,8 @@ export class LexenOfferSheet extends LitElement {
         observations_comments: p['sections.observations_comments'],
         market_summary: (g.market === 'checked') && (this._isOnePage() || this._marketDisplay === 'summary'),
         market_comparables: (g.market === 'checked') && !this._isOnePage() && this._marketDisplay === 'full',
-        market_scenarios: g.market_scenarios === 'checked',
-        selected_scenarios: g.selected_scenarios === 'checked',
+        market_scenarios: this._isOnePage() ? false : (g.market_scenarios === 'checked' || g.market_scenarios === 'indeterminate'),
+        selected_scenarios: this._isOnePage() ? false : (g.selected_scenarios === 'checked' || g.selected_scenarios === 'indeterminate'),
         recon_breakdown: this._isOnePage() ? false : (g.recon === 'checked'),
         photos: this._isOnePage() ? false : (g.photos === 'checked'),
       },
@@ -1351,6 +1492,11 @@ export class LexenOfferSheet extends LitElement {
         condition: p['general.condition'],
         value_display: this._valueDisplay,
       },
+      scenarios: {
+        market: Object.fromEntries(SCENARIO_FIELDS.map(f => [f.key, p[`market_scenarios.${f.key}`]])),
+        selected: Object.fromEntries(SCENARIO_FIELDS.map(f => [f.key, p[`selected_scenarios.${f.key}`]])),
+      },
+      scenario_layout: this._scenarioLayout,
     };
 
     return display;
@@ -1363,33 +1509,49 @@ export class LexenOfferSheet extends LitElement {
     const isOnePage = value === 'one_page';
 
     if (isOnePage) {
+      // Snapshot the true prior state (including pills) so exiting without any
+      // further edit restores exactly what Full had — the additive re-check
+      // below only touches the live one-page view, not this cache.
       this._preOnePageState = {
         groups: { ...this._groups },
+        pills: { ...this._pills },
         marketDisplay: this._marketDisplay,
         sectionOrder: [...this._sectionOrder],
       };
 
       const newGroups = { ...this._groups };
-      ['disclosures', 'recon', 'photos'].forEach(g => { newGroups[g] = 'unchecked'; });
+      // One-page's format can't fit these — categorically excluded regardless of prior state.
+      ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'].forEach(g => { newGroups[g] = 'unchecked'; });
+      // Additive for everything one-page CAN fit: re-check anything the user had
+      // hidden, so a trimmed-down Full config doesn't produce a sparser-than-
+      // necessary one-pager just because it's not adaptively looking for more
+      // content to fill the page.
+      ['valuation', 'observations', 'market'].forEach(g => { newGroups[g] = 'checked'; });
       this._groups = newGroups;
+
+      const newPills = { ...this._pills };
+      ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings',
+        'sections.observations_highlights', 'sections.observations_comments'].forEach(k => { newPills[k] = true; });
+      this._pills = newPills;
+
       this._marketDisplay = 'summary';
 
-      const disabled = ['disclosures', 'recon', 'photos'];
+      const disabled = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
       const enabled = this._sectionOrder.filter(s => !disabled.includes(s));
       const disabledOrdered = this._sectionOrder.filter(s => disabled.includes(s));
       this._sectionOrder = [...enabled, ...disabledOrdered];
     } else {
       if (this._preOnePageState) {
         const saved = this._preOnePageState;
-        const newGroups = { ...this._groups };
-        ['disclosures', 'recon', 'photos'].forEach(g => { newGroups[g] = saved.groups[g] ?? 'checked'; });
-        this._groups = newGroups;
+        this._groups = { ...saved.groups };
+        this._pills = { ...saved.pills };
         this._marketDisplay = saved.marketDisplay;
         this._sectionOrder = saved.sectionOrder;
         this._preOnePageState = null;
       } else {
         const newGroups = { ...this._groups };
-        ['disclosures', 'recon', 'photos'].forEach(g => { newGroups[g] = 'checked'; });
+        ['disclosures', 'recon', 'photos', 'valuation', 'observations', 'market'].forEach(g => { newGroups[g] = 'checked'; });
+        ['market_scenarios', 'selected_scenarios'].forEach(g => { newGroups[g] = 'unchecked'; });
         this._groups = newGroups;
         this._marketDisplay = 'full';
         this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
@@ -1414,9 +1576,12 @@ export class LexenOfferSheet extends LitElement {
         newPills[k] = checked;
       });
       this._pills = newPills;
+    } else if (group === 'market_scenarios' || group === 'selected_scenarios') {
+      SCENARIO_FIELDS.forEach(f => { newPills[`${group}.${f.key}`] = checked; });
+      this._pills = newPills;
     }
 
-    if (group !== 'signature' && group !== 'market_scenarios' && group !== 'selected_scenarios') {
+    if (group !== 'signature') {
       if (!checked) {
         this._syncLayoutOrder(group);
       } else {
@@ -1430,7 +1595,7 @@ export class LexenOfferSheet extends LitElement {
     newPills[path] = !newPills[path];
     this._pills = newPills;
 
-    if (group && ['valuation', 'observations'].includes(group)) {
+    if (group && ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'].includes(group)) {
       this._recomputeGroupState(group);
 
       // If group is now fully unchecked, push section to bottom
@@ -1438,6 +1603,10 @@ export class LexenOfferSheet extends LitElement {
         this._syncLayoutOrder(group);
       }
     }
+  }
+
+  _togglePillsOpen(group) {
+    this._pillsOpen = { ...this._pillsOpen, [group]: !this._pillsOpen[group] };
   }
 
   _handleFontSizeStep(dir) {
@@ -1458,6 +1627,7 @@ export class LexenOfferSheet extends LitElement {
     if (controlId === 'value-display') this._valueDisplay = value;
     else if (controlId === 'disc-layout') this._discLayout = value;
     else if (controlId === 'market-display') this._marketDisplay = value;
+    else if (controlId === 'scenario-layout') this._scenarioLayout = value;
   }
 
   _handleTaxRateInput(e) {
@@ -1490,6 +1660,52 @@ export class LexenOfferSheet extends LitElement {
     }));
   }
 
+  /** Captures the current customize-panel state as the "last applied" baseline,
+   * called whenever a generate succeeds (initial auto-preview, Apply, Reopen). */
+  _snapshotAppliedState() {
+    this._appliedSnapshot = {
+      mode: this._mode,
+      valueDisplay: this._valueDisplay,
+      taxRatePct: this._taxRatePct,
+      profitName: this._profitName,
+      disclaimerText: this._disclaimerText,
+      disclaimerPunct: this._disclaimerPunct,
+      fontSizeIndex: this._fontSizeIndex,
+      photosPerRow: this._photosPerRow,
+      discLayout: this._discLayout,
+      marketDisplay: this._marketDisplay,
+      scenarioLayout: this._scenarioLayout,
+      sectionOrder: [...this._sectionOrder],
+      pills: { ...this._pills },
+      groups: { ...this._groups },
+      selectedEmployeeIndex: this._selectedEmployeeIndex,
+    };
+  }
+
+  /** Reverts unapplied edits back to the last-applied snapshot — distinct from
+   * "Reset to template", which goes back to the template defaults instead. */
+  _handleDiscardChanges() {
+    if (!this._appliedSnapshot) return;
+    this._pendingDataLoad = true; // suppress re-marking stale during this cascade
+    const s = this._appliedSnapshot;
+    this._mode                  = s.mode;
+    this._valueDisplay          = s.valueDisplay;
+    this._taxRatePct            = s.taxRatePct;
+    this._profitName            = s.profitName;
+    this._disclaimerText        = s.disclaimerText;
+    this._disclaimerPunct       = s.disclaimerPunct;
+    this._fontSizeIndex         = s.fontSizeIndex;
+    this._photosPerRow          = s.photosPerRow;
+    this._discLayout            = s.discLayout;
+    this._marketDisplay         = s.marketDisplay;
+    this._scenarioLayout        = s.scenarioLayout;
+    this._sectionOrder          = [...s.sectionOrder];
+    this._pills                 = { ...s.pills };
+    this._groups                = { ...s.groups };
+    this._selectedEmployeeIndex = s.selectedEmployeeIndex;
+    this._previewStale = false;
+  }
+
   _resetToggles() {
     this._mode = 'full';
     this._valueDisplay = 'offer';
@@ -1504,6 +1720,7 @@ export class LexenOfferSheet extends LitElement {
     this._photosPerRow = 3;
     this._discLayout = 'horizontal';
     this._marketDisplay = 'full';
+    this._scenarioLayout = 'tiles';
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
     this._pills = {
       'general.condition': true,
@@ -1514,6 +1731,10 @@ export class LexenOfferSheet extends LitElement {
       'valuation.tax_savings': true,
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
+      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
+        [`market_scenarios.${f.key}`, true],
+        [`selected_scenarios.${f.key}`, true],
+      ])),
     };
     this._groups = {
       valuation: 'checked', disclosures: 'checked', observations: 'checked',
@@ -1765,12 +1986,6 @@ export class LexenOfferSheet extends LitElement {
 
       const requestBody = { ...commonFields, raw_payload: payloadData };
 
-      alert(
-        'market_scenarios flag: ' + display.sections.market_scenarios +
-        '\nselected_scenarios flag: ' + display.sections.selected_scenarios +
-        '\n\nraw_payload.scenarios:\n' + JSON.stringify(payloadData.scenarios, null, 2)
-      );
-
       // Snapshot the printout inputs so _handleSend can include them in the pdf-send event.
       this._lastPrintoutRequest = {
         raw_payload:    payloadData,
@@ -1803,6 +2018,7 @@ export class LexenOfferSheet extends LitElement {
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
         this._previewStale = false;
+        this._snapshotAppliedState();
         this._doneSentVia  = null;
         this._pdfSent      = false;
         this.dispatchEvent(new CustomEvent('offer-generated', {
@@ -1837,6 +2053,7 @@ export class LexenOfferSheet extends LitElement {
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
         this._previewStale = false;
+        this._snapshotAppliedState();
         this._doneSentVia  = null;
         this._pdfSent      = false;
         this.dispatchEvent(new CustomEvent('offer-generated', {
@@ -1965,20 +2182,26 @@ export class LexenOfferSheet extends LitElement {
     `;
   }
 
+  /* ── REMOVED (kept for reference — old "Refresh Preview" button, replaced by
+     the Apply split-button rendered in its place inside _renderCustomizeCard's
+     .action-btns below):
+
+  ${this._previewStale ? html`
+    <button
+      class="refresh-text-btn"
+      ?disabled="${this._generating || this._finalizing}"
+      @click="${() => this._handleGenerate()}"
+    >Refresh Preview ↻</button>
+  ` : nothing}
+
+  ── end removed ─────────────────────────────────────────────────────────────── */
 
   _renderCustomizeCard() {
     const onePage = this._isOnePage();
     const fontLabel = FONT_SIZE_OPTIONS[this._fontSizeIndex].label;
 
     // Show/hide groups always in default order
-    const sectionGroups = DEFAULT_LAYOUT_ORDER.flatMap(sec => {
-      const rows = [this._renderShowHideGroup(sec)];
-      if (sec === 'market') {
-        rows.push(this._renderMarketScenariosGroup());
-        rows.push(this._renderSelectedScenariosGroup());
-      }
-      return rows;
-    });
+    const sectionGroups = DEFAULT_LAYOUT_ORDER.map(sec => this._renderShowHideGroup(sec));
 
     return html`
       <div class="card">
@@ -2086,23 +2309,23 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('font_size')}
               </div>
             </div>
-            <div class="config-row ${onePage ? 'disabled' : ''}">
+            <div class="config-row">
               <span>Photos (per row)</span>
               <div class="ctrl-group ${this._isLocked('photos_per_row') ? 'locked' : ''}">
                 <div class="stepper">
-                  <button class="step-btn" ?disabled="${this._photosPerRow <= 2 || onePage || this._isLocked('photos_per_row')}"
+                  <button class="step-btn" ?disabled="${this._photosPerRow <= 2 || this._isLocked('photos_per_row')}"
                           @click="${() => this._handlePhotosPerRowStep(-1)}">−</button>
                   <span class="stepper-value">${this._photosPerRow}</span>
-                  <button class="step-btn" ?disabled="${this._photosPerRow >= 4 || onePage || this._isLocked('photos_per_row')}"
+                  <button class="step-btn" ?disabled="${this._photosPerRow >= 4 || this._isLocked('photos_per_row')}"
                           @click="${() => this._handlePhotosPerRowStep(1)}">+</button>
                 </div>
                 ${this._lk('photos_per_row')}
               </div>
             </div>
-            <div class="config-row ${onePage ? 'disabled' : ''}">
+            <div class="config-row">
               <span>Disclosures</span>
               <div class="ctrl-group ${this._isLocked('disc_layout') ? 'locked' : ''}">
-                <div class="segmented-control ${onePage ? 'disabled' : ''}">
+                <div class="segmented-control">
                   <button class="seg-btn ${this._discLayout === 'vertical' ? 'active' : ''}"
                           ?disabled="${this._isLocked('disc_layout')}"
                           @click="${() => this._handleSegmentedClick('disc-layout', 'vertical')}">Vertical</button>
@@ -2113,10 +2336,10 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('disc_layout')}
               </div>
             </div>
-            <div class="config-row ${onePage ? 'disabled' : ''}">
+            <div class="config-row">
               <span>Market</span>
               <div class="ctrl-group ${this._isLocked('market_display') ? 'locked' : ''}">
-                <div class="segmented-control ${onePage ? 'disabled' : ''}">
+                <div class="segmented-control">
                   <button class="seg-btn ${this._marketDisplay === 'summary' ? 'active' : ''}"
                           ?disabled="${this._isLocked('market_display')}"
                           @click="${() => this._handleSegmentedClick('market-display', 'summary')}">Summary</button>
@@ -2125,6 +2348,20 @@ export class LexenOfferSheet extends LitElement {
                           @click="${() => this._handleSegmentedClick('market-display', 'full')}">Full</button>
                 </div>
                 ${this._lk('market_display')}
+              </div>
+            </div>
+            <div class="config-row">
+              <span>Scenarios</span>
+              <div class="ctrl-group ${this._isLocked('scenario_layout') ? 'locked' : ''}">
+                <div class="segmented-control">
+                  <button class="seg-btn ${this._scenarioLayout === 'tiles' ? 'active' : ''}"
+                          ?disabled="${this._isLocked('scenario_layout')}"
+                          @click="${() => this._handleSegmentedClick('scenario-layout', 'tiles')}">Tiles</button>
+                  <button class="seg-btn ${this._scenarioLayout === 'rows' ? 'active' : ''}"
+                          ?disabled="${this._isLocked('scenario_layout')}"
+                          @click="${() => this._handleSegmentedClick('scenario-layout', 'rows')}">Rows</button>
+                </div>
+                ${this._lk('scenario_layout')}
               </div>
             </div>
             <div style="padding:8px 0 4px;">
@@ -2251,19 +2488,27 @@ export class LexenOfferSheet extends LitElement {
           <button
             class="btn btn-green"
             ?disabled="${this._generating || this._finalizing}"
-            @click="${this._handleApply}"
+            @click="${() => this._handleApply()}"
           >${this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template'}</button>
         ` : nothing}
 
         ${!this.templateMode ? html`
           <div class="action-btns">
-            ${this._previewStale ? html`
+            <div class="apply-btn-wrap">
               <button
-                class="refresh-text-btn"
-                ?disabled="${this._generating || this._finalizing}"
-                @click="${() => this._handleGenerate()}"
-              >Refresh Preview ↻</button>
-            ` : nothing}
+                class="apply-main ${this._previewStale ? 'split' : 'inactive'}"
+                ?disabled="${!this._previewStale || this._generating || this._finalizing}"
+                @click="${() => this._handleApply()}"
+              >${this._generating || this._finalizing ? 'Applying…' : 'Apply'}</button>
+              ${this._previewStale ? html`
+                <button
+                  class="apply-discard-btn"
+                  title="Discard unapplied changes"
+                  ?disabled="${this._generating || this._finalizing}"
+                  @click="${() => this._handleDiscardChanges()}"
+                >${undoSvg}</button>
+              ` : nothing}
+            </div>
             ${this._renderSendInline()}
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
@@ -2283,8 +2528,9 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _renderShowHideGroup(section) {
-    const onePage    = this._isOnePage();
-    const groupDisabled = onePage && ['disclosures', 'recon', 'photos'].includes(section);
+    if (section === 'market_scenarios') return this._renderScenarioGroup('market_scenarios', 'Market Scenarios', 'Market');
+    if (section === 'selected_scenarios') return this._renderScenarioGroup('selected_scenarios', 'Selected Scenarios', 'Selected');
+
     const locked     = this._isLocked(section);
     const groupState = this._groups[section];
     const LABELS     = { valuation:'Valuation', disclosures:'Disclosures', observations:'Observations', market:'Market Comparables', recon:'Recon', photos:'Photos' };
@@ -2302,21 +2548,25 @@ export class LexenOfferSheet extends LitElement {
       </div>`;
 
     if (section === 'valuation') {
+      const open = !!this._pillsOpen.valuation;
       return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="valuation">
+        <div class="toggle-group" data-group="valuation">
           ${row}
           <div class="pill-group ${locked ? 'locked' : ''}">
-            ${this._renderPill('valuation.retail_value', 'Retail Value', 'valuation')}
-            ${this._renderPill('valuation.recon', 'Recon', 'valuation')}
-            ${this._renderPill('valuation.fixed_overhead', 'Fixed Overhead', 'valuation')}
-            ${this._renderPill('valuation.target_profit', this._profitName || 'Target Profit', 'valuation')}
-            ${this._renderPill('valuation.tax_savings', 'Tax Savings', 'valuation')}
+            ${this._renderPillsToggle('valuation')}
+            ${open ? html`
+              ${this._renderPill('valuation.retail_value', 'Retail Value', 'valuation')}
+              ${this._renderPill('valuation.recon', 'Recon', 'valuation')}
+              ${this._renderPill('valuation.fixed_overhead', 'Fixed Overhead', 'valuation')}
+              ${this._renderPill('valuation.target_profit', this._profitName || 'Target Profit', 'valuation')}
+              ${this._renderPill('valuation.tax_savings', 'Tax Savings', 'valuation')}
+            ` : nothing}
           </div>
         </div>`;
     }
     if (section === 'observations') {
       return html`
-        <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="observations">
+        <div class="toggle-group" data-group="observations">
           ${row}
           <div class="pill-group ${locked ? 'locked' : ''}">
             ${this._renderPill('sections.observations_highlights', 'Highlights', 'observations')}
@@ -2325,47 +2575,45 @@ export class LexenOfferSheet extends LitElement {
         </div>`;
     }
     return html`
-      <div class="toggle-group ${groupDisabled ? 'disabled' : ''}" data-group="${section}">
+      <div class="toggle-group" data-group="${section}">
         ${row}
       </div>`;
   }
 
   /** Independent toggle — not nested under Market Comparables, not part of the
-   * draggable section order (mirrors how Signature is handled). */
-  _renderMarketScenariosGroup() {
-    const locked = this._isLocked('market_scenarios');
-    const checked = this._groups.market_scenarios === 'checked';
+   * draggable section order (mirrors how Signature is handled). Each of the 12
+   * KPI fields gets its own pill, same idiom as Valuation/Observations. */
+  _renderPillsToggle(group) {
+    const open = !!this._pillsOpen[group];
     return html`
-      <div class="toggle-group" data-group="market_scenarios">
-        <div class="group-row ${locked ? 'group-row-locked' : ''}">
-          <label class="group-header">
-            <input type="checkbox" data-group="market_scenarios"
-              .checked="${checked}"
-              ?disabled="${locked}"
-              @change="${(e) => this._handleGroupChange('market_scenarios', e.target.checked)}"
-            >Market Scenarios
-          </label>
-          ${this._lk('market_scenarios')}
-        </div>
-      </div>`;
+      <span
+        class="pill pill-toggle"
+        title="${open ? 'Collapse fields' : 'Expand fields'}"
+        @click="${() => this._togglePillsOpen(group)}"
+      >${open ? 'Collapse ‹' : 'Expand ›'}</span>
+    `;
   }
 
-  /** Independent toggle — not nested under Market Comparables, not part of the
-   * draggable section order (mirrors how Market Scenarios / Signature are handled). */
-  _renderSelectedScenariosGroup() {
-    const locked = this._isLocked('selected_scenarios');
-    const checked = this._groups.selected_scenarios === 'checked';
+  _renderScenarioGroup(group, title, basis) {
+    const locked = this._isLocked(group);
+    const groupState = this._groups[group];
+    const checked = groupState === 'checked' || groupState === 'indeterminate';
+    const open = !!this._pillsOpen[group];
     return html`
-      <div class="toggle-group" data-group="selected_scenarios">
+      <div class="toggle-group" data-group="${group}">
         <div class="group-row ${locked ? 'group-row-locked' : ''}">
           <label class="group-header">
-            <input type="checkbox" data-group="selected_scenarios"
+            <input type="checkbox" data-group="${group}"
               .checked="${checked}"
               ?disabled="${locked}"
-              @change="${(e) => this._handleGroupChange('selected_scenarios', e.target.checked)}"
-            >Selected Scenarios
+              @change="${(e) => this._handleGroupChange(group, e.target.checked)}"
+            >${title}
           </label>
-          ${this._lk('selected_scenarios')}
+          ${this._lk(group)}
+        </div>
+        <div class="pill-group ${locked ? 'locked' : ''}">
+          ${this._renderPillsToggle(group)}
+          ${open ? SCENARIO_FIELDS.map(f => this._renderPill(`${group}.${f.key}`, f.label.replace('{basis}', basis), group)) : nothing}
         </div>
       </div>`;
   }
@@ -2399,6 +2647,27 @@ export class LexenOfferSheet extends LitElement {
     `;
   }
 
+  /* ── REMOVED (kept for reference — the old clickable inline refresh trigger,
+     replaced by the Apply button in the sidebar). Was the whole contents of
+     .preview-title-group in _renderPreviewPane below:
+
+  <div class="preview-title-group">
+    <span
+      class="preview-refresh-trigger ${busy ? 'busy' : ''}"
+      title="${this._previewStale ? 'Refresh preview' : ''}"
+      @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}"
+    >
+      ${this._previewStale ? html`<span class="preview-refresh-icon">↻</span>` : nothing}
+      <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+    </span>
+    <span
+      class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
+      title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"
+    ></span>
+  </div>
+
+  ── end removed ─────────────────────────────────────────────────────────────── */
+
   _renderPreviewPane() {
     const hasPdf = !!this._pdfUrl;
     const busy = this._generating || this._finalizing;
@@ -2411,17 +2680,10 @@ export class LexenOfferSheet extends LitElement {
         <div class="card preview-card">
           <div class="preview-card-header">
             <div class="preview-title-group">
-              <span
-                class="preview-refresh-trigger ${busy ? 'busy' : ''}"
-                title="${this._previewStale ? 'Refresh preview' : ''}"
-                @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}"
-              >
-                ${this._previewStale ? html`<span class="preview-refresh-icon">↻</span>` : nothing}
-                <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
-              </span>
+              <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
               <span
                 class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
-                title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"
+                title="${this._previewStale ? 'Unapplied changes — click Apply to update' : 'Up to date'}"
               ></span>
             </div>
             ${!this.templateMode && hasPdf && !busy && canInlinePdf ? html`
@@ -2443,7 +2705,7 @@ export class LexenOfferSheet extends LitElement {
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
           ` : nothing}
           ${hasPdf && !busy && !canInlinePdf ? html`
-            <div style="display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
+            <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
               ${window.natively ? html`
                 <button
                   class="btn btn-primary"
@@ -2470,9 +2732,9 @@ export class LexenOfferSheet extends LitElement {
 
   render() {
     return html`
-      ${this._renderHeader()}
-      <main @click="${() => { if (this._splitOpen) this._splitOpen = false; }}">
-        <div class="wrap">
+      <div class="shell">
+        ${this._renderHeader()}
+        <main @click="${() => { if (this._splitOpen) this._splitOpen = false; }}">
           <div class="layout">
             <div class="sidebar">
               ${this._renderOfferCard()}
@@ -2480,8 +2742,8 @@ export class LexenOfferSheet extends LitElement {
             </div>
             ${this._renderPreviewPane()}
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     `;
   }
 }

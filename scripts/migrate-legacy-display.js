@@ -25,7 +25,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { pathToFileURL } from 'url';
 
-const DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'recon', 'photos'];
+const DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'market_scenarios', 'selected_scenarios', 'recon', 'photos'];
 
 const DEFAULT_PILLS = {
   'general.condition': true,
