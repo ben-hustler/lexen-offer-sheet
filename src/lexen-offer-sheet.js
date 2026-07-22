@@ -477,6 +477,7 @@ export class LexenOfferSheet extends LitElement {
     .preview-actions .btn { width: auto; flex: 1; }
 
     .preview-title-group { display: flex; align-items: center; gap: 8px; }
+    .preview-title-group h2 { line-height: 1; }
 
     .preview-status-dot {
       display: inline-block;
@@ -2360,7 +2361,7 @@ export class LexenOfferSheet extends LitElement {
         <div class="card preview-card">
           <div class="preview-card-header">
             <div class="preview-title-group">
-              <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+              <h2 @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}">${canInlinePdf ? 'Preview' : 'PDF'}</h2>
               <span
                 class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
                 title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"
