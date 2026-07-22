@@ -1139,8 +1139,10 @@ export class LexenOfferSheet extends LitElement {
     }
 
     // Mark preview stale when settings change after the initial generate.
-    // User must click Refresh Preview to regenerate.
-    if (this._autoPreviewDone && this.apiBaseUrl && !this._finalized) {
+    // User must click Refresh Preview to regenerate. (No longer gated on !_finalized —
+    // the visual "settings locked" overlay this used to pair with is currently unused,
+    // so settings stay editable after finalizing and staleness must still track that.)
+    if (this._autoPreviewDone && this.apiBaseUrl) {
       const isDataLoad = changedProps.has('sharedDisplay') || changedProps.has('pdfDisplay')
         || changedProps.has('payload') || changedProps.has('employees');
       const settingKeys = [
