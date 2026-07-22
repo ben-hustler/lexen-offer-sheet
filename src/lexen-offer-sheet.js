@@ -109,6 +109,7 @@ const SECTION_LABELS = {
 const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const refreshSvg    = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 6.5A4.5 4.5 0 1 1 9.4 3.15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11 2.4V5.6H7.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -478,6 +479,28 @@ export class LexenOfferSheet extends LitElement {
 
     .preview-title-group { display: flex; align-items: center; gap: 8px; }
     .preview-title-group h2 { line-height: 1; }
+
+    .preview-refresh-trigger {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: -3px -6px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .preview-refresh-trigger:hover { background: #f2f4f7; }
+    .preview-refresh-trigger:hover h2 { color: #006073; }
+    .preview-refresh-trigger:hover .preview-refresh-icon { color: #006073; }
+    .preview-refresh-trigger.busy { cursor: default; pointer-events: none; }
+
+    .preview-refresh-icon {
+      display: flex;
+      align-items: center;
+      color: #f59f00;
+      flex-shrink: 0;
+    }
 
     .preview-status-dot {
       display: inline-block;
@@ -939,6 +962,7 @@ export class LexenOfferSheet extends LitElement {
       observations: 'checked',
       market: 'checked',
       market_scenarios: 'unchecked', // new feature — off by default
+      selected_scenarios: 'unchecked', // new feature — off by default
       recon: 'checked',
       photos: 'checked',
       signature: 'checked',
@@ -986,6 +1010,7 @@ export class LexenOfferSheet extends LitElement {
       observations:     false,
       market:           false,
       market_scenarios: false,
+      selected_scenarios: false,
       recon:            false,
       photos:           false,
       signature:        false,
@@ -1019,7 +1044,7 @@ export class LexenOfferSheet extends LitElement {
 
   _applySharedDisplay(d) {
     if (!d) return;
-    const GROUP_KEYS = ['valuation','disclosures','observations','market','market_scenarios','recon','photos'];
+    const GROUP_KEYS = ['valuation','disclosures','observations','market','market_scenarios','selected_scenarios','recon','photos'];
     const sec = d.sections || {};
     const newGroups = { ...this._groups };
     GROUP_KEYS.forEach(k => { if (sec[k] != null) newGroups[k] = sec[k] ? 'checked' : 'unchecked'; });
@@ -1273,6 +1298,7 @@ export class LexenOfferSheet extends LitElement {
         observations:     g.observations     !== 'unchecked',
         market:           g.market           !== 'unchecked',
         market_scenarios: g.market_scenarios === 'checked',
+        selected_scenarios: g.selected_scenarios === 'checked',
         recon:            g.recon            !== 'unchecked',
         photos:           g.photos           !== 'unchecked',
       },
@@ -1322,6 +1348,7 @@ export class LexenOfferSheet extends LitElement {
         market_summary: (g.market === 'checked') && (this._isOnePage() || this._marketDisplay === 'summary'),
         market_comparables: (g.market === 'checked') && !this._isOnePage() && this._marketDisplay === 'full',
         market_scenarios: g.market_scenarios === 'checked',
+        selected_scenarios: g.selected_scenarios === 'checked',
         recon_breakdown: this._isOnePage() ? false : (g.recon === 'checked'),
         photos: this._isOnePage() ? false : (g.photos === 'checked'),
       },
@@ -1395,7 +1422,7 @@ export class LexenOfferSheet extends LitElement {
       this._pills = newPills;
     }
 
-    if (group !== 'signature' && group !== 'market_scenarios') {
+    if (group !== 'signature' && group !== 'market_scenarios' && group !== 'selected_scenarios') {
       if (!checked) {
         this._syncLayoutOrder(group);
       } else {
@@ -1496,7 +1523,7 @@ export class LexenOfferSheet extends LitElement {
     };
     this._groups = {
       valuation: 'checked', disclosures: 'checked', observations: 'checked',
-      market: 'checked', market_scenarios: 'unchecked',
+      market: 'checked', market_scenarios: 'unchecked', selected_scenarios: 'unchecked',
       recon: 'checked', photos: 'checked', signature: 'checked',
     };
   }
@@ -1746,6 +1773,7 @@ export class LexenOfferSheet extends LitElement {
 
       alert(
         'market_scenarios flag: ' + display.sections.market_scenarios +
+        '\nselected_scenarios flag: ' + display.sections.selected_scenarios +
         '\n\nraw_payload.scenarios:\n' + JSON.stringify(payloadData.scenarios, null, 2)
       );
 
@@ -1951,7 +1979,10 @@ export class LexenOfferSheet extends LitElement {
     // Show/hide groups always in default order
     const sectionGroups = DEFAULT_LAYOUT_ORDER.flatMap(sec => {
       const rows = [this._renderShowHideGroup(sec)];
-      if (sec === 'market') rows.push(this._renderMarketScenariosGroup());
+      if (sec === 'market') {
+        rows.push(this._renderMarketScenariosGroup());
+        rows.push(this._renderSelectedScenariosGroup());
+      }
       return rows;
     });
 
@@ -2325,6 +2356,26 @@ export class LexenOfferSheet extends LitElement {
       </div>`;
   }
 
+  /** Independent toggle — not nested under Market Comparables, not part of the
+   * draggable section order (mirrors how Market Scenarios / Signature are handled). */
+  _renderSelectedScenariosGroup() {
+    const locked = this._isLocked('selected_scenarios');
+    const checked = this._groups.selected_scenarios === 'checked';
+    return html`
+      <div class="toggle-group" data-group="selected_scenarios">
+        <div class="group-row ${locked ? 'group-row-locked' : ''}">
+          <label class="group-header">
+            <input type="checkbox" data-group="selected_scenarios"
+              .checked="${checked}"
+              ?disabled="${locked}"
+              @change="${(e) => this._handleGroupChange('selected_scenarios', e.target.checked)}"
+            >Selected Scenarios
+          </label>
+          ${this._lk('selected_scenarios')}
+        </div>
+      </div>`;
+  }
+
   _renderPill(path, label, group) {
     const active = this._pills[path];
     return html`
@@ -2366,7 +2417,14 @@ export class LexenOfferSheet extends LitElement {
         <div class="card preview-card">
           <div class="preview-card-header">
             <div class="preview-title-group">
-              <h2 @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}">${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+              <span
+                class="preview-refresh-trigger ${busy ? 'busy' : ''}"
+                title="${this._previewStale ? 'Refresh preview' : ''}"
+                @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}"
+              >
+                ${this._previewStale ? html`<span class="preview-refresh-icon">${refreshSvg}</span>` : nothing}
+                <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+              </span>
               <span
                 class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
                 title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"

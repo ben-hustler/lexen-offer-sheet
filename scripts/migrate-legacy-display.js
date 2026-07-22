@@ -43,7 +43,7 @@ const DEFAULT_LOCKS = {
   profit_label: false, font_size: false, photos_per_row: false, disc_layout: false,
   market_display: false, disclaimer: false, section_order: false,
   valuation: false, disclosures: false, observations: false,
-  market: false, market_scenarios: false, recon: false, photos: false, signature: false,
+  market: false, market_scenarios: false, selected_scenarios: false, recon: false, photos: false, signature: false,
 };
 
 /** Bubble sometimes hands back an already-parsed object, sometimes a raw JSON string. */
@@ -65,6 +65,7 @@ function toSections(groups = {}) {
   }
   // New feature — legacy records never had this group; default off unless explicitly checked.
   sections.market_scenarios = groups.market_scenarios === 'checked';
+  sections.selected_scenarios = groups.selected_scenarios === 'checked';
   return sections;
 }
 
