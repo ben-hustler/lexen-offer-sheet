@@ -1744,6 +1744,11 @@ export class LexenOfferSheet extends LitElement {
 
       const requestBody = { ...commonFields, raw_payload: payloadData };
 
+      alert(
+        'market_scenarios flag: ' + display.sections.market_scenarios +
+        '\n\nraw_payload.scenarios:\n' + JSON.stringify(payloadData.scenarios, null, 2)
+      );
+
       // Snapshot the printout inputs so _handleSend can include them in the pdf-send event.
       this._lastPrintoutRequest = {
         raw_payload:    payloadData,
