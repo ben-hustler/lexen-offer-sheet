@@ -209,7 +209,14 @@ export class LexenOfferSheet extends LitElement {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #EEEEEE;
       color: #222222;
-      height: 100%;
+      /* Viewport-relative, not %, on purpose — the real Bubble embed wraps this
+         in a plain <div style="min-height: 600px"> with no explicit height, so
+         height:100% has nothing definite to resolve against and silently
+         becomes auto. dvh gives :host a real, self-sufficient size regardless
+         of what the parent container does. min-height mirrors that wrapper's
+         own floor as a fallback. */
+      height: 100dvh;
+      min-height: 600px;
       overflow: hidden;
     }
 
@@ -1531,7 +1538,11 @@ export class LexenOfferSheet extends LitElement {
 
       const newPills = { ...this._pills };
       ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings',
-        'sections.observations_highlights', 'sections.observations_comments'].forEach(k => { newPills[k] = true; });
+        'sections.observations_comments'].forEach(k => { newPills[k] = true; });
+      // Trim, not additive: one-page needs the space back (real-world logo
+      // height in Bubble eats into the budget too), and highlights is the
+      // easiest thing to drop without losing anything essential.
+      newPills['sections.observations_highlights'] = false;
       this._pills = newPills;
 
       this._marketDisplay = 'summary';
@@ -2671,7 +2682,10 @@ export class LexenOfferSheet extends LitElement {
   _renderPreviewPane() {
     const hasPdf = !!this._pdfUrl;
     const busy = this._generating || this._finalizing;
-    const showLoading = busy || (!!this.apiBaseUrl && !hasPdf);
+    // Excludes _statusError — otherwise a failed generate leaves showLoading stuck
+    // true forever (busy goes false, but hasPdf never becomes true either), so the
+    // spinner never clears and the error never gets its own state in the pane.
+    const showLoading = busy || (!!this.apiBaseUrl && !hasPdf && !this._statusError);
     const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     const canInlinePdf = !isMobile && navigator.pdfViewerEnabled;
 
@@ -2699,7 +2713,7 @@ export class LexenOfferSheet extends LitElement {
             </div>
           ` : nothing}
           ${!showLoading && !hasPdf ? html`
-            <div class="empty-preview">Preview will appear once a payload is loaded</div>
+            <div class="empty-preview">${this._statusError && this._statusMsg ? this._statusMsg : 'Preview will appear once a payload is loaded'}</div>
           ` : nothing}
           ${hasPdf && !busy && canInlinePdf ? html`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
