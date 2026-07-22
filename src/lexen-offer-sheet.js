@@ -129,6 +129,7 @@ const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill=
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const undoSvg       = html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="9 14 4 9 9 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20v-7a4 4 0 0 0-4-4H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const mailSvg       = html`<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -196,6 +197,7 @@ export class LexenOfferSheet extends LitElement {
     _sendVia:      { type: String,  state: true },
     _doneSentVia:  { type: String,  state: true },
     _pdfSent:      { type: Boolean, state: true },
+    _confirmSendEmail: { type: Boolean, state: true },
     _previewStale: { type: Boolean, state: true },
   };
 
@@ -367,6 +369,59 @@ export class LexenOfferSheet extends LitElement {
 
     .vehicle-info .desc { color: #006073; }
 
+    /* REMOVED (kept for reference — wider/bigger-icon version of splitting the
+       send button into the .vehicle-info bubble itself, divided by a vertical
+       line. Rejected again — back to the small icon+label box in
+       .offer-header-row, see .email-icon-btn below.
+    .vehicle-info { display: flex; align-items: stretch; overflow: hidden; }
+    .vehicle-info-content { flex: 1; min-width: 0; padding: 12px 14px; }
+    .vehicle-info-send-btn {
+      flex-shrink: 0; width: 76px; border: none;
+      border-left: 1.5px solid #7fb8c3; background: #effcff; color: #006073;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .vehicle-info-send-btn:hover:not(:disabled) { background: #d9f2f7; }
+    .vehicle-info-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .vehicle-info-send-btn.done { color: #1a7a4f; cursor: default; }
+    */
+
+
+    /* Send confirmation modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 24px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .modal-msg { font-size: 14px; color: #344054; line-height: 1.5; margin: 0 0 18px; }
+    .modal-msg strong { color: #006073; }
+    .modal-btns { display: flex; gap: 8px; }
+    .modal-btn-confirm {
+      flex: 1; padding: 9px; background: #35BB9C; color: #fff;
+      border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .modal-btn-confirm:hover { background: #2a9880; }
+    .modal-btn-cancel {
+      flex: 1; padding: 9px; background: transparent; color: #344054;
+      border: 1px solid #d0d5dd; border-radius: 6px; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .modal-btn-cancel:hover { background: #f2f4f7; }
+
     /* Toggle groups */
     .toggle-group { margin-bottom: 4px; }
     .toggle-group:last-child { margin-bottom: 0; }
@@ -495,9 +550,18 @@ export class LexenOfferSheet extends LitElement {
     .btn-primary { background: #35BB9C; color: #fff; }
     .btn-primary:hover { background: #2a9880; }
     .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-preview { background: #0f8f8f; color: #fff; }
-    .btn-preview:hover { background: #0a7777; }
+    /* REMOVED (kept for reference — Send via Email as a full-width teal button
+       under Apply, matching .apply-main's exact sizing. Moved back to the
+       Offer card as a small icon+label box instead — see .email-icon-btn.
+    .btn-preview {
+      display: block; width: 100%; padding: 10px 16px; font-size: 13px;
+      font-weight: 600; font-family: inherit; border: none; border-radius: 8px;
+      cursor: pointer; text-align: center; transition: background 0.15s, opacity 0.15s;
+      background: #0f8f8f; color: #fff;
+    }
+    .btn-preview:hover:not(:disabled) { background: #0a7777; }
     .btn-preview:disabled { opacity: 0.45; cursor: not-allowed; }
+    */
     .btn-reopen { background: #FAB515; color: #373737; }
     .btn-reopen:hover { color: #000; }
     .btn-reopen:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -601,7 +665,7 @@ export class LexenOfferSheet extends LitElement {
     }
     .apply-main.split { border-radius: 8px 0 0 8px; }
     .apply-main:hover:not(:disabled) { background: #2a9880; }
-    .apply-main.inactive, .apply-main:disabled { background: #d0d5dd; color: #667085; cursor: not-allowed; }
+    .apply-main.inactive, .apply-main:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
     .apply-discard-btn {
       width: 34px; flex-shrink: 0; padding: 0;
       background: #2a9880; color: #fff; border: none;
@@ -961,6 +1025,48 @@ export class LexenOfferSheet extends LitElement {
 
     .offer-header-row h2 { margin-bottom: 0; }
 
+    /* Matches the unselected/greyed segment look of .seg-btn (Full/One-Page
+       etc.) — deliberately not the teal .seg-btn.active treatment. */
+    /* REMOVED (kept for reference — small icon+label box opposite "Offer",
+       styled as a pill / as the .seg-btn unselected look, in two separate
+       attempts. Back to a full-width button under the offer bubble instead,
+       styled like .apply-main — see .send-email-btn below.
+    .email-icon-btn {
+      display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+      padding: 4px 14px; background: #f2f4f7; border: 1.5px solid transparent;
+      border-radius: 6px; font-size: 12px; font-weight: 500; font-family: inherit;
+      color: #667085; cursor: pointer; user-select: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .email-icon-btn:hover:not(:disabled) { background: #e4e7ec; color: #344054; }
+    .email-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .email-icon-btn.done { color: #1a7a4f; }
+    */
+
+    /* Send Email — styled to match .apply-main exactly (same green CTA look),
+       sitting as its own full-width button under the offer bubble. */
+    .send-email-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      background: #35BB9C;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .send-email-btn:hover:not(:disabled) { background: #2a9880; }
+    .send-email-btn:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
+    .send-email-btn.done { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: default; }
+
     .customize-header-row {
       display: flex;
       align-items: center;
@@ -1093,6 +1199,7 @@ export class LexenOfferSheet extends LitElement {
     this._sendVia      = null;
     this._doneSentVia  = null;
     this._pdfSent      = false;
+    this._confirmSendEmail = false;
     this._previewStale = false;
 
     // Generate state
@@ -2136,6 +2243,15 @@ export class LexenOfferSheet extends LitElement {
     return null;
   }
 
+  /** The employee an offer is sent "as" — same resolution _handleGenerate uses
+   * for payloadData.employee, so the confirm modal shows the actual sender. */
+  _resolveEmployee() {
+    if (this.employees && this.employees.length > 0) {
+      return this.employees[this._selectedEmployeeIndex] || this.employees[0] || null;
+    }
+    return this.payload?.employee || null;
+  }
+
   _handleSend(sendVia) {
     this._splitOpen   = false;
     this._doneSentVia = sendVia;
@@ -2161,7 +2277,7 @@ export class LexenOfferSheet extends LitElement {
     return html`
       <div class="component-header">
         <div class="wrap">
-          <h1>LXN Offer Sheet Generator</h1>
+          <h1>LXN Offer Sheet</h1>
         </div>
       </div>
     `;
@@ -2189,6 +2305,7 @@ export class LexenOfferSheet extends LitElement {
             ${vi.vin ? html`<div style="font-size:11px;color:#006073;margin-top:2px;">${vi.vin}</div>` : nothing}
           </div>
         ` : html`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ${this._renderSendInline()}
       </div>
     `;
   }
@@ -2510,7 +2627,7 @@ export class LexenOfferSheet extends LitElement {
                 class="apply-main ${this._previewStale ? 'split' : 'inactive'}"
                 ?disabled="${!this._previewStale || this._generating || this._finalizing}"
                 @click="${() => this._handleApply()}"
-              >${this._generating || this._finalizing ? 'Applying…' : 'Apply'}</button>
+              >${this._generating || this._finalizing ? 'Applying…' : 'Apply Changes'}</button>
               ${this._previewStale ? html`
                 <button
                   class="apply-discard-btn"
@@ -2520,7 +2637,6 @@ export class LexenOfferSheet extends LitElement {
                 >${undoSvg}</button>
               ` : nothing}
             </div>
-            ${this._renderSendInline()}
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
                 <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
@@ -2645,16 +2761,37 @@ export class LexenOfferSheet extends LitElement {
 
     if (!hasEmail) return nothing;
 
-    const mainLabel = this._doneSentVia ? 'Email Sent ✓' : 'Send via Email';
-    const canSend   = hasPdf && !this._doneSentVia;
+    const label   = this._doneSentVia ? 'Email Sent ✓' : 'Send Email';
+    const canSend = hasPdf && !this._doneSentVia;
 
     return html`
       <button
-        class="split-main ${this._doneSentVia ? 'done' : ''}"
-        style="border-radius:8px;width:100%;padding:10px 16px;font-size:13px;"
+        class="send-email-btn ${this._doneSentVia ? 'done' : ''}"
         ?disabled="${!canSend}"
-        @click="${() => this._handleSend('email')}"
-      >${mainLabel}</button>
+        @click="${() => { this._confirmSendEmail = true; }}"
+      >${mailSvg}${label}</button>
+      ${this._confirmSendEmail ? this._renderSendConfirmModal() : nothing}
+    `;
+  }
+
+  _renderSendConfirmModal() {
+    const customerEmail = this.payload?.customer?.email || '';
+    const employeeName   = this._resolveEmployee()?.name || 'an unspecified employee';
+
+    return html`
+      <div class="modal-overlay" @click="${() => { this._confirmSendEmail = false; }}">
+        <div class="modal-box" @click="${(e) => e.stopPropagation()}">
+          <p class="modal-msg">
+            Send this offer to <strong>${customerEmail}</strong> as an offer made by <strong>${employeeName}</strong>?
+          </p>
+          <div class="modal-btns">
+            <button class="modal-btn-confirm"
+              @click="${() => { this._confirmSendEmail = false; this._handleSend('email'); }}"
+            >Yes, send</button>
+            <button class="modal-btn-cancel" @click="${() => { this._confirmSendEmail = false; }}">Cancel</button>
+          </div>
+        </div>
+      </div>
     `;
   }
 
