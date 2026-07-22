@@ -488,21 +488,23 @@ export class LexenOfferSheet extends LitElement {
     }
     .preview-status-dot.stale { background: #f59f00; }
 
-    .refresh-inline-btn {
-      padding: 3px 10px;
-      font-size: 11px;
+    .refresh-text-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      padding: 4px 0;
+      background: none;
+      border: none;
+      font-size: 13px;
       font-weight: 600;
       font-family: inherit;
-      background: #006073;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
+      color: #006073;
       cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.15s, opacity 0.15s;
     }
-    .refresh-inline-btn:hover:not(:disabled) { background: #004f5f; }
-    .refresh-inline-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .refresh-text-btn:hover:not(:disabled) { color: #004f5f; text-decoration: underline; }
+    .refresh-text-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .empty-preview {
       display: flex;
@@ -2222,6 +2224,13 @@ export class LexenOfferSheet extends LitElement {
 
         ${!this.templateMode ? html`
           <div class="action-btns">
+            ${this._previewStale ? html`
+              <button
+                class="refresh-text-btn"
+                ?disabled="${this._generating || this._finalizing}"
+                @click="${() => this._handleGenerate()}"
+              >Refresh Preview ↻</button>
+            ` : nothing}
             ${this._renderSendInline()}
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
@@ -2354,13 +2363,6 @@ export class LexenOfferSheet extends LitElement {
                 class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
                 title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"
               ></span>
-              ${this._previewStale && !this.templateMode ? html`
-                <button
-                  class="refresh-inline-btn"
-                  ?disabled="${this._generating || this._finalizing}"
-                  @click="${() => this._handleGenerate()}"
-                >Refresh ↻</button>
-              ` : nothing}
             </div>
             ${!this.templateMode && hasPdf && !busy && canInlinePdf ? html`
               <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
