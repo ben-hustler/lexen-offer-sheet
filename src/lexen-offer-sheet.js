@@ -109,7 +109,6 @@ const SECTION_LABELS = {
 const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const refreshSvg    = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 6.5A4.5 4.5 0 1 1 9.4 3.15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11 2.4V5.6H7.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -478,28 +477,23 @@ export class LexenOfferSheet extends LitElement {
     .preview-actions .btn { width: auto; flex: 1; }
 
     .preview-title-group { display: flex; align-items: center; gap: 8px; }
-    .preview-title-group h2 { line-height: 1; }
+    .preview-title-group h2 { line-height: 1; transition: color 0.15s; }
 
     .preview-refresh-trigger {
       display: flex;
       align-items: center;
       gap: 6px;
-      margin: -3px -6px;
-      padding: 3px 6px;
-      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.15s;
     }
-    .preview-refresh-trigger:hover { background: #f2f4f7; }
-    .preview-refresh-trigger:hover h2 { color: #006073; }
-    .preview-refresh-trigger:hover .preview-refresh-icon { color: #006073; }
-    .preview-refresh-trigger.busy { cursor: default; pointer-events: none; }
+    .preview-refresh-trigger:hover:not(.busy) h2 { color: #004f5f; text-decoration: underline; }
+    .preview-refresh-trigger:hover:not(.busy) .preview-refresh-icon { color: #004f5f; }
+    .preview-refresh-trigger.busy { cursor: not-allowed; opacity: 0.45; }
 
     .preview-refresh-icon {
       display: flex;
       align-items: center;
-      color: #f59f00;
       flex-shrink: 0;
+      transition: color 0.15s;
     }
 
     .preview-status-dot {
@@ -2422,7 +2416,7 @@ export class LexenOfferSheet extends LitElement {
                 title="${this._previewStale ? 'Refresh preview' : ''}"
                 @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}"
               >
-                ${this._previewStale ? html`<span class="preview-refresh-icon">${refreshSvg}</span>` : nothing}
+                ${this._previewStale ? html`<span class="preview-refresh-icon">↻</span>` : nothing}
                 <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
               </span>
               <span
