@@ -129,7 +129,7 @@ const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill=
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const undoSvg       = html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="9 14 4 9 9 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20v-7a4 4 0 0 0-4-4H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const mailSvg       = html`<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const mailSvg       = html`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -402,12 +402,11 @@ export class LexenOfferSheet extends LitElement {
       background: #fff;
       border-radius: 10px;
       padding: 24px;
-      max-width: 520px;
+      max-width: 380px;
       width: 100%;
       box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     }
     .modal-msg { font-size: 14px; color: #344054; line-height: 1.5; margin: 0 0 18px; }
-    .modal-msg strong { color: #006073; }
     .modal-btns { display: flex; gap: 8px; }
     .modal-btn-confirm {
       flex: 1; padding: 9px; background: #35BB9C; color: #fff;
@@ -1027,24 +1026,19 @@ export class LexenOfferSheet extends LitElement {
 
     /* Matches the unselected/greyed segment look of .seg-btn (Full/One-Page
        etc.) — deliberately not the teal .seg-btn.active treatment. */
-    /* REMOVED (kept for reference — small icon+label box opposite "Offer",
-       styled as a pill / as the .seg-btn unselected look, in two separate
-       attempts. Back to a full-width button under the offer bubble instead,
-       styled like .apply-main — see .send-email-btn below.
     .email-icon-btn {
-      display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
-      padding: 4px 14px; background: #f2f4f7; border: 1.5px solid transparent;
-      border-radius: 6px; font-size: 12px; font-weight: 500; font-family: inherit;
-      color: #667085; cursor: pointer; user-select: none;
-      transition: background 0.15s, color 0.15s;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+      padding: 0; background: transparent; border: none;
+      color: #475467; cursor: pointer; user-select: none; line-height: 0;
+      transition: color 0.15s;
     }
-    .email-icon-btn:hover:not(:disabled) { background: #e4e7ec; color: #344054; }
+    .email-icon-btn:hover:not(:disabled) { color: #1d2939; }
     .email-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .email-icon-btn.done { color: #1a7a4f; }
-    */
 
-    /* Send Email — styled to match .apply-main exactly (same green CTA look),
-       sitting as its own full-width button under the offer bubble. */
+    /* REMOVED (kept for reference — Send Email as a full-width teal button
+       under the offer bubble, styled to match .apply-main exactly. Back to
+       the small icon+label box opposite "Offer" instead — see .email-icon-btn.
     .send-email-btn {
       display: flex;
       align-items: center;
@@ -1066,6 +1060,7 @@ export class LexenOfferSheet extends LitElement {
     .send-email-btn:hover:not(:disabled) { background: #2a9880; }
     .send-email-btn:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
     .send-email-btn.done { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: default; }
+    */
 
     .customize-header-row {
       display: flex;
@@ -1773,7 +1768,7 @@ export class LexenOfferSheet extends LitElement {
     this._previewStale = true;
     // Null values signal Bubble to clear instance-level overrides.
     this.dispatchEvent(new CustomEvent('display-save', {
-      detail: { shared: null, pdf: null, employee: null },
+      detail: { shared: null, pdf: null, employee: null, payload: null },
       bubbles: true, composed: true,
     }));
   }
@@ -2006,7 +2001,7 @@ export class LexenOfferSheet extends LitElement {
       ? this.employees[this._selectedEmployeeIndex] || this.employees[0]
       : null;
     this.dispatchEvent(new CustomEvent('display-save', {
-      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee },
+      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee, payload: this._lastPrintoutRequest },
       bubbles: true, composed: true,
     }));
   }
@@ -2104,14 +2099,9 @@ export class LexenOfferSheet extends LitElement {
 
       const requestBody = { ...commonFields, raw_payload: payloadData };
 
-      // Snapshot the printout inputs so _handleSend can include them in the pdf-send event.
-      this._lastPrintoutRequest = {
-        raw_payload:    payloadData,
-        display,
-        font_size_delta: FONT_SIZE_OPTIONS[this._fontSizeIndex].delta,
-        photos_per_row:  this._photosPerRow,
-        section_order:   [...this._sectionOrder],
-      };
+      // Snapshot the exact Lambda request body — reused by pdf-send and display-save
+      // so Bubble can call /printout-offer directly without re-deriving anything.
+      this._lastPrintoutRequest = { ...requestBody };
 
       const headers = { 'Content-Type': 'application/json', 'Accept': 'application/pdf' };
       if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
@@ -2277,7 +2267,7 @@ export class LexenOfferSheet extends LitElement {
     return html`
       <div class="component-header">
         <div class="wrap">
-          <h1>LXN Offer Sheet</h1>
+          <h1>LXN Offer Sheet Generator</h1>
         </div>
       </div>
     `;
@@ -2297,7 +2287,10 @@ export class LexenOfferSheet extends LitElement {
     const vi = this._vehicleInfo;
     return html`
       <div class="card">
-        <h2>Offer</h2>
+        <div class="offer-header-row">
+          <h2>Offer</h2>
+          ${this._renderSendInline()}
+        </div>
         ${vi ? html`
           <div class="vehicle-info">
             <div class="amount">${vi.amount}</div>
@@ -2305,7 +2298,6 @@ export class LexenOfferSheet extends LitElement {
             ${vi.vin ? html`<div style="font-size:11px;color:#006073;margin-top:2px;">${vi.vin}</div>` : nothing}
           </div>
         ` : html`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
-        ${this._renderSendInline()}
       </div>
     `;
   }
@@ -2761,15 +2753,14 @@ export class LexenOfferSheet extends LitElement {
 
     if (!hasEmail) return nothing;
 
-    const label   = this._doneSentVia ? 'Email Sent ✓' : 'Send Email';
     const canSend = hasPdf && !this._doneSentVia;
 
     return html`
       <button
-        class="send-email-btn ${this._doneSentVia ? 'done' : ''}"
+        class="email-icon-btn ${this._doneSentVia ? 'done' : ''}"
         ?disabled="${!canSend}"
         @click="${() => { this._confirmSendEmail = true; }}"
-      >${mailSvg}${label}</button>
+      >${mailSvg}</button>
       ${this._confirmSendEmail ? this._renderSendConfirmModal() : nothing}
     `;
   }
