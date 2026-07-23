@@ -62,6 +62,20 @@ function _templatePayload() {
         { year: 2024, description: 'Make Model', trim: 'Trim B', vin: '1A2B3C4D5E6F7G8H6', dealer: 'Dealer Name', mileage_km: 29000, price: 38000, distance_km: 110, days_on_market: 15 },
       ],
     },
+    scenarios: {
+      market: {
+        vehicles: 320, avgRetail: '$35,000', avgMileage: 45000, listedDays: 90,
+        prcMkt: '100%', prcMktAdj: '95%', costMkt: '100%',
+        priceRank: '160 of 320', mileageRank: '150 of 320', perception: '160 of 320',
+        retail: '$32,000', ACV: '$25,000',
+      },
+      selected: {
+        vehicles: 6, avgRetail: '$36,000', avgMileage: 45000, listedDays: 60,
+        prcMkt: '110%', prcMktAdj: '100%', costMkt: '110%',
+        priceRank: '3 of 6', mileageRank: '3 of 6', perception: '3 of 6',
+        retail: '$32,000', ACV: '$25,000',
+      },
+    },
     recon: {
       items: [
         { description: 'Recon Item #1', amount: 1000 },
@@ -148,6 +162,8 @@ export class LexenOfferSheet extends LitElement {
     payload:        { type: Object },
     sharedDisplay:  { type: Object },
     pdfDisplay:     { type: Object },
+    templateSharedDisplay: { type: Object },
+    templatePdfDisplay:    { type: Object },
     employees:      { type: Array },
     locked:         { type: Boolean },
 
@@ -1035,6 +1051,7 @@ export class LexenOfferSheet extends LitElement {
     .email-icon-btn:hover:not(:disabled) { color: #1d2939; }
     .email-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .email-icon-btn.done { color: #1a7a4f; }
+    .email-icon-btn.done:disabled { opacity: 1; }
 
     /* REMOVED (kept for reference — Send Email as a full-width teal button
        under the offer bubble, styled to match .apply-main exactly. Back to
@@ -1123,6 +1140,8 @@ export class LexenOfferSheet extends LitElement {
     this.payload       = null;
     this.sharedDisplay = null;
     this.pdfDisplay    = null;
+    this.templateSharedDisplay = null;
+    this.templatePdfDisplay    = null;
     this.employees = [];
     this._selectedEmployeeIndex = 0;
 
@@ -1370,7 +1389,7 @@ export class LexenOfferSheet extends LitElement {
     // _mode alongside its own group-forcing) — only a change on a LATER cycle,
     // while already sitting in One-Page, should trigger this. !wasDataLoad excludes
     // sharedDisplay/pdfDisplay data-load cascades (same guard used below).
-    if (this._mode === 'one_page' && !changedProps.has('_mode') && !wasDataLoad) {
+    if (this._mode === 'one_page' && !changedProps.has('_mode') && !wasDataLoad && !this._isLocked('mode')) {
       const editKeys = ['_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
         '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay', '_scenarioLayout',
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex'];
@@ -1634,17 +1653,23 @@ export class LexenOfferSheet extends LitElement {
       // Additive for everything one-page CAN fit: re-check anything the user had
       // hidden, so a trimmed-down Full config doesn't produce a sparser-than-
       // necessary one-pager just because it's not adaptively looking for more
-      // content to fill the page.
-      ['valuation', 'observations', 'market'].forEach(g => { newGroups[g] = 'checked'; });
+      // content to fill the page. Skip any group a template locked — a lock
+      // means "hands off", so a locked-off section stays omitted instead of
+      // being silently re-enabled by the mode switch.
+      ['valuation', 'observations', 'market'].forEach(g => { if (!this._isLocked(g)) newGroups[g] = 'checked'; });
       this._groups = newGroups;
 
       const newPills = { ...this._pills };
-      ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings',
-        'sections.observations_comments'].forEach(k => { newPills[k] = true; });
-      // Trim, not additive: one-page needs the space back (real-world logo
-      // height in Bubble eats into the budget too), and highlights is the
-      // easiest thing to drop without losing anything essential.
-      newPills['sections.observations_highlights'] = false;
+      if (!this._isLocked('valuation')) {
+        ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'].forEach(k => { newPills[k] = true; });
+      }
+      if (!this._isLocked('observations')) {
+        newPills['sections.observations_comments'] = true;
+        // Trim, not additive: one-page needs the space back (real-world logo
+        // height in Bubble eats into the budget too), and highlights is the
+        // easiest thing to drop without losing anything essential.
+        newPills['sections.observations_highlights'] = false;
+      }
       this._pills = newPills;
 
       this._marketDisplay = 'summary';
@@ -1663,8 +1688,9 @@ export class LexenOfferSheet extends LitElement {
         this._preOnePageState = null;
       } else {
         const newGroups = { ...this._groups };
-        ['disclosures', 'recon', 'photos', 'valuation', 'observations', 'market'].forEach(g => { newGroups[g] = 'checked'; });
-        ['market_scenarios', 'selected_scenarios'].forEach(g => { newGroups[g] = 'unchecked'; });
+        // Same rule as switching into one-page: never override a locked group's state.
+        ['disclosures', 'recon', 'photos', 'valuation', 'observations', 'market'].forEach(g => { if (!this._isLocked(g)) newGroups[g] = 'checked'; });
+        ['market_scenarios', 'selected_scenarios'].forEach(g => { if (!this._isLocked(g)) newGroups[g] = 'unchecked'; });
         this._groups = newGroups;
         this._marketDisplay = 'full';
         this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
@@ -1759,9 +1785,11 @@ export class LexenOfferSheet extends LitElement {
   _handleReset() {
     this._confirmReset = false;
     this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
-    if (this.sharedDisplay || this.pdfDisplay) {
-      if (this.sharedDisplay) this._applySharedDisplay(this.sharedDisplay);
-      if (this.pdfDisplay)    this._applyPdfDisplay(this.pdfDisplay);
+    // Reset goes back to the template's own baseline, not whatever's currently
+    // loaded in sharedDisplay/pdfDisplay (that may already be an instance override).
+    if (this.templateSharedDisplay || this.templatePdfDisplay) {
+      if (this.templateSharedDisplay) this._applySharedDisplay(this.templateSharedDisplay);
+      if (this.templatePdfDisplay)    this._applyPdfDisplay(this.templatePdfDisplay);
     } else {
       this._resetToggles();
     }
@@ -1969,8 +1997,16 @@ export class LexenOfferSheet extends LitElement {
 
   // ── Lock helpers ───────────────────────────────────────────────────────────
 
+  /** True if `key` is explicitly locked, or if mode is locked to one_page —
+   * every other control is inert in one-page mode, so a mode lock cascades
+   * to lock everything else too (dealers can't edit their way back to full). */
+  _effectiveLock(key) {
+    if (this._locks?.[key]) return true;
+    return key !== 'mode' && this._mode === 'one_page' && !!this._locks?.mode;
+  }
+
   _isLocked(key) {
-    return !this.templateMode && !!this._locks?.[key];
+    return !this.templateMode && this._effectiveLock(key);
   }
 
   _lk(key) {
@@ -1983,7 +2019,7 @@ export class LexenOfferSheet extends LitElement {
           ${locked ? lockClosedSvg : lockOpenSvg}
         </button>`;
     }
-    if (locked) {
+    if (this._effectiveLock(key)) {
       return html`<span class="lock-indicator" title="Locked by template">${lockClosedSvg}</span>`;
     }
     return nothing;
