@@ -147,6 +147,7 @@ const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill=
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const mailSvg       = html`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const alertCircleSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
 export class LexenOfferSheet extends LitElement {
@@ -567,6 +568,17 @@ export class LexenOfferSheet extends LitElement {
       background: #fff8e1; border-color: #f59f00; color: #b45309;
       opacity: 0.55; cursor: not-allowed;
     }
+    .pill-stale-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-right: 4px;
+    }
+
+    /* The tooltip itself is NOT styled here — :host sets overflow:hidden
+       (see below), which clips anything painted anywhere in this shadow
+       root, position:fixed included. It's a real DOM node built and styled
+       inline in _ensureTooltip(), appended straight to document.body so it
+       can float above everything unclipped — same as how Tippy.js itself
+       works by default. */
 
     .pill-toggle {
       display: inline-flex;
@@ -1291,6 +1303,16 @@ export class LexenOfferSheet extends LitElement {
 
     // Suppress auto display-save during data-load reactive cascades (non-reactive)
     this._pendingDataLoad = false;
+
+    // Shared tooltip — a real DOM node appended to document.body, not
+    // rendered via Lit. :host itself sets overflow:hidden (see its styles),
+    // so nothing painted anywhere inside this shadow root can ever escape
+    // clipping via position:fixed — the tooltip has to live outside the
+    // shadow root entirely, same as how Tippy.js itself appends to
+    // document.body by default (see _ensureTooltip below).
+    this._tooltipEl = null;
+    this._tooltipBubble = null;
+    this._tooltipLabel = null;
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
@@ -1314,11 +1336,24 @@ export class LexenOfferSheet extends LitElement {
   _applySharedDisplay(d) {
     if (!d) return;
     const GROUP_KEYS = ['valuation','disclosures','observations','market','market_scenarios','selected_scenarios','recon','photos'];
+    const PILL_BEARING_GROUPS = ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'];
     const sec = d.sections || {};
+
+    // Pills first — the recompute below needs the freshly loaded values.
+    if (d.pills != null) this._pills = { ...this._pills, ...d.pills };
+
     const newGroups = { ...this._groups };
     GROUP_KEYS.forEach(k => { if (sec[k] != null) newGroups[k] = sec[k] ? 'checked' : 'unchecked'; });
     this._groups = newGroups;
-    if (d.pills != null)         this._pills        = { ...this._pills, ...d.pills };
+
+    // A section saved as "on" can still have only some of its fields
+    // selected (e.g. the scenario KPIs default to 8/12) — re-derive the
+    // real checked/indeterminate/unchecked state from those pills instead
+    // of collapsing straight to a full checkmark.
+    PILL_BEARING_GROUPS.forEach(group => {
+      if (this._groups[group] === 'checked') this._recomputeGroupState(group);
+    });
+
     if (d.section_order != null) this._sectionOrder = d.section_order.filter(s => DEFAULT_LAYOUT_ORDER.includes(s));
     if (d.tax_rate_pct != null)  this._taxRatePct   = d.tax_rate_pct;
     if (d.value_display != null) this._valueDisplay = d.value_display;
@@ -1341,6 +1376,16 @@ export class LexenOfferSheet extends LitElement {
   }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._tooltipEl) {
+      this._tooltipEl.remove();
+      this._tooltipEl = null;
+      this._tooltipBubble = null;
+      this._tooltipLabel = null;
+    }
+  }
 
   firstUpdated() {
     this.dispatchEvent(new CustomEvent('component-ready', {
@@ -1761,25 +1806,17 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _handleGroupChange(group, checked) {
-    const newGroups = { ...this._groups };
-    newGroups[group] = checked ? 'checked' : 'unchecked';
-    this._groups = newGroups;
+    // This checkbox only shows/hides the whole section — it no longer
+    // bulk-sets the individual field pills underneath, so toggling a group
+    // off then back on restores exactly the same partial selection (e.g.
+    // 4/5 fields) instead of resetting everything to fully on.
+    this._groups = { ...this._groups, [group]: checked ? 'checked' : 'unchecked' };
 
-    // Update pills for groups that have them
-    const newPills = { ...this._pills };
-    if (group === 'valuation') {
-      ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'].forEach(k => {
-        newPills[k] = checked;
-      });
-      this._pills = newPills;
-    } else if (group === 'observations') {
-      ['sections.observations_highlights', 'sections.observations_comments'].forEach(k => {
-        newPills[k] = checked;
-      });
-      this._pills = newPills;
-    } else if (group === 'market_scenarios' || group === 'selected_scenarios') {
-      SCENARIO_FIELDS.forEach(f => { newPills[`${group}.${f.key}`] = checked; });
-      this._pills = newPills;
+    const pillBearingGroups = ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'];
+    if (checked && pillBearingGroups.includes(group)) {
+      // Re-derive the true tri-state from the untouched pills (e.g. still
+      // indeterminate at 4/5) rather than leaving it forced to 'checked'.
+      this._recomputeGroupState(group);
     }
 
     if (group !== 'signature') {
@@ -1844,7 +1881,7 @@ export class LexenOfferSheet extends LitElement {
     this._disclaimerText = e.target.value;
   }
 
-  _handleReset() {
+  async _handleReset() {
     this._confirmReset = false;
     this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
     // Reset goes back to the template's own baseline, not whatever's currently
@@ -1856,7 +1893,18 @@ export class LexenOfferSheet extends LitElement {
       this._resetToggles();
     }
     this._previewStale = true;
-    // Null values signal Bubble to clear instance-level overrides.
+
+    // Regenerate right away instead of leaving the preview stale until a
+    // separate manual Apply click — mirrors _handleApply's own generate step.
+    this._finalizing = true;
+    await this._handleGenerate(false);
+    this._finalizing = false;
+    this._finalized = true;
+
+    // Null values signal Bubble to clear instance-level overrides. This is
+    // the authoritative save for a reset, so it's the only display-save
+    // dispatched here — not _handleApply's own (non-null) one, which would
+    // immediately re-create an instance override and undo the clear.
     this.dispatchEvent(new CustomEvent('display-save', {
       detail: { shared: null, pdf: null, employee: null, payload: null },
       bubbles: true, composed: true,
@@ -2821,7 +2869,7 @@ export class LexenOfferSheet extends LitElement {
         class="pill-toggle"
         title="${open ? 'Collapse fields' : 'Expand fields'}"
         @click="${() => this._togglePillsOpen(group)}"
-      >${open ? 'Collapse ‹' : `Expand (${active}/${total}) ›`}</span>
+      >${open ? '‹ Collapse' : `Expand (${active}/${total}) ›`}</span>
     `;
   }
 
@@ -2849,16 +2897,132 @@ export class LexenOfferSheet extends LitElement {
       </div>`;
   }
 
+  /** Lazily builds the shared tooltip node — see the constructor comment for
+   * why this lives in document.body instead of a Lit template. Visuals match
+   * Bubble's Tippy.js output (.tippy-box/.tippy-content/.tippy-arrow)
+   * pixel-for-pixel; positioning + the rise-in animation are done by hand
+   * here since Tippy itself drives those via Popper + its own JS, not CSS.
+   * One reused node for every tooltip in this component (stale pills, the
+   * preview status dot, ...) — text and position update per show() call. */
+  _ensureTooltip() {
+    if (this._tooltipEl) return this._tooltipEl;
+
+    const outer = document.createElement('div');
+    Object.assign(outer.style, {
+      position: 'fixed',
+      top: '0px',
+      left: '0px',
+      transform: 'translate(-50%, -100%)',
+      zIndex: '2147483647',
+      pointerEvents: 'none',
+    });
+
+    const bubble = document.createElement('div');
+    Object.assign(bubble.style, {
+      position: 'relative',
+      boxSizing: 'content-box',
+      background: '#333',
+      color: '#fff',
+      borderRadius: '4px',
+      fontSize: '14px',
+      lineHeight: '1.4',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      whiteSpace: 'normal',
+      textAlign: 'center',
+      padding: '8px',
+      maxWidth: '240px',
+      opacity: '0',
+    });
+
+    const label = document.createElement('span');
+    bubble.appendChild(label);
+
+    const arrow = document.createElement('div');
+    Object.assign(arrow.style, {
+      position: 'absolute',
+      // Overlaps the bubble by 1px instead of sitting flush at 100% —
+      // two adjacent elements meeting at an exact sub-pixel boundary can
+      // render with a hairline gap between them once the bubble is
+      // animating (transform/opacity commonly promotes it to its own
+      // compositor layer), so nudge the arrow up into the body to
+      // guarantee no seam regardless of sub-pixel rounding.
+      top: 'calc(100% - 1px)',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '0',
+      height: '0',
+      borderStyle: 'solid',
+      borderWidth: '8px 8px 0',
+      borderColor: '#333 transparent transparent transparent',
+    });
+    bubble.appendChild(arrow);
+
+    outer.appendChild(bubble);
+    document.body.appendChild(outer);
+
+    this._tooltipEl = outer;
+    this._tooltipBubble = bubble;
+    this._tooltipLabel = label;
+    return outer;
+  }
+
+  _showTooltip(e, text) {
+    const outer  = this._ensureTooltip();
+    const bubble = this._tooltipBubble;
+    const label  = this._tooltipLabel;
+    const rect   = e.currentTarget.getBoundingClientRect();
+
+    // No CSS sizing keyword (width:max-content, display:table/inline-block)
+    // actually shrinks a box to its post-wrap line width — they all just
+    // clamp to max-width the instant the text needs more than one line,
+    // ignoring how narrow the wrapped lines end up. So measure it for real:
+    // let it wrap at max-width, read the widest rendered line via Range
+    // rects, then set that as the explicit width.
+    bubble.style.width = '';
+    label.textContent = text;
+    const range = document.createRange();
+    range.selectNodeContents(label);
+    const lineWidths = Array.from(range.getClientRects(), r => r.width);
+    bubble.style.width = `${Math.ceil(Math.max(...lineWidths))}px`;
+
+    outer.style.top  = `${rect.top - 10}px`;
+    outer.style.left = `${rect.left + rect.width / 2}px`;
+
+    bubble.getAnimations().forEach(a => a.cancel());
+    bubble.animate(
+      [
+        { opacity: 0, transform: 'translateY(6px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      { duration: 160, easing: 'ease-out', fill: 'forwards' },
+    );
+  }
+
+  _hideTooltip() {
+    const bubble = this._tooltipBubble;
+    if (!bubble) return;
+    bubble.getAnimations().forEach(a => a.cancel());
+    bubble.animate(
+      [
+        { opacity: 1, transform: 'translateY(0)' },
+        { opacity: 0, transform: 'translateY(6px)' },
+      ],
+      { duration: 160, easing: 'ease-in', fill: 'forwards' },
+    );
+  }
+
   _renderPill(path, label, group) {
     const stale  = this._isPillLockedStale(path);
     const active = !stale && this._pills[path];
+    const tooltipText = 'Not available: Offer has been adjusted manually';
 
     return html`
       <span
         class="pill ${active ? 'active' : ''} ${stale ? 'stale' : ''}"
-        title="${stale ? 'Offer amount was adjusted after scenarios were calculated — value hidden until they\'re recalculated' : ''}"
+        @mouseenter="${(e) => { if (stale) this._showTooltip(e, tooltipText); }}"
+        @mouseleave="${() => { if (stale) this._hideTooltip(); }}"
         @click="${() => { if (!stale) this._handlePillClick(path, group); }}"
-      >${label}</span>
+      >${stale ? html`<span class="pill-stale-icon">${alertCircleSvg}</span>` : nothing}${label}</span>
     `;
   }
 
@@ -2989,12 +3153,13 @@ export class LexenOfferSheet extends LitElement {
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
-            <div class="preview-title-group">
+            <div
+              class="preview-title-group"
+              @mouseenter="${(e) => this._showTooltip(e, this._previewStale ? 'Unapplied changes' : 'Up to date')}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >
               <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
-              <span
-                class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
-                title="${this._previewStale ? 'Unapplied changes — click Apply to update' : 'Up to date'}"
-              ></span>
+              <span class="preview-status-dot ${this._previewStale ? 'stale' : ''}"></span>
             </div>
             ${!this.templateMode && hasPdf && !busy && canInlinePdf ? html`
               <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
