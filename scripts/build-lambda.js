@@ -1,5 +1,5 @@
 // Copies the printout-offer Python Lambda source into lexen-bubble-web-comp,
-// the deployment repo — mirrors how lxn-customizer's `npm run build` and
+// the deployment repo mirrors how lxn-customizers `npm run build` and
 // lexen-offer-link's `bundle:lambdas` land their output there. No compile step;
 // Python Lambdas ship as plain source, so this is a straight file copy.
 import { existsSync, mkdirSync, copyFileSync } from 'fs';

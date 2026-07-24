@@ -142,7 +142,6 @@ const SCENARIO_FIELDS = [
 const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const undoSvg       = html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="9 14 4 9 9 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20v-7a4 4 0 0 0-4-4H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const mailSvg       = html`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -214,6 +213,8 @@ export class LexenOfferSheet extends LitElement {
     _doneSentVia:  { type: String,  state: true },
     _pdfSent:      { type: Boolean, state: true },
     _confirmSendEmail: { type: Boolean, state: true },
+    _sendMessageType:  { type: String,  state: true },
+    _manualCustomerEmail: { type: String, state: true },
     _previewStale: { type: Boolean, state: true },
   };
 
@@ -423,13 +424,26 @@ export class LexenOfferSheet extends LitElement {
       box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     }
     .modal-msg { font-size: 14px; color: #344054; line-height: 1.5; margin: 0 0 18px; }
+    .modal-recipient-group { display: flex; flex-direction: column; gap: 8px; margin: 0 0 14px; }
+    .modal-recipient-option {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #344054; cursor: pointer; user-select: none;
+    }
+    .modal-recipient-option input[type="radio"] { cursor: pointer; }
+    .modal-email-input {
+      width: 100%; box-sizing: border-box; padding: 8px 10px; margin: 0 0 14px;
+      font-size: 13px; font-family: inherit; color: #222222;
+      border: 1.5px solid #d0d5dd; border-radius: 6px;
+    }
+    .modal-email-input:focus { outline: none; border-color: #35BB9C; }
     .modal-btns { display: flex; gap: 8px; }
     .modal-btn-confirm {
       flex: 1; padding: 9px; background: #35BB9C; color: #fff;
       border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
       cursor: pointer; font-family: inherit; transition: background 0.15s;
     }
-    .modal-btn-confirm:hover { background: #2a9880; }
+    .modal-btn-confirm:hover:not(:disabled) { background: #2a9880; }
+    .modal-btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; }
     .modal-btn-cancel {
       flex: 1; padding: 9px; background: transparent; color: #344054;
       border: 1px solid #d0d5dd; border-radius: 6px; font-size: 13px; font-weight: 500;
@@ -542,7 +556,18 @@ export class LexenOfferSheet extends LitElement {
       opacity: 0.6;
     }
 
-    .pill-toggle:hover { border-color: #98a2b3; color: #667085; }
+    .pill-toggle {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #006073;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .pill-toggle:hover { color: #004f5f; text-decoration: underline; }
 
     /* Buttons */
     .btn {
@@ -668,29 +693,26 @@ export class LexenOfferSheet extends LitElement {
     }
     .preview-status-dot.stale { background: #f59f00; }
 
-    /* Apply — greys out with no pending changes, lights up (with a Discard
-       split side-button) once something's been edited. Mirrors .split-btn-wrap
-       below, used for Send. */
-    .apply-btn-wrap { display: flex; gap: 0; width: 100%; }
+    /* Apply / Discard — both grey out with no pending changes, light up once
+       something's been edited. Sit side by side above the reset-to-template
+       button (see .action-btns). */
+    .apply-btn-wrap { display: flex; gap: 8px; width: 100%; }
     .apply-main {
       flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
       background: #35BB9C; color: #fff; border: none;
       border-radius: 8px; cursor: pointer; font-family: inherit;
       transition: background 0.15s; text-align: center;
     }
-    .apply-main.split { border-radius: 8px 0 0 8px; }
     .apply-main:hover:not(:disabled) { background: #2a9880; }
-    .apply-main.inactive, .apply-main:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
-    .apply-discard-btn {
-      width: 34px; flex-shrink: 0; padding: 0;
-      background: #2a9880; color: #fff; border: none;
-      border-left: 1px solid rgba(255,255,255,0.25);
-      border-radius: 0 8px 8px 0; cursor: pointer;
-      font-size: 14px; transition: background 0.15s;
-      display: flex; align-items: center; justify-content: center;
+    .apply-main:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
+    .discard-btn {
+      flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+      background: #fff8e1; color: #b45309; border: 1px solid #f59f00;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s; text-align: center;
     }
-    .apply-discard-btn:hover:not(:disabled) { background: #1e7a68; }
-    .apply-discard-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .discard-btn:hover:not(:disabled) { background: #ffedb3; border-color: #e08e00; }
+    .discard-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
     /* REMOVED (kept for reference — old "Refresh Preview" text button)
     .refresh-text-btn {
@@ -1214,6 +1236,8 @@ export class LexenOfferSheet extends LitElement {
     this._doneSentVia  = null;
     this._pdfSent      = false;
     this._confirmSendEmail = false;
+    this._sendMessageType = null;
+    this._manualCustomerEmail = '';
     this._previewStale = false;
 
     // Generate state
@@ -2278,7 +2302,7 @@ export class LexenOfferSheet extends LitElement {
     return this.payload?.employee || null;
   }
 
-  _handleSend(sendVia) {
+  _handleSend(sendVia, toEmail, messageType) {
     this._splitOpen   = false;
     this._doneSentVia = sendVia;
     this._pdfSent     = true;
@@ -2289,10 +2313,12 @@ export class LexenOfferSheet extends LitElement {
     };
 
     console.log('[pdf-send] send_via:', sendVia);
+    console.log('[pdf-send] to_email:', toEmail);
+    console.log('[pdf-send] message_type:', messageType);
     console.log('[pdf-send] payload:', payload);
 
     this.dispatchEvent(new CustomEvent('pdf-send', {
-      detail: { send_via: sendVia, payload },
+      detail: { send_via: sendVia, to_email: toEmail, message_type: messageType, payload },
       bubbles: true, composed: true,
     }));
   }
@@ -2652,18 +2678,15 @@ export class LexenOfferSheet extends LitElement {
           <div class="action-btns">
             <div class="apply-btn-wrap">
               <button
-                class="apply-main ${this._previewStale ? 'split' : 'inactive'}"
+                class="apply-main"
                 ?disabled="${!this._previewStale || this._generating || this._finalizing}"
                 @click="${() => this._handleApply()}"
               >${this._generating || this._finalizing ? 'Applying…' : 'Apply Changes'}</button>
-              ${this._previewStale ? html`
-                <button
-                  class="apply-discard-btn"
-                  title="Discard unapplied changes"
-                  ?disabled="${this._generating || this._finalizing}"
-                  @click="${() => this._handleDiscardChanges()}"
-                >${undoSvg}</button>
-              ` : nothing}
+              <button
+                class="discard-btn"
+                ?disabled="${!this._previewStale || this._generating || this._finalizing}"
+                @click="${() => this._handleDiscardChanges()}"
+              >Discard Changes</button>
             </div>
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
@@ -2708,7 +2731,6 @@ export class LexenOfferSheet extends LitElement {
         <div class="toggle-group" data-group="valuation">
           ${row}
           <div class="pill-group ${locked ? 'locked' : ''}">
-            ${this._renderPillsToggle('valuation')}
             ${open ? html`
               ${this._renderPill('valuation.retail_value', 'Retail Value', 'valuation')}
               ${this._renderPill('valuation.recon', 'Recon', 'valuation')}
@@ -2716,6 +2738,7 @@ export class LexenOfferSheet extends LitElement {
               ${this._renderPill('valuation.target_profit', this._profitName || 'Target Profit', 'valuation')}
               ${this._renderPill('valuation.tax_savings', 'Tax Savings', 'valuation')}
             ` : nothing}
+            ${this._renderPillsToggle('valuation')}
           </div>
         </div>`;
     }
@@ -2742,7 +2765,7 @@ export class LexenOfferSheet extends LitElement {
     const open = !!this._pillsOpen[group];
     return html`
       <span
-        class="pill pill-toggle"
+        class="pill-toggle"
         title="${open ? 'Collapse fields' : 'Expand fields'}"
         @click="${() => this._togglePillsOpen(group)}"
       >${open ? 'Collapse ‹' : 'Expand ›'}</span>
@@ -2767,8 +2790,8 @@ export class LexenOfferSheet extends LitElement {
           ${this._lk(group)}
         </div>
         <div class="pill-group ${locked ? 'locked' : ''}">
-          ${this._renderPillsToggle(group)}
           ${open ? SCENARIO_FIELDS.map(f => this._renderPill(`${group}.${f.key}`, f.label.replace('{basis}', basis), group)) : nothing}
+          ${this._renderPillsToggle(group)}
         </div>
       </div>`;
   }
@@ -2784,10 +2807,11 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _renderSendInline() {
-    const hasEmail = !!this.payload?.customer?.email;
-    const hasPdf   = !!this._pdfUrl && !this._generating;
+    const employee     = this._resolveEmployee();
+    const hasRecipient = !!this.payload?.customer || !!employee?.email;
+    const hasPdf        = !!this._pdfUrl && !this._generating;
 
-    if (!hasEmail) return nothing;
+    if (!hasRecipient) return nothing;
 
     const canSend = hasPdf && !this._doneSentVia;
 
@@ -2795,25 +2819,75 @@ export class LexenOfferSheet extends LitElement {
       <button
         class="email-icon-btn ${this._doneSentVia ? 'done' : ''}"
         ?disabled="${!canSend}"
-        @click="${() => { this._confirmSendEmail = true; }}"
+        @click="${() => {
+          this._confirmSendEmail    = true;
+          this._sendMessageType     = null;
+          this._manualCustomerEmail = '';
+        }}"
       >${mailSvg}</button>
       ${this._confirmSendEmail ? this._renderSendConfirmModal() : nothing}
     `;
   }
 
   _renderSendConfirmModal() {
+    const employee      = this._resolveEmployee();
     const customerEmail = this.payload?.customer?.email || '';
-    const employeeName   = this._resolveEmployee()?.name || 'an unspecified employee';
+    const employeeEmail = employee?.email || '';
+    const employeeName  = employee?.name || 'an unspecified employee';
+
+    // Default to customer when they have an email on file, otherwise fall back
+    // to the employee — either way the dealer can still switch manually.
+    const messageType = this._sendMessageType || (customerEmail ? 'customer' : (employeeEmail ? 'employee' : 'customer'));
+
+    // Entered here only to fill this one send — never written back to `payload.customer`.
+    const needsManualEmail = messageType === 'customer' && !customerEmail;
+    const toEmail = messageType === 'employee' ? employeeEmail : (customerEmail || this._manualCustomerEmail.trim());
+    const canConfirmSend = !!toEmail;
 
     return html`
       <div class="modal-overlay" @click="${() => { this._confirmSendEmail = false; }}">
         <div class="modal-box" @click="${(e) => e.stopPropagation()}">
           <p class="modal-msg">
-            Send this offer to <strong>${customerEmail}</strong> as an offer made by <strong>${employeeName}</strong>?
+            Send this offer as an offer made by <strong>${employeeName}</strong>?
           </p>
+
+          <div class="modal-recipient-group">
+            <label class="modal-recipient-option">
+              <input
+                type="radio"
+                name="send-recipient"
+                .checked="${messageType === 'customer'}"
+                @change="${() => { this._sendMessageType = 'customer'; }}"
+              />
+              <span>Customer${customerEmail ? html` — ${customerEmail}` : nothing}</span>
+            </label>
+            ${employeeEmail ? html`
+              <label class="modal-recipient-option">
+                <input
+                  type="radio"
+                  name="send-recipient"
+                  .checked="${messageType === 'employee'}"
+                  @change="${() => { this._sendMessageType = 'employee'; }}"
+                />
+                <span>${employeeName} — ${employeeEmail}</span>
+              </label>
+            ` : nothing}
+          </div>
+
+          ${needsManualEmail ? html`
+            <input
+              type="email"
+              class="modal-email-input"
+              placeholder="Customer email address"
+              .value="${this._manualCustomerEmail}"
+              @input="${(e) => { this._manualCustomerEmail = e.target.value; }}"
+            />
+          ` : nothing}
+
           <div class="modal-btns">
             <button class="modal-btn-confirm"
-              @click="${() => { this._confirmSendEmail = false; this._handleSend('email'); }}"
+              ?disabled="${!canConfirmSend}"
+              @click="${() => { this._confirmSendEmail = false; this._handleSend('email', toEmail, messageType); }}"
             >Yes, send</button>
             <button class="modal-btn-cancel" @click="${() => { this._confirmSendEmail = false; }}">Cancel</button>
           </div>
