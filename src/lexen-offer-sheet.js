@@ -2467,6 +2467,12 @@ export class LexenOfferSheet extends LitElement {
   _renderCustomizeCard() {
     const onePage = this._isOnePage();
     const fontLabel = FONT_SIZE_OPTIONS[this._fontSizeIndex].label;
+    // No template display to fall back to — _handleReset() itself already
+    // falls back to _resetToggles()'s hardcoded generator defaults in this
+    // case, so just label the button for what it actually does.
+    const hasTemplateDisplay = !!(this.templateSharedDisplay || this.templatePdfDisplay);
+    const resetTargetLabel = hasTemplateDisplay ? 'template' : 'default';
+    const resetConfirmPhrase = hasTemplateDisplay ? 'template defaults' : 'default configuration';
 
     // Show/hide groups always in default order
     const sectionGroups = DEFAULT_LAYOUT_ORDER.map(sec => this._renderShowHideGroup(sec));
@@ -2487,6 +2493,8 @@ export class LexenOfferSheet extends LitElement {
                 class="seg-btn ${onePage ? 'active' : ''}"
                 ?disabled="${this._isLocked('mode')}"
                 @click="${() => this._handleModeChange('one_page')}"
+                @mouseenter="${(e) => this._showTooltip(e, "Current display is restored when returning to 'Full'")}"
+                @mouseleave="${() => this._hideTooltip()}"
               >One-Page</button>
             </div>
             ${this._lk('mode')}
@@ -2776,14 +2784,14 @@ export class LexenOfferSheet extends LitElement {
             </div>
             ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
               <div class="confirm-reset">
-                <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
+                <span class="confirm-reset-msg">Reset all settings to the ${resetConfirmPhrase}?</span>
                 <div class="confirm-reset-btns">
                   <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
                   <button class="confirm-reset-no"  @click="${() => { this._confirmReset = false; }}">Cancel</button>
                 </div>
               </div>
             ` : html`
-              <button class="reset-btn" @click="${() => { this._confirmReset = true; }}">Reset to template</button>
+              <button class="reset-btn" @click="${() => { this._confirmReset = true; }}">Reset to ${resetTargetLabel}</button>
             `) : nothing}
           </div>
         ` : nothing}
