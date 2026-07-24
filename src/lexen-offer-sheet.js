@@ -2758,17 +2758,32 @@ export class LexenOfferSheet extends LitElement {
       </div>`;
   }
 
+  /** Pill keys for a toggle-able group — same lists as _recomputeGroupState. */
+  _pillKeysForGroup(group) {
+    if (group === 'valuation') {
+      return ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'];
+    }
+    if (group === 'market_scenarios' || group === 'selected_scenarios') {
+      return SCENARIO_FIELDS.map(f => `${group}.${f.key}`);
+    }
+    return [];
+  }
+
   /** Independent toggle — not nested under Market Comparables, not part of the
    * draggable section order (mirrors how Signature is handled). Each of the 12
    * KPI fields gets its own pill, same idiom as Valuation/Observations. */
   _renderPillsToggle(group) {
     const open = !!this._pillsOpen[group];
+    const pillKeys = this._pillKeysForGroup(group);
+    const active = pillKeys.filter(k => this._pills[k]).length;
+    const total = pillKeys.length;
+
     return html`
       <span
         class="pill-toggle"
         title="${open ? 'Collapse fields' : 'Expand fields'}"
         @click="${() => this._togglePillsOpen(group)}"
-      >${open ? 'Collapse ‹' : 'Expand ›'}</span>
+      >${open ? 'Collapse ‹' : `Expand (${active}/${total}) ›`}</span>
     `;
   }
 
@@ -2813,7 +2828,10 @@ export class LexenOfferSheet extends LitElement {
 
     if (!hasRecipient) return nothing;
 
-    const canSend = hasPdf && !this._doneSentVia;
+    // Stays clickable even after a send — dealers resend, or send to the
+    // other recipient, without the button locking up. `.done` just tints it
+    // green to show it's gone out at least once.
+    const canSend = hasPdf;
 
     return html`
       <button
@@ -2859,7 +2877,7 @@ export class LexenOfferSheet extends LitElement {
                 .checked="${messageType === 'customer'}"
                 @change="${() => { this._sendMessageType = 'customer'; }}"
               />
-              <span>Customer${customerEmail ? html` — ${customerEmail}` : nothing}</span>
+              <span>Customer's inbox${customerEmail ? html` — ${customerEmail}` : nothing}</span>
             </label>
             ${employeeEmail ? html`
               <label class="modal-recipient-option">
@@ -2869,7 +2887,7 @@ export class LexenOfferSheet extends LitElement {
                   .checked="${messageType === 'employee'}"
                   @change="${() => { this._sendMessageType = 'employee'; }}"
                 />
-                <span>${employeeName} — ${employeeEmail}</span>
+                <span>Employee's inbox — ${employeeEmail}</span>
               </label>
             ` : nothing}
           </div>
