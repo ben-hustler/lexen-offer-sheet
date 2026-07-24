@@ -138,6 +138,10 @@ const SCENARIO_FIELDS = [
   { key: 'ACV',         label: 'Actual Cash Value' },
 ];
 
+// These four start unchecked in a fresh scenario grid — noisier/less
+// commonly used KPIs than the rest of SCENARIO_FIELDS.
+const SCENARIO_DEFAULT_OFF_KEYS = new Set(['costMkt', 'prcMktAdj', 'retail', 'ACV']);
+
 // ── Chevron + lock SVG helpers ────────────────────────────────────────────────
 const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
@@ -555,6 +559,50 @@ export class LexenOfferSheet extends LitElement {
       line-height: 1;
       opacity: 0.6;
     }
+
+    /* Stale — offer amount no longer matches the calculated ACV this scenario's
+       ACV/Cost to Market are derived from. Same amber as .discard-btn, faded
+       the same way .discard-btn:disabled fades — orange, but visibly inert. */
+    .pill.stale {
+      background: #fff8e1; border-color: #f59f00; color: #b45309;
+      opacity: 0.55; cursor: not-allowed;
+    }
+
+    /* Custom tooltip instead of a native title attribute — this needs to be
+       visible reliably inside the Bubble embed, where native title tooltips
+       don't consistently fire. */
+    .pill-wrap { position: relative; display: inline-flex; }
+    .pill-tooltip {
+      position: absolute;
+      top: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 220px;
+      padding: 7px 10px;
+      background: #1d2939;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.4;
+      text-align: center;
+      border-radius: 6px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 30;
+    }
+    .pill-tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-bottom-color: #1d2939;
+    }
+    .pill-wrap:hover .pill-tooltip { opacity: 1; visibility: visible; }
 
     .pill-toggle {
       display: inline-flex;
@@ -1072,8 +1120,6 @@ export class LexenOfferSheet extends LitElement {
     }
     .email-icon-btn:hover:not(:disabled) { color: #1d2939; }
     .email-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    .email-icon-btn.done { color: #1a7a4f; }
-    .email-icon-btn.done:disabled { opacity: 1; }
 
     /* REMOVED (kept for reference — Send Email as a full-width teal button
        under the offer bubble, styled to match .apply-main exactly. Back to
@@ -1201,8 +1247,8 @@ export class LexenOfferSheet extends LitElement {
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
       ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
-        [`market_scenarios.${f.key}`, true],
-        [`selected_scenarios.${f.key}`, true],
+        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
       ])),
     };
 
@@ -1499,6 +1545,34 @@ export class LexenOfferSheet extends LitElement {
     return this.payload || _templatePayload();
   }
 
+  _parseCurrency(str) {
+    if (str == null) return null;
+    const n = parseFloat(String(str).replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  /** True once the workbench's post-scenario negotiation slider has moved the
+   * offer away from the calculated ACV for this scenario — ACV and Cost to
+   * Market are derived from that original valuation, so they go stale too. */
+  _isScenarioStale(group) {
+    const scenarioKey = group === 'market_scenarios' ? 'market' : group === 'selected_scenarios' ? 'selected' : null;
+    if (!scenarioKey) return false;
+
+    const data = this._getPayloadData();
+    const offerAmount = data?.offer?.amount;
+    const acv = this._parseCurrency(data?.scenarios?.[scenarioKey]?.ACV);
+
+    if (offerAmount == null || acv == null) return false;
+    return Math.round(offerAmount) !== Math.round(acv);
+  }
+
+  /** ACV and Cost to Market are the only fields tied to that valuation. */
+  _isPillLockedStale(path) {
+    const [group, key] = path.split('.');
+    if (key !== 'ACV' && key !== 'costMkt') return false;
+    return this._isScenarioStale(group);
+  }
+
   _vehicleInfoFromData(data) {
     const v = data.vehicle || {};
     const o = data.offer || {};
@@ -1645,8 +1719,8 @@ export class LexenOfferSheet extends LitElement {
         value_display: this._valueDisplay,
       },
       scenarios: {
-        market: Object.fromEntries(SCENARIO_FIELDS.map(f => [f.key, p[`market_scenarios.${f.key}`]])),
-        selected: Object.fromEntries(SCENARIO_FIELDS.map(f => [f.key, p[`selected_scenarios.${f.key}`]])),
+        market: Object.fromEntries(SCENARIO_FIELDS.map(f => [f.key, this._isPillLockedStale(`market_scenarios.${f.key}`) ? false : p[`market_scenarios.${f.key}`]])),
+        selected: Object.fromEntries(SCENARIO_FIELDS.map(f => [f.key, this._isPillLockedStale(`selected_scenarios.${f.key}`) ? false : p[`selected_scenarios.${f.key}`]])),
       },
       scenario_layout: this._scenarioLayout,
     };
@@ -1897,8 +1971,8 @@ export class LexenOfferSheet extends LitElement {
       'sections.observations_highlights': true,
       'sections.observations_comments': true,
       ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
-        [`market_scenarios.${f.key}`, true],
-        [`selected_scenarios.${f.key}`, true],
+        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
       ])),
     };
     this._groups = {
@@ -2775,7 +2849,7 @@ export class LexenOfferSheet extends LitElement {
   _renderPillsToggle(group) {
     const open = !!this._pillsOpen[group];
     const pillKeys = this._pillKeysForGroup(group);
-    const active = pillKeys.filter(k => this._pills[k]).length;
+    const active = pillKeys.filter(k => !this._isPillLockedStale(k) && this._pills[k]).length;
     const total = pillKeys.length;
 
     return html`
@@ -2812,12 +2886,19 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _renderPill(path, label, group) {
-    const active = this._pills[path];
+    const stale  = this._isPillLockedStale(path);
+    const active = !stale && this._pills[path];
+
     return html`
-      <span
-        class="pill ${active ? 'active' : ''}"
-        @click="${() => this._handlePillClick(path, group)}"
-      >${label}</span>
+      <span class="pill-wrap">
+        <span
+          class="pill ${active ? 'active' : ''} ${stale ? 'stale' : ''}"
+          @click="${() => { if (!stale) this._handlePillClick(path, group); }}"
+        >${label}</span>
+        ${stale ? html`
+          <span class="pill-tooltip">Offer amount was adjusted after scenarios were calculated — value hidden until they're recalculated</span>
+        ` : nothing}
+      </span>
     `;
   }
 
@@ -2829,13 +2910,12 @@ export class LexenOfferSheet extends LitElement {
     if (!hasRecipient) return nothing;
 
     // Stays clickable even after a send — dealers resend, or send to the
-    // other recipient, without the button locking up. `.done` just tints it
-    // green to show it's gone out at least once.
+    // other recipient, without the button locking up or changing color.
     const canSend = hasPdf;
 
     return html`
       <button
-        class="email-icon-btn ${this._doneSentVia ? 'done' : ''}"
+        class="email-icon-btn"
         ?disabled="${!canSend}"
         @click="${() => {
           this._confirmSendEmail    = true;

@@ -924,7 +924,7 @@ def _build_market_summary(p):
     return [KeepTogether([Paragraph("Market Summary", STYLE_SECTION_HEADER), tbl])]
 
 
-def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MARKET"):
+def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MARKET", _d=0):
     """KPI grid, 4 tiles per row — large value + small uppercase label, same
     tile style as _build_market_summary. Shared by market and selected
     scenarios blocks.
@@ -952,6 +952,10 @@ def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MA
         label = label_tpl.format(basis=comparison_basis) if "{basis}" in label_tpl else label_tpl
         raw = scenarios.get(key)
         value = _fmt_scenario_km(raw) if fmt == "km" else raw
+        # Vehicles count excludes the appraised vehicle itself — flagged with
+        # an asterisk, explained in the footnote appended below.
+        if key == "vehicles" and value not in (None, ""):
+            value = f"{value}*"
         tiles.append(_tile(value, label))
 
     if not tiles:
@@ -989,10 +993,18 @@ def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MA
         row_tables.append(row_tbl)
         idx += size
 
-    return [KeepTogether([Paragraph(title, STYLE_SECTION_HEADER), *row_tables])]
+    elements = [Paragraph(title, STYLE_SECTION_HEADER), *row_tables]
+    if field_flags.get("vehicles", True):
+        elements.append(Paragraph(
+            "* Number of vehicles being compared, not including your vehicle. "
+            "Mileage, price, and perception rankings include your vehicle.",
+            _adj_style(STYLE_FOOTNOTE, _d),
+        ))
+
+    return [KeepTogether(elements)]
 
 
-def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET"):
+def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET", _d=0):
     """Label/value row layout — same styling as the Valuation table (bold
     label left, value right, alternating row background). Alternative to
     _build_scenario_kpi_grid for the same 12 scenario fields."""
@@ -1029,6 +1041,8 @@ def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET
         label = label_tpl.format(basis=comparison_basis) if "{basis}" in label_tpl else label_tpl
         raw = scenarios.get(key)
         value = _fmt_scenario_km(raw) if fmt == "km" else raw
+        if key == "vehicles" and value not in (None, ""):
+            value = f"{value}*"
         text = value if value not in (None, "") else "—"
         bg = _alt if idx % 2 == 1 else white
         elements.append(Spacer(1, 3))
@@ -1038,6 +1052,13 @@ def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET
     if idx == 0:
         return []
 
+    if field_flags.get("vehicles", True):
+        elements.append(Paragraph(
+            "* Number of vehicles being compared, not including your vehicle. "
+            "Mileage, price, and perception rankings include your vehicle.",
+            _adj_style(STYLE_FOOTNOTE, _d),
+        ))
+
     return [KeepTogether(elements)]
 
 
@@ -1046,9 +1067,10 @@ def _build_market_scenarios(p):
     scenarios = p.get("scenarios", {}).get("market", {})
     display = _get_display(p)
     field_flags = display["scenarios"]["market"]
+    _d = p.get("_font_size_delta", 0)
     if display.get("scenario_layout") == "rows":
-        return _build_scenario_rows(scenarios, "Market Scenarios", field_flags)
-    return _build_scenario_kpi_grid(scenarios, "Market Scenarios", field_flags)
+        return _build_scenario_rows(scenarios, "Market Scenarios", field_flags, _d=_d)
+    return _build_scenario_kpi_grid(scenarios, "Market Scenarios", field_flags, _d=_d)
 
 
 def _build_selected_scenarios(p):
@@ -1056,9 +1078,10 @@ def _build_selected_scenarios(p):
     scenarios = p.get("scenarios", {}).get("selected", {})
     display = _get_display(p)
     field_flags = display["scenarios"]["selected"]
+    _d = p.get("_font_size_delta", 0)
     if display.get("scenario_layout") == "rows":
-        return _build_scenario_rows(scenarios, "Selected Scenarios", field_flags, comparison_basis="SELECTED")
-    return _build_scenario_kpi_grid(scenarios, "Selected Scenarios", field_flags, comparison_basis="SELECTED")
+        return _build_scenario_rows(scenarios, "Selected Scenarios", field_flags, comparison_basis="SELECTED", _d=_d)
+    return _build_scenario_kpi_grid(scenarios, "Selected Scenarios", field_flags, comparison_basis="SELECTED", _d=_d)
 
 
 def _build_market_comparables(p):
