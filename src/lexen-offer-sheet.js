@@ -568,42 +568,6 @@ export class LexenOfferSheet extends LitElement {
       opacity: 0.55; cursor: not-allowed;
     }
 
-    /* Custom tooltip instead of a native title attribute — this needs to be
-       visible reliably inside the Bubble embed, where native title tooltips
-       don't consistently fire. */
-    .pill-wrap { position: relative; display: inline-flex; }
-    .pill-tooltip {
-      position: absolute;
-      top: calc(100% + 7px);
-      left: 50%;
-      transform: translateX(-50%);
-      width: max-content;
-      max-width: 220px;
-      padding: 7px 10px;
-      background: #1d2939;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 500;
-      line-height: 1.4;
-      text-align: center;
-      border-radius: 6px;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.15s;
-      z-index: 30;
-    }
-    .pill-tooltip::after {
-      content: '';
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 5px solid transparent;
-      border-bottom-color: #1d2939;
-    }
-    .pill-wrap:hover .pill-tooltip { opacity: 1; visibility: visible; }
-
     .pill-toggle {
       display: inline-flex;
       align-items: center;
@@ -2890,15 +2854,11 @@ export class LexenOfferSheet extends LitElement {
     const active = !stale && this._pills[path];
 
     return html`
-      <span class="pill-wrap">
-        <span
-          class="pill ${active ? 'active' : ''} ${stale ? 'stale' : ''}"
-          @click="${() => { if (!stale) this._handlePillClick(path, group); }}"
-        >${label}</span>
-        ${stale ? html`
-          <span class="pill-tooltip">Offer amount was adjusted after scenarios were calculated — value hidden until they're recalculated</span>
-        ` : nothing}
-      </span>
+      <span
+        class="pill ${active ? 'active' : ''} ${stale ? 'stale' : ''}"
+        title="${stale ? 'Offer amount was adjusted after scenarios were calculated — value hidden until they\'re recalculated' : ''}"
+        @click="${() => { if (!stale) this._handlePillClick(path, group); }}"
+      >${label}</span>
     `;
   }
 
