@@ -924,7 +924,7 @@ def _build_market_summary(p):
     return [KeepTogether([Paragraph("Market Summary", STYLE_SECTION_HEADER), tbl])]
 
 
-def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MARKET", _d=0):
+def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MARKET", _d=0, show_footnote=True):
     """KPI grid, 4 tiles per row — large value + small uppercase label, same
     tile style as _build_market_summary. Shared by market and selected
     scenarios blocks.
@@ -994,7 +994,7 @@ def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MA
         idx += size
 
     elements = [Paragraph(title, STYLE_SECTION_HEADER), *row_tables]
-    if field_flags.get("vehicles", True):
+    if field_flags.get("vehicles", True) and show_footnote:
         elements.append(Paragraph(
             "* Number of vehicles being compared, not including your vehicle. "
             "Mileage, price, and perception rankings include your vehicle.",
@@ -1004,7 +1004,7 @@ def _build_scenario_kpi_grid(scenarios, title, field_flags, comparison_basis="MA
     return [KeepTogether(elements)]
 
 
-def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET", _d=0):
+def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET", _d=0, show_footnote=True):
     """Label/value row layout — same styling as the Valuation table (bold
     label left, value right, alternating row background). Alternative to
     _build_scenario_kpi_grid for the same 12 scenario fields."""
@@ -1052,7 +1052,7 @@ def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET
     if idx == 0:
         return []
 
-    if field_flags.get("vehicles", True):
+    if field_flags.get("vehicles", True) and show_footnote:
         elements.append(Paragraph(
             "* Number of vehicles being compared, not including your vehicle. "
             "Mileage, price, and perception rankings include your vehicle.",
@@ -1062,15 +1062,15 @@ def _build_scenario_rows(scenarios, title, field_flags, comparison_basis="MARKET
     return [KeepTogether(elements)]
 
 
-def _build_market_scenarios(p):
+def _build_market_scenarios(p, show_footnote=True):
     """Market Scenarios: KPI grid computed over the full comparables set."""
     scenarios = p.get("scenarios", {}).get("market", {})
     display = _get_display(p)
     field_flags = display["scenarios"]["market"]
     _d = p.get("_font_size_delta", 0)
     if display.get("scenario_layout") == "rows":
-        return _build_scenario_rows(scenarios, "Market Scenarios", field_flags, _d=_d)
-    return _build_scenario_kpi_grid(scenarios, "Market Scenarios", field_flags, _d=_d)
+        return _build_scenario_rows(scenarios, "Market Scenarios", field_flags, _d=_d, show_footnote=show_footnote)
+    return _build_scenario_kpi_grid(scenarios, "Market Scenarios", field_flags, _d=_d, show_footnote=show_footnote)
 
 
 def _build_selected_scenarios(p):
@@ -1594,7 +1594,13 @@ def render_offer(payload: dict, preview_logo: bool = False, preview_photos: bool
                 (_build_market_comparables(payload) if ds["market_comparables"] else [])
             )
         if name == "market_scenarios":
-            return _build_market_scenarios(payload) if ds["market_scenarios"] else []
+            if not ds["market_scenarios"]:
+                return []
+            # Both scenario blocks share the same "vehicles" footnote — when
+            # selected scenarios is also showing, it prints there instead so
+            # the note isn't duplicated on the page.
+            show_footnote = not ds["selected_scenarios"]
+            return _build_market_scenarios(payload, show_footnote=show_footnote)
         if name == "selected_scenarios":
             return _build_selected_scenarios(payload) if ds["selected_scenarios"] else []
         if name == "recon":
