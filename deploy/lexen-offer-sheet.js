@@ -1,23 +1,23 @@
-var Oe = Object.defineProperty;
-var Ce = (a, e, t) => e in a ? Oe(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
-var q = (a, e, t) => Ce(a, typeof e != "symbol" ? e + "" : e, t);
+var Le = Object.defineProperty;
+var Re = (r, e, t) => e in r ? Le(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var W = (r, e, t) => Re(r, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const F = globalThis, ee = F.ShadowRoot && (F.ShadyCSS === void 0 || F.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, te = Symbol(), ae = /* @__PURE__ */ new WeakMap();
-let ye = class {
+const G = globalThis, ie = G.ShadowRoot && (G.ShadyCSS === void 0 || G.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, se = Symbol(), de = /* @__PURE__ */ new WeakMap();
+let we = class {
   constructor(e, t, i) {
-    if (this._$cssResult$ = !0, i !== te) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, i !== se) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = e, this.t = t;
   }
   get styleSheet() {
     let e = this.o;
     const t = this.t;
-    if (ee && e === void 0) {
+    if (ie && e === void 0) {
       const i = t !== void 0 && t.length === 1;
-      i && (e = ae.get(t)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && ae.set(t, e));
+      i && (e = de.get(t)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && de.set(t, e));
     }
     return e;
   }
@@ -25,95 +25,95 @@ let ye = class {
     return this.cssText;
   }
 };
-const ze = (a) => new ye(typeof a == "string" ? a : a + "", void 0, te), Le = (a, ...e) => {
-  const t = a.length === 1 ? a[0] : e.reduce((i, s, o) => i + ((r) => {
-    if (r._$cssResult$ === !0) return r.cssText;
-    if (typeof r == "number") return r;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(s) + a[o + 1], a[0]);
-  return new ye(t, a, te);
-}, Re = (a, e) => {
-  if (ee) a.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
+const ze = (r) => new we(typeof r == "string" ? r : r + "", void 0, se), Te = (r, ...e) => {
+  const t = r.length === 1 ? r[0] : e.reduce((i, s, o) => i + ((a) => {
+    if (a._$cssResult$ === !0) return a.cssText;
+    if (typeof a == "number") return a;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + a + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(s) + r[o + 1], r[0]);
+  return new we(t, r, se);
+}, Me = (r, e) => {
+  if (ie) r.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
-    const i = document.createElement("style"), s = F.litNonce;
-    s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, a.appendChild(i);
+    const i = document.createElement("style"), s = G.litNonce;
+    s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, r.appendChild(i);
   }
-}, ne = ee ? (a) => a : (a) => a instanceof CSSStyleSheet ? ((e) => {
+}, ce = ie ? (r) => r : (r) => r instanceof CSSStyleSheet ? ((e) => {
   let t = "";
   for (const i of e.cssRules) t += i.cssText;
   return ze(t);
-})(a) : a;
+})(r) : r;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ne, getOwnPropertySymbols: Ie, getPrototypeOf: Be } = Object, $ = globalThis, le = $.trustedTypes, He = le ? le.emptyScript : "", K = $.reactiveElementPolyfillSupport, T = (a, e) => a, Q = { toAttribute(a, e) {
+const { is: Be, defineProperty: Ne, getOwnPropertyDescriptor: Ue, getOwnPropertyNames: Ie, getOwnPropertySymbols: je, getPrototypeOf: He } = Object, w = globalThis, pe = w.trustedTypes, Fe = pe ? pe.emptyScript : "", Y = w.reactiveElementPolyfillSupport, T = (r, e) => r, ee = { toAttribute(r, e) {
   switch (e) {
     case Boolean:
-      a = a ? He : null;
+      r = r ? Fe : null;
       break;
     case Object:
     case Array:
-      a = a == null ? a : JSON.stringify(a);
+      r = r == null ? r : JSON.stringify(r);
   }
-  return a;
-}, fromAttribute(a, e) {
-  let t = a;
+  return r;
+}, fromAttribute(r, e) {
+  let t = r;
   switch (e) {
     case Boolean:
-      t = a !== null;
+      t = r !== null;
       break;
     case Number:
-      t = a === null ? null : Number(a);
+      t = r === null ? null : Number(r);
       break;
     case Object:
     case Array:
       try {
-        t = JSON.parse(a);
+        t = JSON.parse(r);
       } catch {
         t = null;
       }
   }
   return t;
-} }, xe = (a, e) => !Te(a, e), de = { attribute: !0, type: String, converter: Q, reflect: !1, useDefault: !1, hasChanged: xe };
-Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), $.litPropertyMetadata ?? ($.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
-let E = class extends HTMLElement {
+} }, $e = (r, e) => !Be(r, e), he = { attribute: !0, type: String, converter: ee, reflect: !1, useDefault: !1, hasChanged: $e };
+Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), w.litPropertyMetadata ?? (w.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+let C = class extends HTMLElement {
   static addInitializer(e) {
     this._$Ei(), (this.l ?? (this.l = [])).push(e);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(e, t = de) {
+  static createProperty(e, t = he) {
     if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
       const i = Symbol(), s = this.getPropertyDescriptor(e, i, t);
-      s !== void 0 && Me(this.prototype, e, s);
+      s !== void 0 && Ne(this.prototype, e, s);
     }
   }
   static getPropertyDescriptor(e, t, i) {
     const { get: s, set: o } = Ue(this.prototype, e) ?? { get() {
       return this[t];
-    }, set(r) {
-      this[t] = r;
+    }, set(a) {
+      this[t] = a;
     } };
-    return { get: s, set(r) {
+    return { get: s, set(a) {
       const n = s == null ? void 0 : s.call(this);
-      o == null || o.call(this, r), this.requestUpdate(e, n, i);
+      o == null || o.call(this, a), this.requestUpdate(e, n, i);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(e) {
-    return this.elementProperties.get(e) ?? de;
+    return this.elementProperties.get(e) ?? he;
   }
   static _$Ei() {
     if (this.hasOwnProperty(T("elementProperties"))) return;
-    const e = Be(this);
+    const e = He(this);
     e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
   }
   static finalize() {
     if (this.hasOwnProperty(T("finalized"))) return;
     if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(T("properties"))) {
-      const t = this.properties, i = [...Ne(t), ...Ie(t)];
+      const t = this.properties, i = [...Ie(t), ...je(t)];
       for (const s of i) this.createProperty(s, t[s]);
     }
     const e = this[Symbol.metadata];
@@ -132,8 +132,8 @@ let E = class extends HTMLElement {
     const t = [];
     if (Array.isArray(e)) {
       const i = new Set(e.flat(1 / 0).reverse());
-      for (const s of i) t.unshift(ne(s));
-    } else e !== void 0 && t.push(ne(e));
+      for (const s of i) t.unshift(ce(s));
+    } else e !== void 0 && t.push(ce(e));
     return t;
   }
   static _$Eu(e, t) {
@@ -162,7 +162,7 @@ let E = class extends HTMLElement {
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Re(e, this.constructor.elementStyles), e;
+    return Me(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     var e;
@@ -187,31 +187,31 @@ let E = class extends HTMLElement {
     var o;
     const i = this.constructor.elementProperties.get(e), s = this.constructor._$Eu(e, i);
     if (s !== void 0 && i.reflect === !0) {
-      const r = (((o = i.converter) == null ? void 0 : o.toAttribute) !== void 0 ? i.converter : Q).toAttribute(t, i.type);
-      this._$Em = e, r == null ? this.removeAttribute(s) : this.setAttribute(s, r), this._$Em = null;
+      const a = (((o = i.converter) == null ? void 0 : o.toAttribute) !== void 0 ? i.converter : ee).toAttribute(t, i.type);
+      this._$Em = e, a == null ? this.removeAttribute(s) : this.setAttribute(s, a), this._$Em = null;
     }
   }
   _$AK(e, t) {
-    var o, r;
+    var o, a;
     const i = this.constructor, s = i._$Eh.get(e);
     if (s !== void 0 && this._$Em !== s) {
-      const n = i.getPropertyOptions(s), l = typeof n.converter == "function" ? { fromAttribute: n.converter } : ((o = n.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? n.converter : Q;
+      const n = i.getPropertyOptions(s), l = typeof n.converter == "function" ? { fromAttribute: n.converter } : ((o = n.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? n.converter : ee;
       this._$Em = s;
-      const u = l.fromAttribute(t, n.type);
-      this[s] = u ?? ((r = this._$Ej) == null ? void 0 : r.get(s)) ?? u, this._$Em = null;
+      const p = l.fromAttribute(t, n.type);
+      this[s] = p ?? ((a = this._$Ej) == null ? void 0 : a.get(s)) ?? p, this._$Em = null;
     }
   }
   requestUpdate(e, t, i, s = !1, o) {
-    var r;
+    var a;
     if (e !== void 0) {
       const n = this.constructor;
-      if (s === !1 && (o = this[e]), i ?? (i = n.getPropertyOptions(e)), !((i.hasChanged ?? xe)(o, t) || i.useDefault && i.reflect && o === ((r = this._$Ej) == null ? void 0 : r.get(e)) && !this.hasAttribute(n._$Eu(e, i)))) return;
+      if (s === !1 && (o = this[e]), i ?? (i = n.getPropertyOptions(e)), !((i.hasChanged ?? $e)(o, t) || i.useDefault && i.reflect && o === ((a = this._$Ej) == null ? void 0 : a.get(e)) && !this.hasAttribute(n._$Eu(e, i)))) return;
       this.C(e, t, i);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
   }
-  C(e, t, { useDefault: i, reflect: s, wrapped: o }, r) {
-    i && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(e) && (this._$Ej.set(e, r ?? t ?? this[e]), o !== !0 || r !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (t = void 0), this._$AL.set(e, t)), s === !0 && this._$Em !== e && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(e));
+  C(e, t, { useDefault: i, reflect: s, wrapped: o }, a) {
+    i && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(e) && (this._$Ej.set(e, a ?? t ?? this[e]), o !== !0 || a !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (t = void 0), this._$AL.set(e, t)), s === !0 && this._$Em !== e && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(e));
   }
   async _$EP() {
     this.isUpdatePending = !0;
@@ -231,13 +231,13 @@ let E = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
-        for (const [o, r] of this._$Ep) this[o] = r;
+        for (const [o, a] of this._$Ep) this[o] = a;
         this._$Ep = void 0;
       }
       const s = this.constructor.elementProperties;
-      if (s.size > 0) for (const [o, r] of s) {
-        const { wrapped: n } = r, l = this[o];
-        n !== !0 || this._$AL.has(o) || l === void 0 || this.C(o, void 0, r, l);
+      if (s.size > 0) for (const [o, a] of s) {
+        const { wrapped: n } = a, l = this[o];
+        n !== !0 || this._$AL.has(o) || l === void 0 || this.C(o, void 0, a, l);
       }
     }
     let e = !1;
@@ -281,59 +281,59 @@ let E = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[T("elementProperties")] = /* @__PURE__ */ new Map(), E[T("finalized")] = /* @__PURE__ */ new Map(), K == null || K({ ReactiveElement: E }), ($.reactiveElementVersions ?? ($.reactiveElementVersions = [])).push("2.1.2");
+C.elementStyles = [], C.shadowRootOptions = { mode: "open" }, C[T("elementProperties")] = /* @__PURE__ */ new Map(), C[T("finalized")] = /* @__PURE__ */ new Map(), Y == null || Y({ ReactiveElement: C }), (w.reactiveElementVersions ?? (w.reactiveElementVersions = [])).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const M = globalThis, ce = (a) => a, j = M.trustedTypes, pe = j ? j.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, ke = "$lit$", k = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + k, Fe = `<${$e}>`, P = document, N = () => P.createComment(""), I = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, je = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", W = `[ 	
-\f\r]`, L = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, w = RegExp(`>|${W}(?:([^\\s"'>=/]+)(${W}*=${W}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, _e = /"/g, we = /^(?:script|style|textarea|title)$/i, Ge = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), p = Ge(1), O = Symbol.for("lit-noChange"), h = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
-function Se(a, e) {
-  if (!ie(a) || !a.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return pe !== void 0 ? pe.createHTML(e) : e;
+const M = globalThis, ue = (r) => r, V = M.trustedTypes, fe = V ? V.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, Se = "$lit$", k = `lit$${Math.random().toFixed(9).slice(2)}$`, Ee = "?" + k, Ge = `<${Ee}>`, P = document, N = () => P.createComment(""), U = (r) => r === null || typeof r != "object" && typeof r != "function", oe = Array.isArray, Ve = (r) => oe(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", Z = `[ 	
+\f\r]`, z = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, _e = /-->/g, me = />/g, $ = RegExp(`>|${Z}(?:([^\\s"'>=/]+)(${Z}*=${Z}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), ge = /'/g, be = /"/g, De = /^(?:script|style|textarea|title)$/i, qe = (r) => (e, ...t) => ({ _$litType$: r, strings: e, values: t }), d = qe(1), O = Symbol.for("lit-noChange"), h = Symbol.for("lit-nothing"), ye = /* @__PURE__ */ new WeakMap(), E = P.createTreeWalker(P, 129);
+function Pe(r, e) {
+  if (!oe(r) || !r.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return fe !== void 0 ? fe.createHTML(e) : e;
 }
-const Ve = (a, e) => {
-  const t = a.length - 1, i = [];
-  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = L;
+const Ke = (r, e) => {
+  const t = r.length - 1, i = [];
+  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", a = z;
   for (let n = 0; n < t; n++) {
-    const l = a[n];
-    let u, g, d = -1, f = 0;
-    for (; f < l.length && (r.lastIndex = f, g = r.exec(l), g !== null); ) f = r.lastIndex, r === L ? g[1] === "!--" ? r = he : g[1] !== void 0 ? r = ue : g[2] !== void 0 ? (we.test(g[2]) && (s = RegExp("</" + g[2], "g")), r = w) : g[3] !== void 0 && (r = w) : r === w ? g[0] === ">" ? (r = s ?? L, d = -1) : g[1] === void 0 ? d = -2 : (d = r.lastIndex - g[2].length, u = g[1], r = g[3] === void 0 ? w : g[3] === '"' ? _e : fe) : r === _e || r === fe ? r = w : r === he || r === ue ? r = L : (r = w, s = void 0);
-    const m = r === w && a[n + 1].startsWith("/>") ? " " : "";
-    o += r === L ? l + Fe : d >= 0 ? (i.push(u), l.slice(0, d) + ke + l.slice(d) + k + m) : l + k + (d === -2 ? n : m);
+    const l = r[n];
+    let p, f, c = -1, _ = 0;
+    for (; _ < l.length && (a.lastIndex = _, f = a.exec(l), f !== null); ) _ = a.lastIndex, a === z ? f[1] === "!--" ? a = _e : f[1] !== void 0 ? a = me : f[2] !== void 0 ? (De.test(f[2]) && (s = RegExp("</" + f[2], "g")), a = $) : f[3] !== void 0 && (a = $) : a === $ ? f[0] === ">" ? (a = s ?? z, c = -1) : f[1] === void 0 ? c = -2 : (c = a.lastIndex - f[2].length, p = f[1], a = f[3] === void 0 ? $ : f[3] === '"' ? be : ge) : a === be || a === ge ? a = $ : a === _e || a === me ? a = z : (a = $, s = void 0);
+    const g = a === $ && r[n + 1].startsWith("/>") ? " " : "";
+    o += a === z ? l + Ge : c >= 0 ? (i.push(p), l.slice(0, c) + Se + l.slice(c) + k + g) : l + k + (c === -2 ? n : g);
   }
-  return [Se(a, o + (a[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
+  return [Pe(r, o + (r[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
-class B {
+class I {
   constructor({ strings: e, _$litType$: t }, i) {
     let s;
     this.parts = [];
-    let o = 0, r = 0;
-    const n = e.length - 1, l = this.parts, [u, g] = Ve(e, t);
-    if (this.el = B.createElement(u, i), S.currentNode = this.el.content, t === 2 || t === 3) {
-      const d = this.el.content.firstChild;
-      d.replaceWith(...d.childNodes);
+    let o = 0, a = 0;
+    const n = e.length - 1, l = this.parts, [p, f] = Ke(e, t);
+    if (this.el = I.createElement(p, i), E.currentNode = this.el.content, t === 2 || t === 3) {
+      const c = this.el.content.firstChild;
+      c.replaceWith(...c.childNodes);
     }
-    for (; (s = S.nextNode()) !== null && l.length < n; ) {
+    for (; (s = E.nextNode()) !== null && l.length < n; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const d of s.getAttributeNames()) if (d.endsWith(ke)) {
-          const f = g[r++], m = s.getAttribute(d).split(k), c = /([.?@])?(.*)/.exec(f);
-          l.push({ type: 1, index: o, name: c[2], strings: m, ctor: c[1] === "." ? Ke : c[1] === "?" ? We : c[1] === "@" ? Ye : G }), s.removeAttribute(d);
-        } else d.startsWith(k) && (l.push({ type: 6, index: o }), s.removeAttribute(d));
-        if (we.test(s.tagName)) {
-          const d = s.textContent.split(k), f = d.length - 1;
-          if (f > 0) {
-            s.textContent = j ? j.emptyScript : "";
-            for (let m = 0; m < f; m++) s.append(d[m], N()), S.nextNode(), l.push({ type: 2, index: ++o });
-            s.append(d[f], N());
+        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith(Se)) {
+          const _ = f[a++], g = s.getAttribute(c).split(k), u = /([.?@])?(.*)/.exec(_);
+          l.push({ type: 1, index: o, name: u[2], strings: g, ctor: u[1] === "." ? Ye : u[1] === "?" ? Ze : u[1] === "@" ? Je : q }), s.removeAttribute(c);
+        } else c.startsWith(k) && (l.push({ type: 6, index: o }), s.removeAttribute(c));
+        if (De.test(s.tagName)) {
+          const c = s.textContent.split(k), _ = c.length - 1;
+          if (_ > 0) {
+            s.textContent = V ? V.emptyScript : "";
+            for (let g = 0; g < _; g++) s.append(c[g], N()), E.nextNode(), l.push({ type: 2, index: ++o });
+            s.append(c[_], N());
           }
         }
-      } else if (s.nodeType === 8) if (s.data === $e) l.push({ type: 2, index: o });
+      } else if (s.nodeType === 8) if (s.data === Ee) l.push({ type: 2, index: o });
       else {
-        let d = -1;
-        for (; (d = s.data.indexOf(k, d + 1)) !== -1; ) l.push({ type: 7, index: o }), d += k.length - 1;
+        let c = -1;
+        for (; (c = s.data.indexOf(k, c + 1)) !== -1; ) l.push({ type: 7, index: o }), c += k.length - 1;
       }
       o++;
     }
@@ -343,14 +343,14 @@ class B {
     return i.innerHTML = e, i;
   }
 }
-function C(a, e, t = a, i) {
-  var r, n;
+function L(r, e, t = r, i) {
+  var a, n;
   if (e === O) return e;
-  let s = i !== void 0 ? (r = t._$Co) == null ? void 0 : r[i] : t._$Cl;
-  const o = I(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== o && ((n = s == null ? void 0 : s._$AO) == null || n.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = C(a, s._$AS(a, e.values), s, i)), e;
+  let s = i !== void 0 ? (a = t._$Co) == null ? void 0 : a[i] : t._$Cl;
+  const o = U(e) ? void 0 : e._$litDirective$;
+  return (s == null ? void 0 : s.constructor) !== o && ((n = s == null ? void 0 : s._$AO) == null || n.call(s, !1), o === void 0 ? s = void 0 : (s = new o(r), s._$AT(r, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = L(r, s._$AS(r, e.values), s, i)), e;
 }
-class qe {
+class We {
   constructor(e, t) {
     this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
   }
@@ -362,23 +362,23 @@ class qe {
   }
   u(e) {
     const { el: { content: t }, parts: i } = this._$AD, s = ((e == null ? void 0 : e.creationScope) ?? P).importNode(t, !0);
-    S.currentNode = s;
-    let o = S.nextNode(), r = 0, n = 0, l = i[0];
+    E.currentNode = s;
+    let o = E.nextNode(), a = 0, n = 0, l = i[0];
     for (; l !== void 0; ) {
-      if (r === l.index) {
-        let u;
-        l.type === 2 ? u = new H(o, o.nextSibling, this, e) : l.type === 1 ? u = new l.ctor(o, l.name, l.strings, this, e) : l.type === 6 && (u = new Ze(o, this, e)), this._$AV.push(u), l = i[++n];
+      if (a === l.index) {
+        let p;
+        l.type === 2 ? p = new j(o, o.nextSibling, this, e) : l.type === 1 ? p = new l.ctor(o, l.name, l.strings, this, e) : l.type === 6 && (p = new Qe(o, this, e)), this._$AV.push(p), l = i[++n];
       }
-      r !== (l == null ? void 0 : l.index) && (o = S.nextNode(), r++);
+      a !== (l == null ? void 0 : l.index) && (o = E.nextNode(), a++);
     }
-    return S.currentNode = P, s;
+    return E.currentNode = P, s;
   }
   p(e) {
     let t = 0;
     for (const i of this._$AV) i !== void 0 && (i.strings !== void 0 ? (i._$AI(e, i, t), t += i.strings.length - 2) : i._$AI(e[t])), t++;
   }
 }
-class H {
+class j {
   get _$AU() {
     var e;
     return ((e = this._$AM) == null ? void 0 : e._$AU) ?? this._$Cv;
@@ -398,7 +398,7 @@ class H {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = C(this, e, t), I(e) ? e === h || e == null || e === "" ? (this._$AH !== h && this._$AR(), this._$AH = h) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : je(e) ? this.k(e) : this._(e);
+    e = L(this, e, t), U(e) ? e === h || e == null || e === "" ? (this._$AH !== h && this._$AR(), this._$AH = h) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Ve(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -407,33 +407,33 @@ class H {
     this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
   }
   _(e) {
-    this._$AH !== h && I(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
+    this._$AH !== h && U(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
   }
   $(e) {
     var o;
-    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = B.createElement(Se(i.h, i.h[0]), this.options)), i);
+    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = I.createElement(Pe(i.h, i.h[0]), this.options)), i);
     if (((o = this._$AH) == null ? void 0 : o._$AD) === s) this._$AH.p(t);
     else {
-      const r = new qe(s, this), n = r.u(this.options);
-      r.p(t), this.T(n), this._$AH = r;
+      const a = new We(s, this), n = a.u(this.options);
+      a.p(t), this.T(n), this._$AH = a;
     }
   }
   _$AC(e) {
-    let t = ge.get(e.strings);
-    return t === void 0 && ge.set(e.strings, t = new B(e)), t;
+    let t = ye.get(e.strings);
+    return t === void 0 && ye.set(e.strings, t = new I(e)), t;
   }
   k(e) {
-    ie(this._$AH) || (this._$AH = [], this._$AR());
+    oe(this._$AH) || (this._$AH = [], this._$AR());
     const t = this._$AH;
     let i, s = 0;
-    for (const o of e) s === t.length ? t.push(i = new H(this.O(N()), this.O(N()), this, this.options)) : i = t[s], i._$AI(o), s++;
+    for (const o of e) s === t.length ? t.push(i = new j(this.O(N()), this.O(N()), this, this.options)) : i = t[s], i._$AI(o), s++;
     s < t.length && (this._$AR(i && i._$AB.nextSibling, s), t.length = s);
   }
   _$AR(e = this._$AA.nextSibling, t) {
     var i;
     for ((i = this._$AP) == null ? void 0 : i.call(this, !1, !0, t); e !== this._$AB; ) {
-      const s = ce(e).nextSibling;
-      ce(e).remove(), e = s;
+      const s = ue(e).nextSibling;
+      ue(e).remove(), e = s;
     }
   }
   setConnected(e) {
@@ -441,7 +441,7 @@ class H {
     this._$AM === void 0 && (this._$Cv = e, (t = this._$AP) == null || t.call(this, e));
   }
 }
-class G {
+class q {
   get tagName() {
     return this.element.tagName;
   }
@@ -453,20 +453,20 @@ class G {
   }
   _$AI(e, t = this, i, s) {
     const o = this.strings;
-    let r = !1;
-    if (o === void 0) e = C(this, e, t, 0), r = !I(e) || e !== this._$AH && e !== O, r && (this._$AH = e);
+    let a = !1;
+    if (o === void 0) e = L(this, e, t, 0), a = !U(e) || e !== this._$AH && e !== O, a && (this._$AH = e);
     else {
       const n = e;
-      let l, u;
-      for (e = o[0], l = 0; l < o.length - 1; l++) u = C(this, n[i + l], t, l), u === O && (u = this._$AH[l]), r || (r = !I(u) || u !== this._$AH[l]), u === h ? e = h : e !== h && (e += (u ?? "") + o[l + 1]), this._$AH[l] = u;
+      let l, p;
+      for (e = o[0], l = 0; l < o.length - 1; l++) p = L(this, n[i + l], t, l), p === O && (p = this._$AH[l]), a || (a = !U(p) || p !== this._$AH[l]), p === h ? e = h : e !== h && (e += (p ?? "") + o[l + 1]), this._$AH[l] = p;
     }
-    r && !s && this.j(e);
+    a && !s && this.j(e);
   }
   j(e) {
     e === h ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
-class Ke extends G {
+class Ye extends q {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -474,7 +474,7 @@ class Ke extends G {
     this.element[this.name] = e === h ? void 0 : e;
   }
 }
-class We extends G {
+class Ze extends q {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -482,12 +482,12 @@ class We extends G {
     this.element.toggleAttribute(this.name, !!e && e !== h);
   }
 }
-class Ye extends G {
+class Je extends q {
   constructor(e, t, i, s, o) {
     super(e, t, i, s, o), this.type = 5;
   }
   _$AI(e, t = this) {
-    if ((e = C(this, e, t, 0) ?? h) === O) return;
+    if ((e = L(this, e, t, 0) ?? h) === O) return;
     const i = this._$AH, s = e === h && i !== h || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== h && (i === h || s);
     s && this.element.removeEventListener(this.name, this, i), o && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
@@ -496,7 +496,7 @@ class Ye extends G {
     typeof this._$AH == "function" ? this._$AH.call(((t = this.options) == null ? void 0 : t.host) ?? this.element, e) : this._$AH.handleEvent(e);
   }
 }
-class Ze {
+class Qe {
   constructor(e, t, i) {
     this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = i;
   }
@@ -504,19 +504,19 @@ class Ze {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    C(this, e);
+    L(this, e);
   }
 }
-const Y = M.litHtmlPolyfillSupport;
-Y == null || Y(B, H), (M.litHtmlVersions ?? (M.litHtmlVersions = [])).push("3.3.3");
-const Je = (a, e, t) => {
+const J = M.litHtmlPolyfillSupport;
+J == null || J(I, j), (M.litHtmlVersions ?? (M.litHtmlVersions = [])).push("3.3.3");
+const Xe = (r, e, t) => {
   const i = (t == null ? void 0 : t.renderBefore) ?? e;
   let s = i._$litPart$;
   if (s === void 0) {
     const o = (t == null ? void 0 : t.renderBefore) ?? null;
-    i._$litPart$ = s = new H(e.insertBefore(N(), o), o, void 0, t ?? {});
+    i._$litPart$ = s = new j(e.insertBefore(N(), o), o, void 0, t ?? {});
   }
-  return s._$AI(a), s;
+  return s._$AI(r), s;
 };
 /**
  * @license
@@ -524,7 +524,7 @@ const Je = (a, e, t) => {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const D = globalThis;
-class U extends E {
+class B extends C {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -535,7 +535,7 @@ class U extends E {
   }
   update(e) {
     const t = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Je(t, this.renderRoot, this.renderOptions);
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Xe(t, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     var e;
@@ -549,18 +549,18 @@ class U extends E {
     return O;
   }
 }
-var ve;
-U._$litElement$ = !0, U.finalized = !0, (ve = D.litElementHydrateSupport) == null || ve.call(D, { LitElement: U });
-const Z = D.litElementPolyfillSupport;
-Z == null || Z({ LitElement: U });
+var ke;
+B._$litElement$ = !0, B.finalized = !0, (ke = D.litElementHydrateSupport) == null || ke.call(D, { LitElement: B });
+const Q = D.litElementPolyfillSupport;
+Q == null || Q({ LitElement: B });
 (D.litElementVersions ?? (D.litElementVersions = [])).push("4.2.2");
-function me(a) {
-  const e = String(a || "").replace(/\D/g, "");
-  return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : a || "";
+function ve(r) {
+  const e = String(r || "").replace(/\D/g, "");
+  return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : r || "";
 }
-function Qe() {
-  const a = /* @__PURE__ */ new Date(), e = new Date(a);
-  e.setDate(a.getDate() + 30);
+function et() {
+  const r = /* @__PURE__ */ new Date(), e = new Date(r);
+  e.setDate(r.getDate() + 30);
   const t = (s) => s.toISOString().slice(0, 10);
   return {
     dealer: {
@@ -585,7 +585,7 @@ City, PR`,
     offer: {
       amount: 25e3,
       valid_until: t(e),
-      appraisal_date: t(a),
+      appraisal_date: t(r),
       classification: "Good Condition"
     },
     valuation: {
@@ -622,6 +622,36 @@ City, PR`,
         { year: 2024, description: "Make Model", trim: "Trim B", vin: "1A2B3C4D5E6F7G8H6", dealer: "Dealer Name", mileage_km: 29e3, price: 38e3, distance_km: 110, days_on_market: 15 }
       ]
     },
+    scenarios: {
+      market: {
+        vehicles: 320,
+        avgRetail: "$35,000",
+        avgMileage: 45e3,
+        listedDays: 90,
+        prcMkt: "100%",
+        prcMktAdj: "95%",
+        costMkt: "100%",
+        priceRank: "160 of 320",
+        mileageRank: "150 of 320",
+        perception: "160 of 320",
+        retail: "$32,000",
+        ACV: "$25,000"
+      },
+      selected: {
+        vehicles: 6,
+        avgRetail: "$36,000",
+        avgMileage: 45e3,
+        listedDays: 60,
+        prcMkt: "110%",
+        prcMktAdj: "100%",
+        costMkt: "110%",
+        priceRank: "3 of 6",
+        mileageRank: "3 of 6",
+        perception: "3 of 6",
+        retail: "$32,000",
+        ACV: "$25,000"
+      }
+    },
     recon: {
       items: [
         { description: "Recon Item #1", amount: 1e3 },
@@ -647,23 +677,38 @@ City, PR`,
     disclaimer: ", subject to Carfax History and Lien Report"
   };
 }
-const R = [
+const H = [
   { label: "Extra Small", delta: -1 },
   { label: "Small", delta: 0 },
   { label: "Medium", delta: 1 },
   { label: "Large", delta: 2 },
   { label: "Extra Large", delta: 3 }
-], A = ["valuation", "disclosures", "observations", "market", "recon", "photos"], Xe = {
+], A = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], tt = {
   valuation: "Valuation",
   disclosures: "Disclosures",
   observations: "Observations",
-  market: "Market",
+  market: "Market Comparables",
+  market_scenarios: "Market Scenarios",
+  selected_scenarios: "Selected Scenarios",
   recon: "Recon",
   photos: "Photos"
-}, J = p`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, be = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`, et = p`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-class X extends U {
+}, S = [
+  { key: "vehicles", label: "Vehicles" },
+  { key: "avgRetail", label: "Average Retail" },
+  { key: "avgMileage", label: "Average Mileage" },
+  { key: "listedDays", label: "Listed Days" },
+  { key: "prcMkt", label: "Price to {basis}" },
+  { key: "prcMktAdj", label: "Adj. Price to {basis}" },
+  { key: "costMkt", label: "Cost to {basis}" },
+  { key: "priceRank", label: "Price Rank" },
+  { key: "mileageRank", label: "Mileage Rank" },
+  { key: "perception", label: "Perception" },
+  { key: "retail", label: "Retail" },
+  { key: "ACV", label: "Actual Cash Value" }
+], F = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), X = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, xe = d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`, it = d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`, st = d`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`, ot = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
+class te extends B {
   constructor() {
-    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...A], this._pills = {
+    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._sectionOrder = [...A], this._pills = {
       "general.condition": !0,
       "valuation.retail_value": !0,
       "valuation.recon": !0,
@@ -671,16 +716,24 @@ class X extends U {
       "valuation.target_profit": !0,
       "valuation.tax_savings": !0,
       "sections.observations_highlights": !0,
-      "sections.observations_comments": !0
+      "sections.observations_comments": !0,
+      ...Object.fromEntries(S.flatMap((e) => [
+        [`market_scenarios.${e.key}`, !F.has(e.key)],
+        [`selected_scenarios.${e.key}`, !F.has(e.key)]
+      ]))
     }, this._groups = {
       valuation: "checked",
       disclosures: "checked",
       observations: "checked",
       market: "checked",
+      market_scenarios: "unchecked",
+      // new feature — off by default
+      selected_scenarios: "unchecked",
+      // new feature — off by default
       recon: "checked",
       photos: "checked",
       signature: "checked"
-    }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._previewStale = !1, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
+    }, this._pillsOpen = { valuation: !1, market_scenarios: !1, selected_scenarios: !1 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
       mode: !1,
       condition: !1,
       value_display: !1,
@@ -690,16 +743,19 @@ class X extends U {
       photos_per_row: !1,
       disc_layout: !1,
       market_display: !1,
+      scenario_layout: !1,
       disclaimer: !1,
       section_order: !1,
       valuation: !1,
       disclosures: !1,
       observations: !1,
       market: !1,
+      market_scenarios: !1,
+      selected_scenarios: !1,
       recon: !1,
       photos: !1,
       signature: !1
-    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1;
+    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1, this._tooltipEl = null, this._tooltipBubble = null, this._tooltipLabel = null;
   }
   // ── Public API ─────────────────────────────────────────────────────────────
   /** Returns the full current customization state. Save this to restore later. */
@@ -711,6 +767,7 @@ class X extends U {
       photosPerRow: this._photosPerRow,
       discLayout: this._discLayout,
       marketDisplay: this._marketDisplay,
+      scenarioLayout: this._scenarioLayout,
       sectionOrder: [...this._sectionOrder],
       pills: { ...this._pills },
       groups: { ...this._groups }
@@ -718,15 +775,22 @@ class X extends U {
   }
   _applySharedDisplay(e) {
     if (!e) return;
-    const t = ["valuation", "disclosures", "observations", "market", "recon", "photos"], i = e.sections || {}, s = { ...this._groups };
-    t.forEach((o) => {
-      i[o] != null && (s[o] = i[o] ? "checked" : "unchecked");
-    }), this._groups = s, e.pills != null && (this._pills = { ...this._pills, ...e.pills }), e.section_order != null && (this._sectionOrder = e.section_order.filter((o) => A.includes(o))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full");
+    const t = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], i = ["valuation", "observations", "market_scenarios", "selected_scenarios"], s = e.sections || {};
+    e.pills != null && (this._pills = { ...this._pills, ...e.pills });
+    const o = { ...this._groups };
+    t.forEach((a) => {
+      s[a] != null && (o[a] = s[a] ? "checked" : "unchecked");
+    }), this._groups = o, i.forEach((a) => {
+      this._groups[a] === "checked" && this._recomputeGroupState(a);
+    }), e.section_order != null && (this._sectionOrder = e.section_order.filter((a) => A.includes(a))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full");
   }
   _applyPdfDisplay(e) {
-    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.signature != null && (this._groups = { ...this._groups, signature: e.signature ? "checked" : "unchecked" }), e.locks && (this._locks = { ...this._locks, ...e.locks }));
+    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.scenario_layout != null && (this._scenarioLayout = e.scenario_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.signature != null && (this._groups = { ...this._groups, signature: e.signature ? "checked" : "unchecked" }), e.locks && (this._locks = { ...this._locks, ...e.locks }));
   }
   // ── Lifecycle ──────────────────────────────────────────────────────────────
+  disconnectedCallback() {
+    super.disconnectedCallback(), this._tooltipEl && (this._tooltipEl.remove(), this._tooltipEl = null, this._tooltipBubble = null, this._tooltipLabel = null);
+  }
   firstUpdated() {
     this.dispatchEvent(new CustomEvent("component-ready", {
       bubbles: !0,
@@ -734,17 +798,17 @@ class X extends U {
     }));
   }
   updated(e) {
-    var o, r, n, l, u, g;
+    var o, a, n, l, p, f;
     const t = this._pendingDataLoad;
     if (e.has("sharedDisplay") || e.has("pdfDisplay") ? this._pendingDataLoad = !0 : this._pendingDataLoad && (this._pendingDataLoad = !1), e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const d = (n = (r = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : r.tax_savings) == null ? void 0 : n.rate_pct;
-      this._taxRatePct = d != null ? parseFloat(parseFloat(d).toFixed(2)) : 0;
+      const c = (n = (a = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : a.tax_savings) == null ? void 0 : n.rate_pct;
+      this._taxRatePct = c != null ? parseFloat(parseFloat(c).toFixed(2)) : 0;
     }
-    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((l = this.employees) != null && l.length) && ((g = (u = this.payload) == null ? void 0 : u.employee) != null && g.name)) {
-      const d = this.employees.findIndex((f) => f.name === this.payload.employee.name);
-      d !== -1 && (this._selectedEmployeeIndex = d);
+    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((l = this.employees) != null && l.length) && ((f = (p = this.payload) == null ? void 0 : p.employee) != null && f.name)) {
+      const c = this.employees.findIndex((_) => _.name === this.payload.employee.name);
+      c !== -1 && (this._selectedEmployeeIndex = c);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -757,15 +821,13 @@ class X extends U {
       "_photosPerRow",
       "_discLayout",
       "_marketDisplay",
+      "_scenarioLayout",
       "_sectionOrder",
       "_pills",
       "_groups",
       "_selectedEmployeeIndex",
       "_locks"
-    ].some((f) => e.has(f)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((d) => e.has(d)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
-      !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
-    }, 300)), this._autoPreviewDone && this.apiBaseUrl && !this._finalized && !(e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
-      "_mode",
+    ].some((_) => e.has(_)) && (this._savedConfirm = !1), this._mode === "one_page" && !e.has("_mode") && !t && !this._isLocked("mode") && [
       "_valueDisplay",
       "_taxRatePct",
       "_profitName",
@@ -775,11 +837,14 @@ class X extends U {
       "_photosPerRow",
       "_discLayout",
       "_marketDisplay",
+      "_scenarioLayout",
       "_sectionOrder",
       "_pills",
       "_groups",
       "_selectedEmployeeIndex"
-    ].some((m) => e.has(m)) && (this._previewStale = !0), this._autoPreviewDone && !t && !e.has("sharedDisplay") && !e.has("pdfDisplay") && [
+    ].some((_) => e.has(_)) && (this._mode = "full", this._preOnePageState = null), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((c) => e.has(c)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+      !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
+    }, 300)), this._autoPreviewDone && this.apiBaseUrl && !(t || e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
       "_mode",
       "_valueDisplay",
       "_taxRatePct",
@@ -790,17 +855,17 @@ class X extends U {
       "_photosPerRow",
       "_discLayout",
       "_marketDisplay",
+      "_scenarioLayout",
       "_sectionOrder",
       "_pills",
       "_groups",
-      "_selectedEmployeeIndex",
-      "_locks"
-    ].some((f) => e.has(f)) && this._dispatchDisplaySave();
+      "_selectedEmployeeIndex"
+    ].some((g) => e.has(g)) && (this._previewStale = !0);
     const s = this.shadowRoot;
     if (s)
-      for (const [d, f] of Object.entries(this._groups)) {
-        const m = s.querySelector(`input[data-group="${d}"]`);
-        m && (m.indeterminate = f === "indeterminate", m.checked = f === "checked" || f === "indeterminate");
+      for (const [c, _] of Object.entries(this._groups)) {
+        const g = s.querySelector(`input[data-group="${c}"]`);
+        g && (g.indeterminate = _ === "indeterminate", g.checked = _ === "checked" || _ === "indeterminate");
       }
   }
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -808,11 +873,31 @@ class X extends U {
     return !e && e !== 0 ? "" : "$" + Number(e).toLocaleString();
   }
   _getPayloadData() {
-    return this.payload || Qe();
+    return this.payload || et();
+  }
+  _parseCurrency(e) {
+    if (e == null) return null;
+    const t = parseFloat(String(e).replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(t) ? t : null;
+  }
+  /** True once the workbench's post-scenario negotiation slider has moved the
+   * offer away from the calculated ACV for this scenario — ACV and Cost to
+   * Market are derived from that original valuation, so they go stale too. */
+  _isScenarioStale(e) {
+    var a, n, l;
+    const t = e === "market_scenarios" ? "market" : e === "selected_scenarios" ? "selected" : null;
+    if (!t) return !1;
+    const i = this._getPayloadData(), s = (a = i == null ? void 0 : i.offer) == null ? void 0 : a.amount, o = this._parseCurrency((l = (n = i == null ? void 0 : i.scenarios) == null ? void 0 : n[t]) == null ? void 0 : l.ACV);
+    return s == null || o == null ? !1 : Math.round(s) !== Math.round(o);
+  }
+  /** ACV and Cost to Market are the only fields tied to that valuation. */
+  _isPillLockedStale(e) {
+    const [t, i] = e.split(".");
+    return i !== "ACV" && i !== "costMkt" ? !1 : this._isScenarioStale(t);
   }
   _vehicleInfoFromData(e) {
-    const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", r = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
-    return { amount: s, desc: r, vin: t.vin || "" };
+    const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", a = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
+    return { amount: s, desc: a, vin: t.vin || "" };
   }
   _getGroupState(e) {
     return this._groups[e] || "checked";
@@ -826,6 +911,9 @@ class X extends U {
     } else if (e === "observations") {
       const i = ["sections.observations_highlights", "sections.observations_comments"], s = i.filter((o) => this._pills[o]).length;
       s === 0 ? t.observations = "unchecked" : s === i.length ? t.observations = "checked" : t.observations = "indeterminate";
+    } else if (e === "market_scenarios" || e === "selected_scenarios") {
+      const i = S.map((o) => `${e}.${o.key}`), s = i.filter((o) => this._pills[o]).length;
+      s === 0 ? t[e] = "unchecked" : s === i.length ? t[e] = "checked" : t[e] = "indeterminate";
     }
     this._groups = t;
   }
@@ -835,15 +923,15 @@ class X extends U {
     i !== -1 && (t.splice(i, 1), t.push(e)), this._sectionOrder = t;
   }
   _restoreLayoutOrder(e) {
-    var r, n;
-    const t = (n = (r = this.sharedDisplay) == null ? void 0 : r.section_order) != null && n.length ? this.sharedDisplay.section_order : A, i = [...this._sectionOrder].filter((l) => l !== e), s = t.indexOf(e), o = i.findIndex((l) => t.indexOf(l) > s);
+    var a, n;
+    const t = (n = (a = this.sharedDisplay) == null ? void 0 : a.section_order) != null && n.length ? this.sharedDisplay.section_order : A, i = [...this._sectionOrder].filter((l) => l !== e), s = t.indexOf(e), o = i.findIndex((l) => t.indexOf(l) > s);
     o === -1 ? i.push(e) : i.splice(o, 0, e), this._sectionOrder = i;
   }
   _isOnePage() {
     return this._mode === "one_page";
   }
   _isSectionDisabled(e) {
-    return this._isOnePage() && ["disclosures", "recon", "photos"].includes(e) ? !0 : this._groups[e] === "unchecked";
+    return this._groups[e] === "unchecked";
   }
   // ── Display block builder ──────────────────────────────────────────────────
   _buildSharedState() {
@@ -854,6 +942,8 @@ class X extends U {
         disclosures: e.disclosures !== "unchecked",
         observations: e.observations !== "unchecked",
         market: e.market !== "unchecked",
+        market_scenarios: e.market_scenarios !== "unchecked",
+        selected_scenarios: e.selected_scenarios !== "unchecked",
         recon: e.recon !== "unchecked",
         photos: e.photos !== "unchecked"
       },
@@ -871,6 +961,7 @@ class X extends U {
       font_size_index: this._fontSizeIndex,
       photos_per_row: this._photosPerRow,
       disc_layout: this._discLayout,
+      scenario_layout: this._scenarioLayout,
       disclaimer_text: this._disclaimerText || "",
       disclaimer_punct: this._disclaimerPunct ?? ",",
       selected_emp_idx: this._selectedEmployeeIndex,
@@ -898,6 +989,8 @@ class X extends U {
         observations_comments: e["sections.observations_comments"],
         market_summary: t.market === "checked" && (this._isOnePage() || this._marketDisplay === "summary"),
         market_comparables: t.market === "checked" && !this._isOnePage() && this._marketDisplay === "full",
+        market_scenarios: this._isOnePage() ? !1 : t.market_scenarios === "checked" || t.market_scenarios === "indeterminate",
+        selected_scenarios: this._isOnePage() ? !1 : t.selected_scenarios === "checked" || t.selected_scenarios === "indeterminate",
         recon_breakdown: this._isOnePage() ? !1 : t.recon === "checked",
         photos: this._isOnePage() ? !1 : t.photos === "checked"
       },
@@ -905,7 +998,12 @@ class X extends U {
         offer_label: !1,
         condition: e["general.condition"],
         value_display: this._valueDisplay
-      }
+      },
+      scenarios: {
+        market: Object.fromEntries(S.map((s) => [s.key, this._isPillLockedStale(`market_scenarios.${s.key}`) ? !1 : e[`market_scenarios.${s.key}`]])),
+        selected: Object.fromEntries(S.map((s) => [s.key, this._isPillLockedStale(`selected_scenarios.${s.key}`) ? !1 : e[`selected_scenarios.${s.key}`]]))
+      },
+      scenario_layout: this._scenarioLayout
     };
   }
   // ── Event handlers ─────────────────────────────────────────────────────────
@@ -913,51 +1011,54 @@ class X extends U {
     if (this._mode = e, e === "one_page") {
       this._preOnePageState = {
         groups: { ...this._groups },
+        pills: { ...this._pills },
         marketDisplay: this._marketDisplay,
         sectionOrder: [...this._sectionOrder]
       };
       const i = { ...this._groups };
-      ["disclosures", "recon", "photos"].forEach((n) => {
-        i[n] = "unchecked";
-      }), this._groups = i, this._marketDisplay = "summary";
-      const s = ["disclosures", "recon", "photos"], o = this._sectionOrder.filter((n) => !s.includes(n)), r = this._sectionOrder.filter((n) => s.includes(n));
-      this._sectionOrder = [...o, ...r];
+      ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"].forEach((l) => {
+        i[l] = "unchecked";
+      }), ["valuation", "observations", "market"].forEach((l) => {
+        this._isLocked(l) || (i[l] = "checked");
+      }), this._groups = i;
+      const s = { ...this._pills };
+      this._isLocked("valuation") || ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"].forEach((l) => {
+        s[l] = !0;
+      }), this._isLocked("observations") || (s["sections.observations_comments"] = !0, s["sections.observations_highlights"] = !1), this._pills = s, this._marketDisplay = "summary";
+      const o = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], a = this._sectionOrder.filter((l) => !o.includes(l)), n = this._sectionOrder.filter((l) => o.includes(l));
+      this._sectionOrder = [...a, ...n];
     } else if (this._preOnePageState) {
-      const i = this._preOnePageState, s = { ...this._groups };
-      ["disclosures", "recon", "photos"].forEach((o) => {
-        s[o] = i.groups[o] ?? "checked";
-      }), this._groups = s, this._marketDisplay = i.marketDisplay, this._sectionOrder = i.sectionOrder, this._preOnePageState = null;
+      const i = this._preOnePageState;
+      this._groups = { ...i.groups }, this._pills = { ...i.pills }, this._marketDisplay = i.marketDisplay, this._sectionOrder = i.sectionOrder, this._preOnePageState = null;
     } else {
       const i = { ...this._groups };
-      ["disclosures", "recon", "photos"].forEach((s) => {
-        i[s] = "checked";
+      ["disclosures", "recon", "photos", "valuation", "observations", "market"].forEach((s) => {
+        this._isLocked(s) || (i[s] = "checked");
+      }), ["market_scenarios", "selected_scenarios"].forEach((s) => {
+        this._isLocked(s) || (i[s] = "unchecked");
       }), this._groups = i, this._marketDisplay = "full", this._sectionOrder = [...A];
     }
   }
   _handleGroupChange(e, t) {
-    const i = { ...this._groups };
-    i[e] = t ? "checked" : "unchecked", this._groups = i;
-    const s = { ...this._pills };
-    e === "valuation" ? (["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"].forEach((o) => {
-      s[o] = t;
-    }), this._pills = s) : e === "observations" && (["sections.observations_highlights", "sections.observations_comments"].forEach((o) => {
-      s[o] = t;
-    }), this._pills = s), e !== "signature" && (t ? this._restoreLayoutOrder(e) : this._syncLayoutOrder(e));
+    this._groups = { ...this._groups, [e]: t ? "checked" : "unchecked" }, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(e) && this._recomputeGroupState(e), e !== "signature" && (t ? this._restoreLayoutOrder(e) : this._syncLayoutOrder(e));
   }
   _handlePillClick(e, t) {
     const i = { ...this._pills };
-    i[e] = !i[e], this._pills = i, t && ["valuation", "observations"].includes(t) && (this._recomputeGroupState(t), this._groups[t] === "unchecked" && this._syncLayoutOrder(t));
+    i[e] = !i[e], this._pills = i, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(t) && (this._recomputeGroupState(t), this._groups[t] === "unchecked" && this._syncLayoutOrder(t));
+  }
+  _togglePillsOpen(e) {
+    this._pillsOpen = { ...this._pillsOpen, [e]: !this._pillsOpen[e] };
   }
   _handleFontSizeStep(e) {
     const t = this._fontSizeIndex + e;
-    t >= 0 && t < R.length && (this._fontSizeIndex = t);
+    t >= 0 && t < H.length && (this._fontSizeIndex = t);
   }
   _handlePhotosPerRowStep(e) {
     const t = this._photosPerRow + e;
     t >= 2 && t <= 4 && (this._photosPerRow = t);
   }
   _handleSegmentedClick(e, t) {
-    e === "value-display" ? this._valueDisplay = t : e === "disc-layout" ? this._discLayout = t : e === "market-display" && (this._marketDisplay = t);
+    e === "value-display" ? this._valueDisplay = t : e === "disc-layout" ? this._discLayout = t : e === "market-display" ? this._marketDisplay = t : e === "scenario-layout" && (this._scenarioLayout = t);
   }
   _handleTaxRateInput(e) {
     const t = parseFloat(e.target.value);
@@ -969,18 +1070,47 @@ class X extends U {
   _handleDisclaimerInput(e) {
     this._disclaimerText = e.target.value;
   }
-  _handleReset() {
-    this._confirmReset = !1, this._pendingDataLoad = !0, this.sharedDisplay || this.pdfDisplay ? (this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay)) : this._resetToggles(), this._previewStale = !0, this.dispatchEvent(new CustomEvent("display-save", {
-      detail: { shared: null, pdf: null, employee: null },
+  async _handleReset() {
+    this._confirmReset = !1, this._pendingDataLoad = !0, this.templateSharedDisplay || this.templatePdfDisplay ? (this.templateSharedDisplay && this._applySharedDisplay(this.templateSharedDisplay), this.templatePdfDisplay && this._applyPdfDisplay(this.templatePdfDisplay)) : this._resetToggles(), this._previewStale = !0, this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this.dispatchEvent(new CustomEvent("display-save", {
+      detail: { shared: null, pdf: null, employee: null, payload: null },
       bubbles: !0,
       composed: !0
     }));
+  }
+  /** Captures the current customize-panel state as the "last applied" baseline,
+   * called whenever a generate succeeds (initial auto-preview, Apply, Reopen). */
+  _snapshotAppliedState() {
+    this._appliedSnapshot = {
+      mode: this._mode,
+      valueDisplay: this._valueDisplay,
+      taxRatePct: this._taxRatePct,
+      profitName: this._profitName,
+      disclaimerText: this._disclaimerText,
+      disclaimerPunct: this._disclaimerPunct,
+      fontSizeIndex: this._fontSizeIndex,
+      photosPerRow: this._photosPerRow,
+      discLayout: this._discLayout,
+      marketDisplay: this._marketDisplay,
+      scenarioLayout: this._scenarioLayout,
+      sectionOrder: [...this._sectionOrder],
+      pills: { ...this._pills },
+      groups: { ...this._groups },
+      selectedEmployeeIndex: this._selectedEmployeeIndex
+    };
+  }
+  /** Reverts unapplied edits back to the last-applied snapshot — distinct from
+   * "Reset to template", which goes back to the template defaults instead. */
+  _handleDiscardChanges() {
+    if (!this._appliedSnapshot) return;
+    this._pendingDataLoad = !0;
+    const e = this._appliedSnapshot;
+    this._mode = e.mode, this._valueDisplay = e.valueDisplay, this._taxRatePct = e.taxRatePct, this._profitName = e.profitName, this._disclaimerText = e.disclaimerText, this._disclaimerPunct = e.disclaimerPunct, this._fontSizeIndex = e.fontSizeIndex, this._photosPerRow = e.photosPerRow, this._discLayout = e.discLayout, this._marketDisplay = e.marketDisplay, this._scenarioLayout = e.scenarioLayout, this._sectionOrder = [...e.sectionOrder], this._pills = { ...e.pills }, this._groups = { ...e.groups }, this._selectedEmployeeIndex = e.selectedEmployeeIndex, this._previewStale = !1;
   }
   _resetToggles() {
     var t, i, s;
     this._mode = "full", this._valueDisplay = "offer";
     const e = (s = (i = (t = this.payload) == null ? void 0 : t.valuation) == null ? void 0 : i.tax_savings) == null ? void 0 : s.rate_pct;
-    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...A], this._pills = {
+    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._sectionOrder = [...A], this._pills = {
       "general.condition": !0,
       "valuation.retail_value": !0,
       "valuation.recon": !0,
@@ -988,12 +1118,18 @@ class X extends U {
       "valuation.target_profit": !0,
       "valuation.tax_savings": !0,
       "sections.observations_highlights": !0,
-      "sections.observations_comments": !0
+      "sections.observations_comments": !0,
+      ...Object.fromEntries(S.flatMap((o) => [
+        [`market_scenarios.${o.key}`, !F.has(o.key)],
+        [`selected_scenarios.${o.key}`, !F.has(o.key)]
+      ]))
     }, this._groups = {
       valuation: "checked",
       disclosures: "checked",
       observations: "checked",
       market: "checked",
+      market_scenarios: "unchecked",
+      selected_scenarios: "unchecked",
       recon: "checked",
       photos: "checked",
       signature: "checked"
@@ -1012,8 +1148,8 @@ class X extends U {
   }
   _handleDragOver(e, t) {
     if (e.preventDefault(), e.dataTransfer.dropEffect = "move", t === this._dragSrcSection || !this._placeholder) return;
-    const i = e.currentTarget, s = i.getBoundingClientRect(), o = e.clientY > s.top + s.height / 2, r = i.parentNode;
-    o ? r.insertBefore(this._placeholder, i.nextSibling) : r.insertBefore(this._placeholder, i);
+    const i = e.currentTarget, s = i.getBoundingClientRect(), o = e.clientY > s.top + s.height / 2, a = i.parentNode;
+    o ? a.insertBefore(this._placeholder, i.nextSibling) : a.insertBefore(this._placeholder, i);
   }
   _commitDrop() {
     const e = this._dragSrcSection;
@@ -1039,29 +1175,35 @@ class X extends U {
   _handleMoveSection(e, t) {
     const i = [...this._sectionOrder], s = i.indexOf(e), o = s + t;
     o < 0 || o >= i.length || ([i[s], i[o]] = [i[o], i[s]], this._sectionOrder = i, this.updateComplete.then(() => {
-      const r = this.shadowRoot.querySelector(`.sortable-item[data-section="${e}"]`);
-      r && (r.classList.remove("dropped"), r.offsetWidth, r.classList.add("dropped"), setTimeout(() => r.classList.remove("dropped"), 1e3));
+      const a = this.shadowRoot.querySelector(`.sortable-item[data-section="${e}"]`);
+      a && (a.classList.remove("dropped"), a.offsetWidth, a.classList.add("dropped"), setTimeout(() => a.classList.remove("dropped"), 1e3));
     }));
   }
   _handleDragEnd(e) {
     e.currentTarget.classList.remove("dragging"), this.shadowRoot.querySelectorAll(".sortable-item").forEach((t) => t.classList.remove("dragging")), this._placeholder && this._placeholder.parentNode && this._placeholder.parentNode.removeChild(this._placeholder), this._placeholder = null, this._dragSrcSection = null, this._dragSrcIndex = -1;
   }
   // ── Lock helpers ───────────────────────────────────────────────────────────
+  /** True if `key` is explicitly locked, or if mode is locked to one_page —
+   * every other control is inert in one-page mode, so a mode lock cascades
+   * to lock everything else too (dealers can't edit their way back to full). */
+  _effectiveLock(e) {
+    var t, i;
+    return (t = this._locks) != null && t[e] ? !0 : e !== "mode" && this._mode === "one_page" && !!((i = this._locks) != null && i.mode);
+  }
   _isLocked(e) {
-    var t;
-    return !this.templateMode && !!((t = this._locks) != null && t[e]);
+    return !this.templateMode && this._effectiveLock(e);
   }
   _lk(e) {
     var i;
     const t = !!((i = this._locks) != null && i[e]);
-    return this.templateMode ? p`
+    return this.templateMode ? d`
         <button class="lock-btn ${t ? "locked" : ""}"
                 title="${t ? "Unlock for dealers" : "Lock for dealers"}"
                 @click="${(s) => {
       s.stopPropagation(), this._locks = { ...this._locks, [e]: !t };
     }}">
-          ${t ? be : et}
-        </button>` : t ? p`<span class="lock-indicator" title="Locked by template">${be}</span>` : h;
+          ${t ? xe : it}
+        </button>` : this._effectiveLock(e) ? d`<span class="lock-indicator" title="Locked by template">${xe}</span>` : h;
   }
   // ── Save Settings ──────────────────────────────────────────────────────────
   _handleSaveSettings() {
@@ -1070,122 +1212,116 @@ class X extends U {
   _dispatchDisplaySave() {
     const e = this.employees && this.employees.length > 0 ? this.employees[this._selectedEmployeeIndex] || this.employees[0] : null;
     this.dispatchEvent(new CustomEvent("display-save", {
-      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee: e },
+      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee: e, payload: this._lastPrintoutRequest },
       bubbles: !0,
       composed: !0
     }));
   }
   // ── Generate ───────────────────────────────────────────────────────────────
   async _handleGenerate(e = !1) {
-    var t, i, s, o, r, n, l, u, g, d;
+    var t, i, s, o, a, n, l, p, f, c;
     this._generating = !0, this._statusMsg = "Generating…", this._statusError = !1;
     try {
-      const f = this._buildDisplay(), m = {
+      const _ = this._buildDisplay(), g = {
         mode: this._mode,
-        display: f,
+        display: _,
         preview_logo: !0,
         preview_photos: !0,
         font_roboto: !0,
-        font_size_delta: R[this._fontSizeIndex].delta,
+        font_size_delta: H[this._fontSizeIndex].delta,
         photos_per_row: this._photosPerRow,
         section_order: this._sectionOrder,
         watermark: e
-      }, c = { ...this._getPayloadData() }, se = this._profitName != null ? this._profitName : this.profitLabel;
-      se != null && ((t = c.valuation) != null && t.target_profit) && (c.valuation = {
-        ...c.valuation,
-        target_profit: { ...c.valuation.target_profit, label: se || "Target Profit" }
+      }, u = { ...this._getPayloadData() }, ae = this._profitName != null ? this._profitName : this.profitLabel;
+      ae != null && ((t = u.valuation) != null && t.target_profit) && (u.valuation = {
+        ...u.valuation,
+        target_profit: { ...u.valuation.target_profit, label: ae || "Target Profit" }
       });
-      const V = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
-      if (V !== null) {
-        const _ = this._disclaimerPunct ?? ".", v = V ? V.replace(/\.+$/, "") : "";
-        c.disclaimer = v ? _ + " " + v : "";
+      const K = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
+      if (K !== null) {
+        const m = this._disclaimerPunct ?? ".", y = K ? K.replace(/\.+$/, "") : "";
+        u.disclaimer = y ? m + " " + y : "";
       }
-      if ((s = (i = c.dealer) == null ? void 0 : i.logo_url) != null && s.startsWith("//") && (c.dealer = { ...c.dealer, logo_url: "https:" + c.dealer.logo_url }), (o = c.employee) != null && o.phone && (c.employee = { ...c.employee, phone: me(c.employee.phone) }), this.employees && this.employees.length > 0) {
-        const _ = this.employees[this._selectedEmployeeIndex] || this.employees[0];
-        c.employee = { name: _.name || "", phone: me(_.phone || ""), email: _.email || "" };
+      if ((s = (i = u.dealer) == null ? void 0 : i.logo_url) != null && s.startsWith("//") && (u.dealer = { ...u.dealer, logo_url: "https:" + u.dealer.logo_url }), (o = u.employee) != null && o.phone && (u.employee = { ...u.employee, phone: ve(u.employee.phone) }), this.employees && this.employees.length > 0) {
+        const m = this.employees[this._selectedEmployeeIndex] || this.employees[0];
+        u.employee = { name: m.name || "", phone: ve(m.phone || ""), email: m.email || "" };
       }
-      if (c.disclosures && (c.disclosures = c.disclosures.filter((_) => _.answer && _.answer.trim() !== "")), (r = c.market) != null && r.comparables) {
-        const _ = c.market.comparables.map((b) => ({
+      if (u.disclosures && (u.disclosures = u.disclosures.filter((m) => m.answer && m.answer.trim() !== "")), (a = u.market) != null && a.comparables) {
+        const m = u.market.comparables.map((b) => ({
           ...b,
           days_on_market: b.listing_type === "delisted" && b.delisted_days || b.days_on_market
-        })), v = _.map((b) => b.days_on_market).filter((b) => b != null), y = v.length > 0 ? Math.round(v.reduce((b, x) => b + x, 0) / v.length) : (n = c.market.summary) == null ? void 0 : n.avg_days;
-        c.market = {
-          ...c.market,
-          comparables: _,
-          summary: { ...c.market.summary, avg_days: y }
+        })), y = m.map((b) => b.days_on_market).filter((b) => b != null), v = y.length > 0 ? Math.round(y.reduce((b, x) => b + x, 0) / y.length) : (n = u.market.summary) == null ? void 0 : n.avg_days;
+        u.market = {
+          ...u.market,
+          comparables: m,
+          summary: { ...u.market.summary, avg_days: v }
         };
       }
-      if (this._taxRatePct !== null && ((l = c.valuation) != null && l.tax_savings) && ((u = c.offer) == null ? void 0 : u.amount) != null) {
-        const _ = Math.round(c.offer.amount * this._taxRatePct / 100);
-        c.valuation = {
-          ...c.valuation,
+      if (this._taxRatePct !== null && ((l = u.valuation) != null && l.tax_savings) && ((p = u.offer) == null ? void 0 : p.amount) != null) {
+        const m = Math.round(u.offer.amount * this._taxRatePct / 100);
+        u.valuation = {
+          ...u.valuation,
           tax_savings: {
-            ...c.valuation.tax_savings,
+            ...u.valuation.tax_savings,
             rate_pct: this._taxRatePct,
-            amount: _,
-            gross_value: c.offer.amount + _
+            amount: m,
+            gross_value: u.offer.amount + m
           }
         };
       }
-      const De = { ...m, raw_payload: c };
-      this._lastPrintoutRequest = {
-        raw_payload: c,
-        display: f,
-        font_size_delta: R[this._fontSizeIndex].delta,
-        photos_per_row: this._photosPerRow,
-        section_order: [...this._sectionOrder]
-      };
-      const oe = { "Content-Type": "application/json", Accept: "application/pdf" };
-      this.authToken && (oe.Authorization = `Bearer ${this.authToken}`);
-      const z = await fetch(`${this.apiBaseUrl}/printout-offer`, {
+      const re = { ...g, raw_payload: u };
+      this._lastPrintoutRequest = { ...re };
+      const ne = { "Content-Type": "application/json", Accept: "application/pdf" };
+      this.authToken && (ne.Authorization = `Bearer ${this.authToken}`);
+      const R = await fetch(`${this.apiBaseUrl}/printout-offer`, {
         method: "POST",
-        headers: oe,
-        body: JSON.stringify(De)
+        headers: ne,
+        body: JSON.stringify(re)
       });
       if (this.apiMode === "binary") {
-        if (!z.ok) {
-          let y = "Request failed";
+        if (!R.ok) {
+          let v = "Request failed";
           try {
-            y = (await z.json()).error || y;
+            v = (await R.json()).error || v;
           } catch {
           }
-          throw new Error(y);
+          throw new Error(v);
         }
-        const _ = await z.blob(), v = await new Promise((y, b) => {
+        const m = await R.blob(), y = await new Promise((v, b) => {
           const x = new FileReader();
-          x.onload = () => y(x.result), x.onerror = b, x.readAsDataURL(_);
+          x.onload = () => v(x.result), x.onerror = b, x.readAsDataURL(m);
         });
-        this._pdfUrl = v, this._statusMsg = "", this._previewStale = !1, this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: v, blob: _ },
+        this._pdfUrl = y, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
+          detail: { pdfUrl: y, blob: m },
           bubbles: !0,
           composed: !0
         }));
       } else {
-        let _;
+        let m;
         try {
-          _ = await z.json();
+          m = await R.json();
         } catch {
           throw new Error("Server error — check terminal for traceback");
         }
-        if (!z.ok) throw new Error(_.error || "Failed");
-        const v = this.apiBaseUrl + _.pdf_url + "?t=" + Date.now();
-        this._pdfVehicle = _.vehicle;
-        const y = { "ngrok-skip-browser-warning": "true" };
-        this.authToken && (y.Authorization = `Bearer ${this.authToken}`);
-        const x = await (await fetch(v, { headers: y })).blob(), Pe = (((g = c.customer) == null ? void 0 : g.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Ae = ((d = _.vehicle) == null ? void 0 : d.vin) || "offer";
-        this._pdfFilename = `${Pe}_${Ae}.pdf`;
-        const Ee = new File([x], this._pdfFilename, { type: "application/pdf" });
+        if (!R.ok) throw new Error(m.error || "Failed");
+        const y = this.apiBaseUrl + m.pdf_url + "?t=" + Date.now();
+        this._pdfVehicle = m.vehicle;
+        const v = { "ngrok-skip-browser-warning": "true" };
+        this.authToken && (v.Authorization = `Bearer ${this.authToken}`);
+        const x = await (await fetch(y, { headers: v })).blob(), Ae = (((f = u.customer) == null ? void 0 : f.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Ce = ((c = m.vehicle) == null ? void 0 : c.vin) || "offer";
+        this._pdfFilename = `${Ae}_${Ce}.pdf`;
+        const Oe = new File([x], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
-        const re = URL.createObjectURL(Ee);
-        this._currentBlobUrl = re, this._pdfUrl = re, this._statusMsg = "", this._previewStale = !1, this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: v },
+        const le = URL.createObjectURL(Oe);
+        this._currentBlobUrl = le, this._pdfUrl = le, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
+          detail: { pdfUrl: y },
           bubbles: !0,
           composed: !0
         }));
       }
-    } catch (f) {
-      this._statusMsg = f.message, this._statusError = !0, this.dispatchEvent(new CustomEvent("offer-error", {
-        detail: { error: f.message },
+    } catch (_) {
+      this._statusMsg = _.message, this._statusError = !0, this.dispatchEvent(new CustomEvent("offer-error", {
+        detail: { error: _.message },
         bubbles: !0,
         composed: !0
       }));
@@ -1209,8 +1345,8 @@ class X extends U {
     try {
       const i = { "ngrok-skip-browser-warning": "true" };
       this.authToken && (i.Authorization = `Bearer ${this.authToken}`);
-      const o = await (await fetch(this._pdfUrl, { headers: i })).blob(), r = URL.createObjectURL(o), n = document.createElement("a");
-      n.href = r, n.download = e, n.click(), setTimeout(() => URL.revokeObjectURL(r), 1e4);
+      const o = await (await fetch(this._pdfUrl, { headers: i })).blob(), a = URL.createObjectURL(o), n = document.createElement("a");
+      n.href = a, n.download = e, n.click(), setTimeout(() => URL.revokeObjectURL(a), 1e4);
     } catch {
       window.open(this._pdfUrl, "_blank");
     }
@@ -1222,21 +1358,27 @@ class X extends U {
     const e = ((t = this.payload) == null ? void 0 : t.customer) || {};
     return this._sendVia ? this._sendVia : e.email ? "email" : null;
   }
-  _handleSend(e) {
+  /** The employee an offer is sent "as" — same resolution _handleGenerate uses
+   * for payloadData.employee, so the confirm modal shows the actual sender. */
+  _resolveEmployee() {
+    var e;
+    return this.employees && this.employees.length > 0 ? this.employees[this._selectedEmployeeIndex] || this.employees[0] || null : ((e = this.payload) == null ? void 0 : e.employee) || null;
+  }
+  _handleSend(e, t, i) {
     this._splitOpen = !1, this._doneSentVia = e, this._pdfSent = !0;
-    const t = {
+    const s = {
       ...this._lastPrintoutRequest,
       filename: this._pdfFilename || null
     };
-    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] payload:", t), this.dispatchEvent(new CustomEvent("pdf-send", {
-      detail: { send_via: e, payload: t },
+    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] to_email:", t), console.log("[pdf-send] message_type:", i), console.log("[pdf-send] payload:", s), this.dispatchEvent(new CustomEvent("pdf-send", {
+      detail: { send_via: e, to_email: t, message_type: i, payload: s },
       bubbles: !0,
       composed: !0
     }));
   }
   // ── Render helpers ─────────────────────────────────────────────────────────
   _renderHeader() {
-    return p`
+    return d`
       <div class="component-header">
         <div class="wrap">
           <h1>LXN Offer Sheet Generator</h1>
@@ -1246,7 +1388,7 @@ class X extends U {
   }
   _renderOfferCard() {
     if (this.templateMode)
-      return p`
+      return d`
         <div class="card">
           <h2>Template</h2>
           <div style="font-size:13px; color:#667085; line-height:1.6;">
@@ -1255,22 +1397,38 @@ class X extends U {
         </div>
       `;
     const e = this._vehicleInfo;
-    return p`
+    return d`
       <div class="card">
-        <h2>Offer</h2>
-        ${e ? p`
+        <div class="offer-header-row">
+          <h2>Offer</h2>
+          ${this._renderSendInline()}
+        </div>
+        ${e ? d`
           <div class="vehicle-info">
             <div class="amount">${e.amount}</div>
             <div class="desc">${e.desc}</div>
-            ${e.vin ? p`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : h}
+            ${e.vin ? d`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : h}
           </div>
-        ` : p`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ` : d`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
       </div>
     `;
   }
+  /* ── REMOVED (kept for reference — old "Refresh Preview" button, replaced by
+       the Apply split-button rendered in its place inside _renderCustomizeCard's
+       .action-btns below):
+  
+    ${this._previewStale ? html`
+      <button
+        class="refresh-text-btn"
+        ?disabled="${this._generating || this._finalizing}"
+        @click="${() => this._handleGenerate()}"
+      >Refresh Preview ↻</button>
+    ` : nothing}
+  
+    ── end removed ─────────────────────────────────────────────────────────────── */
   _renderCustomizeCard() {
-    const e = this._isOnePage(), t = R[this._fontSizeIndex].label, i = A.map((s) => this._renderShowHideGroup(s));
-    return p`
+    const e = this._isOnePage(), t = H[this._fontSizeIndex].label, i = !!(this.templateSharedDisplay || this.templatePdfDisplay), s = i ? "template" : "default", o = i ? "template defaults" : "default configuration", a = A.map((n) => this._renderShowHideGroup(n));
+    return d`
       <div class="card">
         <div>
         <div class="customize-header-row">
@@ -1286,6 +1444,8 @@ class X extends U {
                 class="seg-btn ${e ? "active" : ""}"
                 ?disabled="${this._isLocked("mode")}"
                 @click="${() => this._handleModeChange("one_page")}"
+                @mouseenter="${(n) => this._showTooltip(n, "Current display is restored when returning to 'Full'")}"
+                @mouseleave="${() => this._hideTooltip()}"
               >One-Page</button>
             </div>
             ${this._lk("mode")}
@@ -1298,7 +1458,7 @@ class X extends U {
       this._generalOpen = !this._generalOpen;
     }}">
             <span>General</span>
-            <div class="section-chevron">${J}</div>
+            <div class="section-chevron">${X}</div>
           </div>
           <div class="section-body">
             <div class="config-row">
@@ -1352,17 +1512,17 @@ class X extends U {
                 ${this._lk("profit_label")}
               </div>
             </div>
-            ${!this.templateMode && this.employees && this.employees.length > 0 ? p`
+            ${!this.templateMode && this.employees && this.employees.length > 0 ? d`
               <div class="config-row">
                 <span>Employee</span>
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
-                  @change="${(s) => {
-      this._selectedEmployeeIndex = parseInt(s.target.value);
+                  @change="${(n) => {
+      this._selectedEmployeeIndex = parseInt(n.target.value);
     }}"
                 >
-                  ${this.employees.map((s, o) => p`
-                    <option value="${o}" ?selected="${o === this._selectedEmployeeIndex}">${s.name}</option>
+                  ${this.employees.map((n, l) => d`
+                    <option value="${l}" ?selected="${l === this._selectedEmployeeIndex}">${n.name}</option>
                   `)}
                 </select>
               </div>
@@ -1374,29 +1534,29 @@ class X extends U {
                   <button class="step-btn" ?disabled="${this._fontSizeIndex <= 0 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(-1)}">−</button>
                   <span class="stepper-value font-size-display">${t}</span>
-                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= R.length - 1 || this._isLocked("font_size")}"
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= H.length - 1 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(1)}">+</button>
                 </div>
                 ${this._lk("font_size")}
               </div>
             </div>
-            <div class="config-row ${e ? "disabled" : ""}">
+            <div class="config-row">
               <span>Photos (per row)</span>
               <div class="ctrl-group ${this._isLocked("photos_per_row") ? "locked" : ""}">
                 <div class="stepper">
-                  <button class="step-btn" ?disabled="${this._photosPerRow <= 2 || e || this._isLocked("photos_per_row")}"
+                  <button class="step-btn" ?disabled="${this._photosPerRow <= 2 || this._isLocked("photos_per_row")}"
                           @click="${() => this._handlePhotosPerRowStep(-1)}">−</button>
                   <span class="stepper-value">${this._photosPerRow}</span>
-                  <button class="step-btn" ?disabled="${this._photosPerRow >= 4 || e || this._isLocked("photos_per_row")}"
+                  <button class="step-btn" ?disabled="${this._photosPerRow >= 4 || this._isLocked("photos_per_row")}"
                           @click="${() => this._handlePhotosPerRowStep(1)}">+</button>
                 </div>
                 ${this._lk("photos_per_row")}
               </div>
             </div>
-            <div class="config-row ${e ? "disabled" : ""}">
+            <div class="config-row">
               <span>Disclosures</span>
               <div class="ctrl-group ${this._isLocked("disc_layout") ? "locked" : ""}">
-                <div class="segmented-control ${e ? "disabled" : ""}">
+                <div class="segmented-control">
                   <button class="seg-btn ${this._discLayout === "vertical" ? "active" : ""}"
                           ?disabled="${this._isLocked("disc_layout")}"
                           @click="${() => this._handleSegmentedClick("disc-layout", "vertical")}">Vertical</button>
@@ -1407,10 +1567,10 @@ class X extends U {
                 ${this._lk("disc_layout")}
               </div>
             </div>
-            <div class="config-row ${e ? "disabled" : ""}">
+            <div class="config-row">
               <span>Market</span>
               <div class="ctrl-group ${this._isLocked("market_display") ? "locked" : ""}">
-                <div class="segmented-control ${e ? "disabled" : ""}">
+                <div class="segmented-control">
                   <button class="seg-btn ${this._marketDisplay === "summary" ? "active" : ""}"
                           ?disabled="${this._isLocked("market_display")}"
                           @click="${() => this._handleSegmentedClick("market-display", "summary")}">Summary</button>
@@ -1419,6 +1579,20 @@ class X extends U {
                           @click="${() => this._handleSegmentedClick("market-display", "full")}">Full</button>
                 </div>
                 ${this._lk("market_display")}
+              </div>
+            </div>
+            <div class="config-row">
+              <span>Scenarios</span>
+              <div class="ctrl-group ${this._isLocked("scenario_layout") ? "locked" : ""}">
+                <div class="segmented-control">
+                  <button class="seg-btn ${this._scenarioLayout === "tiles" ? "active" : ""}"
+                          ?disabled="${this._isLocked("scenario_layout")}"
+                          @click="${() => this._handleSegmentedClick("scenario-layout", "tiles")}">Tiles</button>
+                  <button class="seg-btn ${this._scenarioLayout === "rows" ? "active" : ""}"
+                          ?disabled="${this._isLocked("scenario_layout")}"
+                          @click="${() => this._handleSegmentedClick("scenario-layout", "rows")}">Rows</button>
+                </div>
+                ${this._lk("scenario_layout")}
               </div>
             </div>
             <div style="padding:8px 0 4px;">
@@ -1431,8 +1605,8 @@ class X extends U {
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
                   ?disabled="${this._isLocked("disclaimer")}"
-                  @change="${(s) => {
-      this._disclaimerPunct = s.target.value;
+                  @change="${(n) => {
+      this._disclaimerPunct = n.target.value;
     }}"
                 >
                   <option value="," ?selected="${this._disclaimerPunct === ","}">Comma (,)</option>
@@ -1459,7 +1633,7 @@ class X extends U {
       this._showHideOpen = !this._showHideOpen;
     }}">
             <span>Show / Hide</span>
-            <div class="section-chevron">${J}</div>
+            <div class="section-chevron">${X}</div>
           </div>
           <div class="section-body">
             <!-- Header group (no checkbox) -->
@@ -1476,7 +1650,7 @@ class X extends U {
               </div>
             </div>
             <!-- Section groups in layout order -->
-            ${i}
+            ${a}
             <!-- Signature (always at end of PDF, not draggable) -->
             <div class="toggle-group" data-group="signature">
               <div class="group-row ${this._isLocked("signature") ? "group-row-locked" : ""}">
@@ -1486,7 +1660,7 @@ class X extends U {
                     data-group="signature"
                     .checked="${this._groups.signature === "checked"}"
                     ?disabled="${this._isLocked("signature")}"
-                    @change="${(s) => this._handleGroupChange("signature", s.target.checked)}"
+                    @change="${(n) => this._handleGroupChange("signature", n.target.checked)}"
                   >
                   Customer Signature
                 </label>
@@ -1506,31 +1680,31 @@ class X extends U {
             <span>Layout</span>
             <div style="display:flex;align-items:center;gap:6px;">
               ${this._lk("section_order")}
-              <div class="section-chevron">${J}</div>
+              <div class="section-chevron">${X}</div>
             </div>
           </div>
           <div class="section-body">
             <div class="sortable-list ${this._isLocked("section_order") ? "disabled" : ""}"
-              @dragover="${(s) => s.preventDefault()}"
-              @drop="${(s) => this._handleListDrop(s)}"
+              @dragover="${(n) => n.preventDefault()}"
+              @drop="${(n) => this._handleListDrop(n)}"
             >
-              ${this._sectionOrder.map((s, o) => {
-      const r = this._isSectionDisabled(s) || this._isLocked("section_order");
-      return p`
+              ${this._sectionOrder.map((n, l) => {
+      const p = this._isSectionDisabled(n) || this._isLocked("section_order");
+      return d`
                   <div
-                    class="sortable-item ${r ? "disabled" : ""}"
-                    data-section="${s}"
-                    draggable="${r ? "false" : "true"}"
-                    @dragstart="${(n) => this._handleDragStart(n, s)}"
-                    @dragover="${(n) => this._handleDragOver(n, s)}"
-                    @drop="${(n) => this._handleDrop(n)}"
-                    @dragend="${(n) => this._handleDragEnd(n)}"
+                    class="sortable-item ${p ? "disabled" : ""}"
+                    data-section="${n}"
+                    draggable="${p ? "false" : "true"}"
+                    @dragstart="${(f) => this._handleDragStart(f, n)}"
+                    @dragover="${(f) => this._handleDragOver(f, n)}"
+                    @drop="${(f) => this._handleDrop(f)}"
+                    @dragend="${(f) => this._handleDragEnd(f)}"
                   >
                     <span class="drag-handle">⠿</span>
-                    <span>${Xe[s]}</span>
+                    <span>${tt[n]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${r || o === 0}" @click="${() => this._handleMoveSection(s, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${r || o === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(s, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${p || l === 0}" @click="${() => this._handleMoveSection(n, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${p || l === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(n, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -1543,29 +1717,35 @@ class X extends U {
 
         <div class="divider"></div>
 
-        ${this._statusError && this._statusMsg ? p`
+        ${this._statusError && this._statusMsg ? d`
           <div class="action-msg error">${this._statusMsg}</div>
         ` : h}
 
-        ${this.templateMode ? p`
+        ${this.templateMode ? d`
           <button
             class="btn btn-green"
             ?disabled="${this._generating || this._finalizing}"
-            @click="${this._handleApply}"
+            @click="${() => this._handleApply()}"
           >${this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template"}</button>
         ` : h}
 
-        ${this.templateMode ? h : p`
+        ${this.templateMode ? h : d`
           <div class="action-btns">
-            <button
-              class="refresh-btn"
-              ?disabled="${this._generating || this._finalizing}"
-              @click="${() => this._handleGenerate()}"
-            >${this._previewStale ? "Refresh Preview ↻" : "Refresh Preview"}</button>
-            ${this._renderSendInline()}
-            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? p`
+            <div class="apply-btn-wrap">
+              <button
+                class="apply-main"
+                ?disabled="${!this._previewStale || this._generating || this._finalizing}"
+                @click="${() => this._handleApply()}"
+              >${this._generating || this._finalizing ? "Applying…" : "Apply Changes"}</button>
+              <button
+                class="discard-btn"
+                ?disabled="${!this._previewStale || this._generating || this._finalizing}"
+                @click="${() => this._handleDiscardChanges()}"
+              >Discard Changes</button>
+            </div>
+            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? d`
               <div class="confirm-reset">
-                <span class="confirm-reset-msg">Reset all settings to the template defaults?</span>
+                <span class="confirm-reset-msg">Reset all settings to the ${o}?</span>
                 <div class="confirm-reset-btns">
                   <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
                   <button class="confirm-reset-no"  @click="${() => {
@@ -1573,10 +1753,10 @@ class X extends U {
     }}">Cancel</button>
                 </div>
               </div>
-            ` : p`
+            ` : d`
               <button class="reset-btn" @click="${() => {
       this._confirmReset = !0;
-    }}">Reset to template</button>
+    }}">Reset to ${s}</button>
             ` : h}
           </div>
         `}
@@ -1584,74 +1764,300 @@ class X extends U {
     `;
   }
   _renderShowHideGroup(e) {
-    const i = this._isOnePage() && ["disclosures", "recon", "photos"].includes(e), s = this._isLocked(e), o = this._groups[e], n = p`
-      <div class="group-row ${s ? "group-row-locked" : ""}">
+    if (e === "market_scenarios") return this._renderScenarioGroup("market_scenarios", "Market Scenarios", "Market");
+    if (e === "selected_scenarios") return this._renderScenarioGroup("selected_scenarios", "Selected Scenarios", "Selected");
+    const t = this._isLocked(e), i = this._groups[e], o = d`
+      <div class="group-row ${t ? "group-row-locked" : ""}">
         <label class="group-header">
           <input type="checkbox" data-group="${e}"
-            .checked="${o === "checked" || o === "indeterminate"}"
-            ?disabled="${s}"
-            @change="${(l) => this._handleGroupChange(e, l.target.checked)}"
-          >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Market", recon: "Recon", photos: "Photos" }[e]}
+            .checked="${i === "checked" || i === "indeterminate"}"
+            ?disabled="${t}"
+            @change="${(a) => this._handleGroupChange(e, a.target.checked)}"
+          >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Market Comparables", recon: "Recon", photos: "Photos" }[e]}
         </label>
         ${this._lk(e)}
       </div>`;
-    return e === "valuation" ? p`
-        <div class="toggle-group ${i ? "disabled" : ""}" data-group="valuation">
-          ${n}
-          <div class="pill-group ${s ? "locked" : ""}">
-            ${this._renderPill("valuation.retail_value", "Retail Value", "valuation")}
-            ${this._renderPill("valuation.recon", "Recon", "valuation")}
-            ${this._renderPill("valuation.fixed_overhead", "Fixed Overhead", "valuation")}
-            ${this._renderPill("valuation.target_profit", this._profitName || "Target Profit", "valuation")}
-            ${this._renderPill("valuation.tax_savings", "Tax Savings", "valuation")}
+    if (e === "valuation") {
+      const a = !!this._pillsOpen.valuation;
+      return d`
+        <div class="toggle-group" data-group="valuation">
+          ${o}
+          <div class="pill-group ${t ? "locked" : ""}">
+            ${a ? d`
+              ${this._renderPill("valuation.retail_value", "Retail Value", "valuation")}
+              ${this._renderPill("valuation.recon", "Recon", "valuation")}
+              ${this._renderPill("valuation.fixed_overhead", "Fixed Overhead", "valuation")}
+              ${this._renderPill("valuation.target_profit", this._profitName || "Target Profit", "valuation")}
+              ${this._renderPill("valuation.tax_savings", "Tax Savings", "valuation")}
+            ` : h}
+            ${this._renderPillsToggle("valuation")}
           </div>
-        </div>` : e === "observations" ? p`
-        <div class="toggle-group ${i ? "disabled" : ""}" data-group="observations">
-          ${n}
-          <div class="pill-group ${s ? "locked" : ""}">
+        </div>`;
+    }
+    return e === "observations" ? d`
+        <div class="toggle-group" data-group="observations">
+          ${o}
+          <div class="pill-group ${t ? "locked" : ""}">
             ${this._renderPill("sections.observations_highlights", "Highlights", "observations")}
             ${this._renderPill("sections.observations_comments", "Comments", "observations")}
           </div>
-        </div>` : p`
-      <div class="toggle-group ${i ? "disabled" : ""}" data-group="${e}">
-        ${n}
+        </div>` : d`
+      <div class="toggle-group" data-group="${e}">
+        ${o}
       </div>`;
   }
-  _renderPill(e, t, i) {
-    const s = this._pills[e];
-    return p`
+  /** Pill keys for a toggle-able group — same lists as _recomputeGroupState. */
+  _pillKeysForGroup(e) {
+    return e === "valuation" ? ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"] : e === "market_scenarios" || e === "selected_scenarios" ? S.map((t) => `${e}.${t.key}`) : [];
+  }
+  /** Independent toggle — not nested under Market Comparables, not part of the
+   * draggable section order (mirrors how Signature is handled). Each of the 12
+   * KPI fields gets its own pill, same idiom as Valuation/Observations. */
+  _renderPillsToggle(e) {
+    const t = !!this._pillsOpen[e], i = this._pillKeysForGroup(e), s = i.filter((a) => !this._isPillLockedStale(a) && this._pills[a]).length, o = i.length;
+    return d`
       <span
-        class="pill ${s ? "active" : ""}"
-        @click="${() => this._handlePillClick(e, i)}"
-      >${t}</span>
+        class="pill-toggle"
+        title="${t ? "Collapse fields" : "Expand fields"}"
+        @click="${() => this._togglePillsOpen(e)}"
+      >${t ? "‹ Collapse" : `Expand (${s}/${o}) ›`}</span>
+    `;
+  }
+  _renderScenarioGroup(e, t, i) {
+    const s = this._isLocked(e), o = this._groups[e], a = o === "checked" || o === "indeterminate", n = !!this._pillsOpen[e];
+    return d`
+      <div class="toggle-group" data-group="${e}">
+        <div class="group-row ${s ? "group-row-locked" : ""}">
+          <label class="group-header">
+            <input type="checkbox" data-group="${e}"
+              .checked="${a}"
+              ?disabled="${s}"
+              @change="${(l) => this._handleGroupChange(e, l.target.checked)}"
+            >${t}
+          </label>
+          ${this._lk(e)}
+        </div>
+        <div class="pill-group ${s ? "locked" : ""}">
+          ${n ? S.map((l) => this._renderPill(`${e}.${l.key}`, l.label.replace("{basis}", i), e)) : h}
+          ${this._renderPillsToggle(e)}
+        </div>
+      </div>`;
+  }
+  /** Lazily builds the shared tooltip node — see the constructor comment for
+   * why this lives in document.body instead of a Lit template. Visuals match
+   * Bubble's Tippy.js output (.tippy-box/.tippy-content/.tippy-arrow)
+   * pixel-for-pixel; positioning + the rise-in animation are done by hand
+   * here since Tippy itself drives those via Popper + its own JS, not CSS.
+   * One reused node for every tooltip in this component (stale pills, the
+   * preview status dot, ...) — text and position update per show() call. */
+  _ensureTooltip() {
+    if (this._tooltipEl) return this._tooltipEl;
+    const e = document.createElement("div");
+    Object.assign(e.style, {
+      position: "fixed",
+      top: "0px",
+      left: "0px",
+      transform: "translate(-50%, -100%)",
+      zIndex: "2147483647",
+      pointerEvents: "none"
+    });
+    const t = document.createElement("div");
+    Object.assign(t.style, {
+      position: "relative",
+      boxSizing: "content-box",
+      background: "#333",
+      color: "#fff",
+      borderRadius: "4px",
+      fontSize: "14px",
+      lineHeight: "1.4",
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      whiteSpace: "normal",
+      textAlign: "center",
+      padding: "8px",
+      maxWidth: "240px",
+      opacity: "0"
+    });
+    const i = document.createElement("span");
+    t.appendChild(i);
+    const s = document.createElement("div");
+    return Object.assign(s.style, {
+      position: "absolute",
+      // Overlaps the bubble by 1px instead of sitting flush at 100% —
+      // two adjacent elements meeting at an exact sub-pixel boundary can
+      // render with a hairline gap between them once the bubble is
+      // animating (transform/opacity commonly promotes it to its own
+      // compositor layer), so nudge the arrow up into the body to
+      // guarantee no seam regardless of sub-pixel rounding.
+      top: "calc(100% - 1px)",
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "0",
+      height: "0",
+      borderStyle: "solid",
+      borderWidth: "8px 8px 0",
+      borderColor: "#333 transparent transparent transparent"
+    }), t.appendChild(s), e.appendChild(t), document.body.appendChild(e), this._tooltipEl = e, this._tooltipBubble = t, this._tooltipLabel = i, e;
+  }
+  _showTooltip(e, t) {
+    const i = this._ensureTooltip(), s = this._tooltipBubble, o = this._tooltipLabel, a = e.currentTarget.getBoundingClientRect();
+    s.style.width = "", o.textContent = t;
+    const n = document.createRange();
+    n.selectNodeContents(o);
+    const l = Array.from(n.getClientRects(), (p) => p.width);
+    s.style.width = `${Math.ceil(Math.max(...l))}px`, i.style.top = `${a.top - 10}px`, i.style.left = `${a.left + a.width / 2}px`, s.getAnimations().forEach((p) => p.cancel()), s.animate(
+      [
+        { opacity: 0, transform: "translateY(6px)" },
+        { opacity: 1, transform: "translateY(0)" }
+      ],
+      { duration: 160, easing: "ease-out", fill: "forwards" }
+    );
+  }
+  _hideTooltip() {
+    const e = this._tooltipBubble;
+    e && (e.getAnimations().forEach((t) => t.cancel()), e.animate(
+      [
+        { opacity: 1, transform: "translateY(0)" },
+        { opacity: 0, transform: "translateY(6px)" }
+      ],
+      { duration: 160, easing: "ease-in", fill: "forwards" }
+    ));
+  }
+  _renderPill(e, t, i) {
+    const s = this._isPillLockedStale(e), o = !s && this._pills[e], a = "Not available: Offer has been adjusted manually";
+    return d`
+      <span
+        class="pill ${o ? "active" : ""} ${s ? "stale" : ""}"
+        @mouseenter="${(n) => {
+      s && this._showTooltip(n, a);
+    }}"
+        @mouseleave="${() => {
+      s && this._hideTooltip();
+    }}"
+        @click="${() => {
+      s || this._handlePillClick(e, i);
+    }}"
+      >${s ? d`<span class="pill-stale-icon">${ot}</span>` : h}${t}</span>
     `;
   }
   _renderSendInline() {
-    var o, r;
-    const e = !!((r = (o = this.payload) == null ? void 0 : o.customer) != null && r.email), t = !!this._pdfUrl && !this._generating;
-    if (!e) return h;
-    const i = this._doneSentVia ? "Email Sent ✓" : "Send via Email", s = t && !this._doneSentVia;
-    return p`
+    var o;
+    const e = this._resolveEmployee(), t = !!((o = this.payload) != null && o.customer) || !!(e != null && e.email), i = !!this._pdfUrl && !this._generating;
+    return t ? d`
       <button
-        class="split-main ${this._doneSentVia ? "done" : ""}"
-        style="border-radius:8px;width:100%;padding:10px 16px;font-size:13px;"
-        ?disabled="${!s}"
-        @click="${() => this._handleSend("email")}"
-      >${i}</button>
+        class="email-icon-btn"
+        ?disabled="${!i}"
+        @click="${() => {
+      this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
+    }}"
+      >${st}</button>
+      ${this._confirmSendEmail ? this._renderSendConfirmModal() : h}
+    ` : h;
+  }
+  _renderSendConfirmModal() {
+    var p, f;
+    const e = this._resolveEmployee(), t = ((f = (p = this.payload) == null ? void 0 : p.customer) == null ? void 0 : f.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", o = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), a = o === "customer" && !t, n = o === "employee" ? i : t || this._manualCustomerEmail.trim(), l = !!n;
+    return d`
+      <div class="modal-overlay" @click="${() => {
+      this._confirmSendEmail = !1;
+    }}">
+        <div class="modal-box" @click="${(c) => c.stopPropagation()}">
+          <p class="modal-msg">
+            Send this offer as an offer made by <strong>${s}</strong>?
+          </p>
+
+          <div class="modal-recipient-group">
+            <label class="modal-recipient-option">
+              <input
+                type="radio"
+                name="send-recipient"
+                .checked="${o === "customer"}"
+                @change="${() => {
+      this._sendMessageType = "customer";
+    }}"
+              />
+              <span>Customer's inbox${t ? d` — ${t}` : h}</span>
+            </label>
+            ${i ? d`
+              <label class="modal-recipient-option">
+                <input
+                  type="radio"
+                  name="send-recipient"
+                  .checked="${o === "employee"}"
+                  @change="${() => {
+      this._sendMessageType = "employee";
+    }}"
+                />
+                <span>Employee's inbox — ${i}</span>
+              </label>
+            ` : h}
+          </div>
+
+          ${a ? d`
+            <input
+              type="email"
+              class="modal-email-input"
+              placeholder="Customer email address"
+              .value="${this._manualCustomerEmail}"
+              @input="${(c) => {
+      this._manualCustomerEmail = c.target.value;
+    }}"
+            />
+          ` : h}
+
+          <div class="modal-btns">
+            <button class="modal-btn-confirm"
+              ?disabled="${!l}"
+              @click="${() => {
+      this._confirmSendEmail = !1, this._handleSend("email", n, o);
+    }}"
+            >Yes, send</button>
+            <button class="modal-btn-cancel" @click="${() => {
+      this._confirmSendEmail = !1;
+    }}">Cancel</button>
+          </div>
+        </div>
+      </div>
     `;
   }
+  /* ── REMOVED (kept for reference — the old clickable inline refresh trigger,
+       replaced by the Apply button in the sidebar). Was the whole contents of
+       .preview-title-group in _renderPreviewPane below:
+  
+    <div class="preview-title-group">
+      <span
+        class="preview-refresh-trigger ${busy ? 'busy' : ''}"
+        title="${this._previewStale ? 'Refresh preview' : ''}"
+        @click="${() => { if (!this._generating && !this._finalizing) this._handleGenerate(); }}"
+      >
+        ${this._previewStale ? html`<span class="preview-refresh-icon">↻</span>` : nothing}
+        <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
+      </span>
+      <span
+        class="preview-status-dot ${this._previewStale ? 'stale' : ''}"
+        title="${this._previewStale ? 'Preview is out of date' : 'Preview is up to date'}"
+      ></span>
+    </div>
+  
+    ── end removed ─────────────────────────────────────────────────────────────── */
   _renderPreviewPane() {
-    const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e, o = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
-    return p`
+    const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e && !this._statusError, o = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
+    return d`
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
-            <h2>${o ? "Preview" : "PDF"}</h2>
-            ${!this.templateMode && e && !t && o ? p`
+            <div
+              class="preview-title-group"
+              @mouseenter="${(a) => this._showTooltip(a, this._previewStale ? "Unapplied changes" : "Up to date")}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >
+              <h2>${o ? "Preview" : "PDF"}</h2>
+              <span class="preview-status-dot ${this._previewStale ? "stale" : ""}"></span>
+            </div>
+            ${!this.templateMode && e && !t && o ? d`
               <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
             ` : h}
           </div>
-          ${i ? p`
+          ${i ? d`
             <div class="preview-loading">
               <div class="pulse-dots">
                 <span></span><span></span><span></span>
@@ -1659,22 +2065,22 @@ class X extends U {
               Generating preview…
             </div>
           ` : h}
-          ${!i && !e ? p`
-            <div class="empty-preview">Preview will appear once a payload is loaded</div>
+          ${!i && !e ? d`
+            <div class="empty-preview">${this._statusError && this._statusMsg ? this._statusMsg : "Preview will appear once a payload is loaded"}</div>
           ` : h}
-          ${e && !t && o ? p`
+          ${e && !t && o ? d`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
           ` : h}
-          ${e && !t && !o ? p`
-            <div style="display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
-              ${window.natively ? p`
+          ${e && !t && !o ? d`
+            <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
+              ${window.natively ? d`
                 <button
                   class="btn btn-primary"
                   style="width:auto;padding:10px 24px;"
                   @click="${() => window.natively.openPDF({ base64: this._pdfUrl.split(",")[1], fileName: "offer.pdf", download: !0 }, () => {
     })}"
                 >Open PDF</button>
-              ` : p`
+              ` : d`
                 <a
                   href="${this._pdfUrl}"
                   target="_blank"
@@ -1691,12 +2097,12 @@ class X extends U {
   }
   // ── Main render ────────────────────────────────────────────────────────────
   render() {
-    return p`
-      ${this._renderHeader()}
-      <main @click="${() => {
+    return d`
+      <div class="shell">
+        ${this._renderHeader()}
+        <main @click="${() => {
       this._splitOpen && (this._splitOpen = !1);
     }}">
-        <div class="wrap">
           <div class="layout">
             <div class="sidebar">
               ${this._renderOfferCard()}
@@ -1704,12 +2110,12 @@ class X extends U {
             </div>
             ${this._renderPreviewPane()}
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     `;
   }
 }
-q(X, "properties", {
+W(te, "properties", {
   // Public attributes
   apiBaseUrl: { type: String, attribute: "api-base-url" },
   apiMode: { type: String, attribute: "api-mode" },
@@ -1722,6 +2128,8 @@ q(X, "properties", {
   payload: { type: Object },
   sharedDisplay: { type: Object },
   pdfDisplay: { type: Object },
+  templateSharedDisplay: { type: Object },
+  templatePdfDisplay: { type: Object },
   employees: { type: Array },
   locked: { type: Boolean },
   _selectedEmployeeIndex: { type: Number, state: !0 },
@@ -1748,11 +2156,15 @@ q(X, "properties", {
   // 'vertical' | 'horizontal'
   _marketDisplay: { type: String, state: !0 },
   // 'summary' | 'full'
+  _scenarioLayout: { type: String, state: !0 },
+  // 'tiles' | 'rows'
   _sectionOrder: { type: Array, state: !0 },
   // Show/Hide pill state — flat object of path → bool
   _pills: { type: Object, state: !0 },
   // Group checkbox state: 'checked' | 'indeterminate' | 'unchecked'
   _groups: { type: Object, state: !0 },
+  // Pill-row expand/collapse, per group — { valuation: bool, market_scenarios: bool, selected_scenarios: bool }
+  _pillsOpen: { type: Object, state: !0 },
   _finalized: { type: Boolean, state: !0 },
   _generating: { type: Boolean, state: !0 },
   _finalizing: { type: Boolean, state: !0 },
@@ -1768,13 +2180,42 @@ q(X, "properties", {
   _sendVia: { type: String, state: !0 },
   _doneSentVia: { type: String, state: !0 },
   _pdfSent: { type: Boolean, state: !0 },
+  _confirmSendEmail: { type: Boolean, state: !0 },
+  _sendMessageType: { type: String, state: !0 },
+  _manualCustomerEmail: { type: String, state: !0 },
   _previewStale: { type: Boolean, state: !0 }
-}), q(X, "styles", Le`
-    :host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #EEEEEE; color: #222222; min-height: 100vh; }
+}), W(te, "styles", Te`
+    /* Kept deliberately simple — a host page can (and here, does) target
+       "lexen-offer-sheet" by tag name from outside the shadow DOM, which can
+       override :host rules. The actual split-scroll layout lives on .shell
+       below instead, which light-DOM CSS can never reach. */
+    :host {
+      display: block;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #EEEEEE;
+      color: #222222;
+      /* Viewport-relative, not %, on purpose — the real Bubble embed wraps this
+         in a plain <div style="min-height: 600px"> with no explicit height, so
+         height:100% has nothing definite to resolve against and silently
+         becomes auto. dvh gives :host a real, self-sufficient size regardless
+         of what the parent container does. min-height mirrors that wrapper's
+         own floor as a fallback. */
+      height: 100dvh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
 
     * { box-sizing: border-box; }
 
     .component-header {
+      flex-shrink: 0;
       background: #fff;
       padding: 20px 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -1819,21 +2260,45 @@ q(X, "properties", {
     .setup-toggle-btn.active { color: #344054; }
 
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    main { padding: 32px 0 64px; }
+
+    /* Split scroll: main is a fixed-height row (viewport minus the header),
+       and the sidebar / preview pane each scroll independently within it —
+       same pattern as lxn-customizer's .lxn-cust-split. */
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
 
     .layout {
       display: flex;
-      flex-wrap: wrap;
       gap: 24px;
-      align-items: flex-start;
+      align-items: stretch;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      min-height: 0;
+      overflow: hidden;
     }
 
-    .sidebar { flex: 1 1 440px; min-width: 320px; }
-    .preview-pane { flex: 9999 1 280px; min-width: 280px; }
+    .sidebar { flex: 1 1 440px; min-width: 320px; overflow-y: auto; min-height: 0; }
+    /* Never scrolls — the card inside fills this pane exactly (flex column) instead. */
+    .preview-pane { flex: 9999 1 280px; min-width: 280px; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
 
     @media (max-width: 768px) {
-      .sidebar, .preview-pane { flex: 1 1 100%; }
-      .preview-card { position: static; }
+      /* Below the breakpoint, drop the split-scroll and let the whole
+         component flow/scroll as one page instead — two independently
+         scrolling narrow columns don't work well stacked. */
+      :host { height: auto; overflow: visible; }
+      main { overflow: visible; }
+      .layout { flex-wrap: wrap; overflow: visible; }
+      .sidebar, .preview-pane { flex: 1 1 100%; overflow: visible; min-height: auto; display: block; }
+      .preview-card { flex: none; }
+      .preview-loading { flex: none; height: 300px; }
+      .empty-preview { flex: none; height: 400px; }
+      .pdf-frame { flex: none; height: 700px; }
     }
 
     /* Cards */
@@ -1886,6 +2351,71 @@ q(X, "properties", {
     }
 
     .vehicle-info .desc { color: #006073; }
+
+    /* REMOVED (kept for reference — wider/bigger-icon version of splitting the
+       send button into the .vehicle-info bubble itself, divided by a vertical
+       line. Rejected again — back to the small icon+label box in
+       .offer-header-row, see .email-icon-btn below.
+    .vehicle-info { display: flex; align-items: stretch; overflow: hidden; }
+    .vehicle-info-content { flex: 1; min-width: 0; padding: 12px 14px; }
+    .vehicle-info-send-btn {
+      flex-shrink: 0; width: 76px; border: none;
+      border-left: 1.5px solid #7fb8c3; background: #effcff; color: #006073;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .vehicle-info-send-btn:hover:not(:disabled) { background: #d9f2f7; }
+    .vehicle-info-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .vehicle-info-send-btn.done { color: #1a7a4f; cursor: default; }
+    */
+
+
+    /* Send confirmation modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .modal-msg { font-size: 14px; color: #344054; line-height: 1.5; margin: 0 0 18px; }
+    .modal-recipient-group { display: flex; flex-direction: column; gap: 8px; margin: 0 0 14px; }
+    .modal-recipient-option {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #344054; cursor: pointer; user-select: none;
+    }
+    .modal-recipient-option input[type="radio"] { cursor: pointer; }
+    .modal-email-input {
+      width: 100%; box-sizing: border-box; padding: 8px 10px; margin: 0 0 14px;
+      font-size: 13px; font-family: inherit; color: #222222;
+      border: 1.5px solid #d0d5dd; border-radius: 6px;
+    }
+    .modal-email-input:focus { outline: none; border-color: #35BB9C; }
+    .modal-btns { display: flex; gap: 8px; }
+    .modal-btn-confirm {
+      flex: 1; padding: 9px; background: #35BB9C; color: #fff;
+      border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .modal-btn-confirm:hover:not(:disabled) { background: #2a9880; }
+    .modal-btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; }
+    .modal-btn-cancel {
+      flex: 1; padding: 9px; background: transparent; color: #344054;
+      border: 1px solid #d0d5dd; border-radius: 6px; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .modal-btn-cancel:hover { background: #f2f4f7; }
 
     /* Toggle groups */
     .toggle-group { margin-bottom: 4px; }
@@ -1992,6 +2522,38 @@ q(X, "properties", {
       opacity: 0.6;
     }
 
+    /* Stale — offer amount no longer matches the calculated ACV this scenario's
+       ACV/Cost to Market are derived from. Same amber as .discard-btn, faded
+       the same way .discard-btn:disabled fades — orange, but visibly inert. */
+    .pill.stale {
+      background: #fff8e1; border-color: #f59f00; color: #b45309;
+      opacity: 0.55; cursor: not-allowed;
+    }
+    .pill-stale-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-right: 4px;
+    }
+
+    /* The tooltip itself is NOT styled here — :host sets overflow:hidden
+       (see below), which clips anything painted anywhere in this shadow
+       root, position:fixed included. It's a real DOM node built and styled
+       inline in _ensureTooltip(), appended straight to document.body so it
+       can float above everything unclipped — same as how Tippy.js itself
+       works by default. */
+
+    .pill-toggle {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #006073;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .pill-toggle:hover { color: #004f5f; text-decoration: underline; }
+
     /* Buttons */
     .btn {
       display: inline-flex;
@@ -2013,9 +2575,18 @@ q(X, "properties", {
     .btn-primary { background: #35BB9C; color: #fff; }
     .btn-primary:hover { background: #2a9880; }
     .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-preview { background: #0f8f8f; color: #fff; }
-    .btn-preview:hover { background: #0a7777; }
+    /* REMOVED (kept for reference — Send via Email as a full-width teal button
+       under Apply, matching .apply-main's exact sizing. Moved back to the
+       Offer card as a small icon+label box instead — see .email-icon-btn.
+    .btn-preview {
+      display: block; width: 100%; padding: 10px 16px; font-size: 13px;
+      font-weight: 600; font-family: inherit; border: none; border-radius: 8px;
+      cursor: pointer; text-align: center; transition: background 0.15s, opacity 0.15s;
+      background: #0f8f8f; color: #fff;
+    }
+    .btn-preview:hover:not(:disabled) { background: #0a7777; }
     .btn-preview:disabled { opacity: 0.45; cursor: not-allowed; }
+    */
     .btn-reopen { background: #FAB515; color: #373737; }
     .btn-reopen:hover { color: #000; }
     .btn-reopen:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -2039,10 +2610,16 @@ q(X, "properties", {
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Preview */
-    .preview-card { position: sticky; top: 24px; }
+    .preview-card {
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
     .preview-loading {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 300px; gap: 14px; color: #888; font-size: 14px;
+      width: 100%; aspect-ratio: 612 / 792; gap: 14px; color: #888; font-size: 14px;
     }
     .pulse-dots { display: flex; gap: 7px; }
     .pulse-dots span {
@@ -2058,22 +2635,96 @@ q(X, "properties", {
 
     .pdf-frame {
       width: 100%;
-      height: 700px;
+      aspect-ratio: 612 / 792; /* US Letter — matches render.py's PAGE_W/PAGE_H */
+      height: auto;
       border: 1px solid #dde1e8;
       border-radius: 8px;
       background: #e8e8e8;
     }
 
-    .preview-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .preview-card-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .preview-card-header h2 { margin: 0; }
     .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
     .preview-actions .btn { width: auto; flex: 1; }
+
+    .preview-title-group { display: flex; align-items: center; gap: 8px; }
+    .preview-title-group h2 { line-height: 1; }
+
+    /* REMOVED (kept for reference — old clickable inline refresh trigger)
+    .preview-refresh-trigger {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .preview-refresh-trigger:hover:not(.busy) h2 { color: #004f5f; text-decoration: underline; }
+    .preview-refresh-trigger:hover:not(.busy) .preview-refresh-icon { color: #004f5f; }
+    .preview-refresh-trigger.busy { cursor: not-allowed; opacity: 0.45; }
+    .preview-refresh-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    */
+
+    .preview-status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #35BB9C;
+      flex-shrink: 0;
+    }
+    .preview-status-dot.stale { background: #f59f00; }
+
+    /* Apply / Discard — both grey out with no pending changes, light up once
+       something's been edited. Sit side by side above the reset-to-template
+       button (see .action-btns). */
+    .apply-btn-wrap { display: flex; gap: 8px; width: 100%; }
+    .apply-main {
+      flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+      background: #35BB9C; color: #fff; border: none;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      transition: background 0.15s; text-align: center;
+    }
+    .apply-main:hover:not(:disabled) { background: #2a9880; }
+    .apply-main:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
+    .discard-btn {
+      flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+      background: #fff8e1; color: #b45309; border: 1px solid #f59f00;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s; text-align: center;
+    }
+    .discard-btn:hover:not(:disabled) { background: #ffedb3; border-color: #e08e00; }
+    .discard-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* REMOVED (kept for reference — old "Refresh Preview" text button)
+    .refresh-text-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      padding: 4px 0;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: #006073;
+      cursor: pointer;
+    }
+    .refresh-text-btn:hover:not(:disabled) { color: #004f5f; text-decoration: underline; }
+    .refresh-text-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    */
 
     .empty-preview {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 400px;
+      width: 100%;
+      aspect-ratio: 612 / 792;
       color: #aab4c0;
       font-size: 14px;
       border: 2px dashed #dde1e8;
@@ -2365,15 +3016,6 @@ q(X, "properties", {
     }
     .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
 
-    .refresh-btn {
-      width: 100%; padding: 10px 20px; background: #006073; color: #fff;
-      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
-      cursor: pointer; font-family: inherit;
-      transition: background 0.15s, opacity 0.15s;
-    }
-    .refresh-btn:hover:not(:disabled) { background: #004f5f; }
-    .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
     .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
     .confirm-reset {
@@ -2404,6 +3046,43 @@ q(X, "properties", {
     }
 
     .offer-header-row h2 { margin-bottom: 0; }
+
+    /* Matches the unselected/greyed segment look of .seg-btn (Full/One-Page
+       etc.) — deliberately not the teal .seg-btn.active treatment. */
+    .email-icon-btn {
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+      padding: 0; background: transparent; border: none;
+      color: #475467; cursor: pointer; user-select: none; line-height: 0;
+      transition: color 0.15s;
+    }
+    .email-icon-btn:hover:not(:disabled) { color: #1d2939; }
+    .email-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* REMOVED (kept for reference — Send Email as a full-width teal button
+       under the offer bubble, styled to match .apply-main exactly. Back to
+       the small icon+label box opposite "Offer" instead — see .email-icon-btn.
+    .send-email-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      background: #35BB9C;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .send-email-btn:hover:not(:disabled) { background: #2a9880; }
+    .send-email-btn:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
+    .send-email-btn.done { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: default; }
+    */
 
     .customize-header-row {
       display: flex;
@@ -2455,7 +3134,7 @@ q(X, "properties", {
       font-size: 12px; color: #98a2b3; text-align: center; padding: 4px 0;
     }
   `);
-customElements.define("lexen-offer-sheet", X);
+customElements.define("lexen-offer-sheet", te);
 export {
-  X as LexenOfferSheet
+  te as LexenOfferSheet
 };

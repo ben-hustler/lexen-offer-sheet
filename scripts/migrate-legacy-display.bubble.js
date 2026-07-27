@@ -5,20 +5,22 @@
 //   1. Set `legacyDisplay` below — click into the `null` and use Bubble's
 //      "Insert dynamic data" to point at the offer's legacy saved-display field
 //      (add ":formatted as JSON-safe" to the dynamic value).
-//   2. Add a Toolbox "Run Javascript on page load" / "expose as bubble_fn_"
-//      element named `migration_aid` with two text parameters. This script
-//      calls bubble_fn_migration_aid(sharedDisplayJson, pdfDisplayJson) once
-//      conversion is done — wire the next workflow step to read those two
-//      states and save them into the offer's new sharedDisplay / pdfDisplay
-//      fields (raw, no JSON-safe — same as the old display field was saved).
+//   2. Set `recordType` below to whichever dynamic value tells you this record's
+//      an "offer" or a "template" — passed straight through untouched.
+//   3. Add a Toolbox "Run Javascript on page load" / "expose as bubble_fn_"
+//      element named `migration_aid` with three text parameters. This script
+//      calls bubble_fn_migration_aid([sharedDisplayJson, pdfDisplayJson, recordType])
+//      once conversion is done — wire the next workflow step to read those
+//      three states; save the first two (raw, no JSON-safe — same as the old
+//      display field was saved) into the offer's new sharedDisplay / pdfDisplay
+//      fields, and branch on the third to know which record type you're on.
 //
-// This is a hand-copy of the conversion logic in migrate-legacy-display.js
-// (the Node CLI version) — Bubble can't run ES modules, so there's no way to
-// share the source directly. If the mapping rules change, update both files.
-
+// This used to mirror a Node CLI version (migrate-legacy-display.js) for
+// running the same conversion outside Bubble — that's been removed, so this
 var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
+var recordType = null; // ← replace `null` with the inserted dynamic value ("offer" or "template")
 
-(function (legacyDisplayRaw) {
+(function (legacyDisplayRaw, recordTypeRaw) {
 
   var DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'market', 'market_scenarios', 'selected_scenarios', 'recon', 'photos'];
 
@@ -49,16 +51,34 @@ var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
     try { return JSON.parse(value); } catch (e) { return null; }
   }
 
+  // Legacy `groups[key]` shows up as either the tri-state string
+  // ('checked'/'unchecked'/'indeterminate') the live component uses, or a
+  // plain boolean on some records. A raw `!== 'unchecked'` string compare
+  // treats boolean `false` as "not the string unchecked" — i.e. shown — so
+  // normalize both shapes here instead. `defaultShown` is what a
+  // missing/null key falls back to.
+  function isGroupChecked(raw, defaultShown) {
+    if (raw == null) return defaultShown;
+    if (typeof raw === 'boolean') return raw;
+    return raw !== 'unchecked';
+  }
+
+  // market_scenarios/selected_scenarios are new — no legacy record ever had
+  // them, so only an explicit affirmative counts as on (unlike the six
+  // above, which default to shown). Same boolean-vs-string normalization.
+  function isGroupExplicitlyOn(raw) {
+    if (typeof raw === 'boolean') return raw;
+    return raw === 'checked';
+  }
+
   function toSections(groups) {
     groups = groups || {};
     var sections = {};
     ['valuation', 'disclosures', 'observations', 'market', 'recon', 'photos'].forEach(function (key) {
-      var state = groups[key] != null ? groups[key] : 'checked';
-      sections[key] = state !== 'unchecked';
+      sections[key] = isGroupChecked(groups[key], true);
     });
-    // New feature — legacy records never had this group; default off unless explicitly checked.
-    sections.market_scenarios = groups.market_scenarios === 'checked';
-    sections.selected_scenarios = groups.selected_scenarios === 'checked';
+    sections.market_scenarios = isGroupExplicitlyOn(groups.market_scenarios);
+    sections.selected_scenarios = isGroupExplicitlyOn(groups.selected_scenarios);
     return sections;
   }
 
@@ -107,7 +127,7 @@ var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
       // Never part of any legacy record — employee selection was always auto-matched
       // from the payload, so there's nothing to carry forward.
       selected_emp_idx: null,
-      signature: (groups.signature != null ? groups.signature : 'checked') !== 'unchecked',
+      signature: isGroupChecked(groups.signature, true),
       // Locking didn't exist in the legacy component — every legacy record migrates unlocked.
       locks: Object.assign({}, DEFAULT_LOCKS),
     };
@@ -119,7 +139,8 @@ var legacyDisplay = null; // ← replace `null` with the inserted dynamic value
 
   bubble_fn_migrationAid([
     result.sharedDisplay ? JSON.stringify(result.sharedDisplay) : '',
-    result.pdfDisplay ? JSON.stringify(result.pdfDisplay) : ''
+    result.pdfDisplay ? JSON.stringify(result.pdfDisplay) : '',
+    recordTypeRaw
   ]);
 
-})(legacyDisplay);
+})(legacyDisplay, recordType);
