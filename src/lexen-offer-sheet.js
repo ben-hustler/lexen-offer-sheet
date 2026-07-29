@@ -1213,33 +1213,10 @@ export class LexenOfferSheet extends LitElement {
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
 
     // Show/Hide pills (path → bool)
-    this._pills = {
-      'general.condition': true,
-      'valuation.retail_value': true,
-      'valuation.recon': true,
-      'valuation.fixed_overhead': true,
-      'valuation.target_profit': true,
-      'valuation.tax_savings': true,
-      'sections.observations_highlights': true,
-      'sections.observations_comments': true,
-      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
-        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
-        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
-      ])),
-    };
+    this._pills = this._defaultPills();
 
     // Group states
-    this._groups = {
-      valuation: 'checked',
-      disclosures: 'checked',
-      observations: 'checked',
-      market: 'checked',
-      market_scenarios: 'unchecked', // new feature — off by default
-      selected_scenarios: 'unchecked', // new feature — off by default
-      recon: 'checked',
-      photos: 'checked',
-      signature: 'checked',
-    };
+    this._groups = this._defaultGroups();
 
     // Pill-row expand/collapse — all groups start collapsed.
     this._pillsOpen = { valuation: false, market_scenarios: false, selected_scenarios: false };
@@ -1333,6 +1310,37 @@ export class LexenOfferSheet extends LitElement {
     };
   }
 
+  _defaultPills() {
+    return {
+      'general.condition': true,
+      'valuation.retail_value': true,
+      'valuation.recon': true,
+      'valuation.fixed_overhead': true,
+      'valuation.target_profit': true,
+      'valuation.tax_savings': true,
+      'sections.observations_highlights': true,
+      'sections.observations_comments': true,
+      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
+        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+      ])),
+    };
+  }
+
+  _defaultGroups() {
+    return {
+      valuation: 'checked',
+      disclosures: 'checked',
+      observations: 'checked',
+      market: 'checked',
+      market_scenarios: 'unchecked', // new feature — off by default
+      selected_scenarios: 'unchecked', // new feature — off by default
+      recon: 'checked',
+      photos: 'checked',
+      signature: 'checked',
+    };
+  }
+
   _applySharedDisplay(d) {
     if (!d) return;
     const GROUP_KEYS = ['valuation','disclosures','observations','market','market_scenarios','selected_scenarios','recon','photos'];
@@ -1340,9 +1348,15 @@ export class LexenOfferSheet extends LitElement {
     const sec = d.sections || {};
 
     // Pills first — the recompute below needs the freshly loaded values.
-    if (d.pills != null) this._pills = { ...this._pills, ...d.pills };
+    // Start from the hardcoded defaults, not the current (possibly dirtied
+    // mid-session) pills — otherwise a pill/group missing from an older or
+    // partial saved display silently inherits whatever was on-screen before
+    // this load, instead of falling back to its real default.
+    this._pills = { ...this._defaultPills(), ...(d.pills || {}) };
 
-    const newGroups = { ...this._groups };
+    // signature isn't part of GROUP_KEYS (that's _applyPdfDisplay's job) —
+    // preserve it rather than resetting it to the default here.
+    const newGroups = { ...this._defaultGroups(), signature: this._groups.signature };
     GROUP_KEYS.forEach(k => { if (sec[k] != null) newGroups[k] = sec[k] ? 'checked' : 'unchecked'; });
     this._groups = newGroups;
 
@@ -1972,25 +1986,8 @@ export class LexenOfferSheet extends LitElement {
     this._marketDisplay = 'full';
     this._scenarioLayout = 'tiles';
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
-    this._pills = {
-      'general.condition': true,
-      'valuation.retail_value': true,
-      'valuation.recon': true,
-      'valuation.fixed_overhead': true,
-      'valuation.target_profit': true,
-      'valuation.tax_savings': true,
-      'sections.observations_highlights': true,
-      'sections.observations_comments': true,
-      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
-        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
-        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
-      ])),
-    };
-    this._groups = {
-      valuation: 'checked', disclosures: 'checked', observations: 'checked',
-      market: 'checked', market_scenarios: 'unchecked', selected_scenarios: 'unchecked',
-      recon: 'checked', photos: 'checked', signature: 'checked',
-    };
+    this._pills = this._defaultPills();
+    this._groups = this._defaultGroups();
   }
 
   // ── Drag-and-drop ──────────────────────────────────────────────────────────
@@ -2104,35 +2101,38 @@ export class LexenOfferSheet extends LitElement {
     this._dragSrcIndex = -1;
   }
 
-  // ── Lock helpers ───────────────────────────────────────────────────────────
-
-  /** True if `key` is explicitly locked, or if mode is locked to one_page —
-   * every other control is inert in one-page mode, so a mode lock cascades
-   * to lock everything else too (dealers can't edit their way back to full). */
-  _effectiveLock(key) {
-    if (this._locks?.[key]) return true;
-    return key !== 'mode' && this._mode === 'one_page' && !!this._locks?.mode;
-  }
-
-  _isLocked(key) {
-    return !this.templateMode && this._effectiveLock(key);
-  }
-
-  _lk(key) {
-    const locked = !!this._locks?.[key];
-    if (this.templateMode) {
-      return html`
-        <button class="lock-btn ${locked ? 'locked' : ''}"
-                title="${locked ? 'Unlock for dealers' : 'Lock for dealers'}"
-                @click="${(e) => { e.stopPropagation(); this._locks = { ...this._locks, [key]: !locked }; }}">
-          ${locked ? lockClosedSvg : lockOpenSvg}
-        </button>`;
-    }
-    if (this._effectiveLock(key)) {
-      return html`<span class="lock-indicator" title="Locked by template">${lockClosedSvg}</span>`;
-    }
-    return nothing;
-  }
+  // ── Lock helpers — disabled for now, left in place to pick back up later ───
+  //
+  // /** True if `key` is explicitly locked, or if mode is locked to one_page —
+  //  * every other control is inert in one-page mode, so a mode lock cascades
+  //  * to lock everything else too (dealers can't edit their way back to full). */
+  // _effectiveLock(key) {
+  //   if (this._locks?.[key]) return true;
+  //   return key !== 'mode' && this._mode === 'one_page' && !!this._locks?.mode;
+  // }
+  //
+  // _isLocked(key) {
+  //   return !this.templateMode && this._effectiveLock(key);
+  // }
+  //
+  // _lk(key) {
+  //   const locked = !!this._locks?.[key];
+  //   if (this.templateMode) {
+  //     return html`
+  //       <button class="lock-btn ${locked ? 'locked' : ''}"
+  //               title="${locked ? 'Unlock for dealers' : 'Lock for dealers'}"
+  //               @click="${(e) => { e.stopPropagation(); this._locks = { ...this._locks, [key]: !locked }; }}">
+  //         ${locked ? lockClosedSvg : lockOpenSvg}
+  //       </button>`;
+  //   }
+  //   if (this._effectiveLock(key)) {
+  //     return html`<span class="lock-indicator" title="Locked by template">${lockClosedSvg}</span>`;
+  //   }
+  //   return nothing;
+  // }
+  _effectiveLock(key) { return false; }
+  _isLocked(key) { return false; }
+  _lk(key) { return nothing; }
 
   // ── Save Settings ──────────────────────────────────────────────────────────
 
