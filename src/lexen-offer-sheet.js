@@ -1806,17 +1806,16 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _handleGroupChange(group, checked) {
-    // This checkbox only shows/hides the whole section — it no longer
-    // bulk-sets the individual field pills underneath, so toggling a group
-    // off then back on restores exactly the same partial selection (e.g.
-    // 4/5 fields) instead of resetting everything to fully on.
     this._groups = { ...this._groups, [group]: checked ? 'checked' : 'unchecked' };
 
     const pillBearingGroups = ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'];
-    if (checked && pillBearingGroups.includes(group)) {
-      // Re-derive the true tri-state from the untouched pills (e.g. still
-      // indeterminate at 4/5) rather than leaving it forced to 'checked'.
-      this._recomputeGroupState(group);
+    if (pillBearingGroups.includes(group)) {
+      // Group checkbox bulk-sets every pill underneath it — a partial
+      // selection collapsing to an unchecked box (chips still lit, nothing
+      // shown) is more confusing than losing the partial state.
+      const newPills = { ...this._pills };
+      this._pillKeysForGroup(group).forEach(k => { newPills[k] = checked; });
+      this._pills = newPills;
     }
 
     if (group !== 'signature') {
@@ -2856,6 +2855,9 @@ export class LexenOfferSheet extends LitElement {
   _pillKeysForGroup(group) {
     if (group === 'valuation') {
       return ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'];
+    }
+    if (group === 'observations') {
+      return ['sections.observations_highlights', 'sections.observations_comments'];
     }
     if (group === 'market_scenarios' || group === 'selected_scenarios') {
       return SCENARIO_FIELDS.map(f => `${group}.${f.key}`);
