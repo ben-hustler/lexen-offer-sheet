@@ -1,3 +1,5 @@
+//This was me experimenting with using claude to update UI based off a style guide created by Claude Design.
+
 import { LitElement, html, css, nothing } from 'lit';
 
 // ── Template placeholder payload ──────────────────────────────────────────────
@@ -229,10 +231,43 @@ export class LexenOfferSheet extends LitElement {
        override :host rules. The actual split-scroll layout lives on .shell
        below instead, which light-DOM CSS can never reach. */
     :host {
+      /* ── LXN Design System v2 tokens ──────────────────────────────────────
+         Scoped to this component (not global custom properties elsewhere in
+         the app) — values lifted straight from the DS's colors_and_type.css. */
+      --lxn-primary-900: #00A17B;   /* press */
+      --lxn-primary-800: #219C88;   /* default action */
+      --lxn-primary-700: #35BA9B;   /* hover — lighter, not darker, per DS */
+      --lxn-neutral-900: #000000;
+      --lxn-neutral-500: #515D5F;
+      --lxn-neutral-400: #949C9C;
+      --lxn-neutral-300: #C7CFCF;
+      --lxn-neutral-200: #D4D8DB;
+      --lxn-neutral-150: #E2E5E5;
+      --lxn-neutral-100: #EEEEEE;
+      --lxn-neutral-50:  #F6F7F7;
+      --lxn-neutral-10:  #FFFFFF;
+      --lxn-accent-deep-teal:  #006073;
+      --lxn-accent-light-teal: #7FB8C3;
+      --lxn-accent-tint:       #EFFCFF;
+      --color-warning:    #FDB712;
+      --color-warning-bg: #FBE9C8;
+      --color-error:      #FF2E5E;
+      --color-negative:       #BA0730;
+      --color-negative-press: #8F0524;
+      --color-success:    #00A17B;
+      --shadow-sm: 0 1px 2px rgba(17,19,21,0.06), 0 1px 1px rgba(17,19,21,0.04);
+      --shadow-md: 0 2px 6px rgba(17,19,21,0.08), 0 1px 2px rgba(17,19,21,0.04);
+      --shadow-lg: 0 8px 24px rgba(17,19,21,0.10), 0 2px 6px rgba(17,19,21,0.06);
+      --radius-sm: 5px;
+      --radius-md: 10px;
+      --ease-standard: cubic-bezier(0.2, 0, 0.1, 1);
+      --motion-quick: 120ms;
+      --motion-base:  180ms;
+
       display: block;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #EEEEEE;
-      color: #222222;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--lxn-neutral-100);
+      color: var(--lxn-neutral-900);
       /* Viewport-relative, not %, on purpose — the real Bubble embed wraps this
          in a plain <div style="min-height: 600px"> with no explicit height, so
          height:100% has nothing definite to resolve against and silently
@@ -257,7 +292,7 @@ export class LexenOfferSheet extends LitElement {
       flex-shrink: 0;
       background: #fff;
       padding: 20px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-sm);
     }
 
     .component-header .wrap {
@@ -267,11 +302,11 @@ export class LexenOfferSheet extends LitElement {
       justify-content: space-between;
     }
 
-    .component-header h1 { color: #222222; font-size: 20px; font-weight: 600; margin: 0; padding: 0; }
+    .component-header h1 { color: var(--lxn-neutral-900); font-size: 20px; font-weight: 600; margin: 0; padding: 0; }
 
     .component-header .badge {
-      background: #f2f4f7;
-      color: #667085;
+      background: var(--lxn-neutral-50);
+      color: var(--lxn-neutral-400);
       font-size: 11px;
       padding: 3px 10px;
       border-radius: 12px;
@@ -287,16 +322,16 @@ export class LexenOfferSheet extends LitElement {
       font-size: 12px;
       font-weight: 500;
       background: transparent;
-      color: #98a2b3;
+      color: var(--lxn-neutral-400);
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
+      transition: background var(--motion-quick) var(--ease-standard), color var(--motion-quick) var(--ease-standard);
       white-space: nowrap;
     }
 
-    .setup-toggle-btn:hover { background: #f2f4f7; color: #344054; }
-    .setup-toggle-btn.active { color: #344054; }
+    .setup-toggle-btn:hover { background: var(--lxn-neutral-50); color: var(--lxn-neutral-500); }
+    .setup-toggle-btn.active { color: var(--lxn-neutral-500); }
 
     .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
@@ -343,8 +378,8 @@ export class LexenOfferSheet extends LitElement {
     /* Cards */
     .card {
       background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
       padding: 24px;
       margin-bottom: 20px;
     }
@@ -352,7 +387,7 @@ export class LexenOfferSheet extends LitElement {
     .card h2 {
       font-size: 14px;
       font-weight: 600;
-      color: #222222;
+      color: var(--lxn-neutral-900);
       margin: 0 0 16px 0;
       padding: 0;
     }
@@ -362,22 +397,22 @@ export class LexenOfferSheet extends LitElement {
       width: 100%;
       padding: 10px 12px;
       font-size: 13px;
-      border: 2px solid #d0d5dd;
-      border-radius: 8px;
+      border: 2px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
       outline: none;
       background: #fff;
-      color: #222222;
+      color: var(--lxn-neutral-900);
       cursor: pointer;
     }
 
-    .picker select:focus { border-color: #35BB9C; }
+    .picker select:focus { border-color: var(--lxn-primary-800); }
 
     .vehicle-info {
       margin-top: 14px;
       padding: 12px 14px;
-      background: #effcff;
-      border: 1.5px solid #7fb8c3;
-      border-radius: 6px;
+      background: var(--lxn-accent-tint);
+      border: 1.5px solid var(--lxn-accent-light-teal);
+      border-radius: var(--radius-sm);
       font-size: 13px;
       line-height: 1.6;
     }
@@ -385,11 +420,11 @@ export class LexenOfferSheet extends LitElement {
     .vehicle-info .amount {
       font-size: 20px;
       font-weight: 700;
-      color: #006073;
+      color: var(--lxn-accent-deep-teal);
       margin-bottom: 4px;
     }
 
-    .vehicle-info .desc { color: #006073; }
+    .vehicle-info .desc { color: var(--lxn-accent-deep-teal); }
 
     /* REMOVED (kept for reference — wider/bigger-icon version of splitting the
        send button into the .vehicle-info bubble itself, divided by a vertical
@@ -413,7 +448,7 @@ export class LexenOfferSheet extends LitElement {
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(17,19,21,0.40);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -422,39 +457,39 @@ export class LexenOfferSheet extends LitElement {
     }
     .modal-box {
       background: #fff;
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       padding: 24px;
       max-width: 380px;
       width: 100%;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      box-shadow: var(--shadow-lg);
     }
-    .modal-msg { font-size: 14px; color: #344054; line-height: 1.5; margin: 0 0 18px; }
+    .modal-msg { font-size: 14px; color: var(--lxn-neutral-500); line-height: 1.5; margin: 0 0 18px; }
     .modal-recipient-group { display: flex; flex-direction: column; gap: 8px; margin: 0 0 14px; }
     .modal-recipient-option {
       display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: #344054; cursor: pointer; user-select: none;
+      font-size: 13px; color: var(--lxn-neutral-500); cursor: pointer; user-select: none;
     }
     .modal-recipient-option input[type="radio"] { cursor: pointer; }
     .modal-email-input {
       width: 100%; box-sizing: border-box; padding: 8px 10px; margin: 0 0 14px;
-      font-size: 13px; font-family: inherit; color: #222222;
-      border: 1.5px solid #d0d5dd; border-radius: 6px;
+      font-size: 13px; font-family: inherit; color: var(--lxn-neutral-900);
+      border: 1.5px solid var(--lxn-neutral-200); border-radius: var(--radius-sm);
     }
-    .modal-email-input:focus { outline: none; border-color: #35BB9C; }
+    .modal-email-input:focus { outline: none; border-color: var(--lxn-primary-800); }
     .modal-btns { display: flex; gap: 8px; }
     .modal-btn-confirm {
-      flex: 1; padding: 9px; background: #35BB9C; color: #fff;
-      border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
+      flex: 1; padding: 9px; background: var(--lxn-primary-800); color: #fff;
+      border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background var(--motion-quick) var(--ease-standard);
     }
-    .modal-btn-confirm:hover:not(:disabled) { background: #2a9880; }
+    .modal-btn-confirm:hover:not(:disabled) { background: var(--lxn-primary-700); }
     .modal-btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; }
     .modal-btn-cancel {
-      flex: 1; padding: 9px; background: transparent; color: #344054;
-      border: 1px solid #d0d5dd; border-radius: 6px; font-size: 13px; font-weight: 500;
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
+      flex: 1; padding: 9px; background: transparent; color: var(--lxn-neutral-500);
+      border: 1px solid var(--lxn-neutral-200); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: background var(--motion-quick) var(--ease-standard);
     }
-    .modal-btn-cancel:hover { background: #f2f4f7; }
+    .modal-btn-cancel:hover { background: var(--lxn-neutral-50); }
 
     /* Toggle groups */
     .toggle-group { margin-bottom: 4px; }
@@ -474,18 +509,18 @@ export class LexenOfferSheet extends LitElement {
       -webkit-appearance: none;
       width: 16px;
       height: 16px;
-      border: 2px solid #d0d5dd;
+      border: 2px solid var(--lxn-neutral-200);
       border-radius: 4px;
       background: #fff;
       cursor: pointer;
       flex-shrink: 0;
       position: relative;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background var(--motion-quick) var(--ease-standard), border-color var(--motion-quick) var(--ease-standard);
     }
 
     .group-header input[type="checkbox"]:checked {
-      background: #006073;
-      border-color: #006073;
+      background: var(--lxn-accent-deep-teal);
+      border-color: var(--lxn-accent-deep-teal);
     }
 
     .group-header input[type="checkbox"]:checked::after {
@@ -502,8 +537,8 @@ export class LexenOfferSheet extends LitElement {
     }
 
     .group-header input[type="checkbox"]:indeterminate {
-      background: #006073;
-      border-color: #006073;
+      background: var(--lxn-accent-deep-teal);
+      border-color: var(--lxn-accent-deep-teal);
     }
 
     .group-header input[type="checkbox"]:indeterminate::after {
@@ -522,7 +557,7 @@ export class LexenOfferSheet extends LitElement {
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #222222;
+      color: var(--lxn-neutral-900);
     }
 
     .pill-group {
@@ -536,21 +571,21 @@ export class LexenOfferSheet extends LitElement {
       display: inline-flex;
       align-items: center;
       padding: 4px 12px;
-      border-radius: 20px;
+      border-radius: var(--radius-sm);
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
-      border: 1.5px solid #d0d5dd;
-      background: #f2f4f7;
-      color: #98a2b3;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      border: 1.5px solid var(--lxn-neutral-200);
+      background: var(--lxn-neutral-50);
+      color: var(--lxn-neutral-400);
+      transition: background var(--motion-quick) var(--ease-standard), border-color var(--motion-quick) var(--ease-standard), color var(--motion-quick) var(--ease-standard);
       user-select: none;
     }
 
     .pill.active {
-      background: #effcff;
-      border-color: #7fb8c3;
-      color: #006073;
+      background: var(--lxn-accent-tint);
+      border-color: var(--lxn-accent-light-teal);
+      color: var(--lxn-accent-deep-teal);
     }
 
     .pill.active::after {
@@ -565,7 +600,7 @@ export class LexenOfferSheet extends LitElement {
        ACV/Cost to Market are derived from. Same amber as .discard-btn, faded
        the same way .discard-btn:disabled fades — orange, but visibly inert. */
     .pill.stale {
-      background: #fff8e1; border-color: #f59f00; color: #b45309;
+      background: var(--color-warning-bg); border-color: var(--color-warning); color: #b45309;
       opacity: 0.55; cursor: not-allowed;
     }
     .pill-stale-icon {
@@ -586,10 +621,10 @@ export class LexenOfferSheet extends LitElement {
       padding: 4px 2px;
       font-size: 12px;
       font-weight: 700;
-      color: #006073;
+      color: var(--lxn-accent-deep-teal);
       cursor: pointer;
       user-select: none;
-      transition: color 0.15s;
+      transition: color var(--motion-quick) var(--ease-standard);
     }
     .pill-toggle:hover { color: #004f5f; text-decoration: underline; }
 
@@ -604,15 +639,15 @@ export class LexenOfferSheet extends LitElement {
       font-weight: 600;
       font-family: inherit;
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: background 0.15s, opacity 0.15s;
+      transition: background var(--motion-quick) var(--ease-standard), opacity var(--motion-quick) var(--ease-standard);
       text-decoration: none;
       width: 100%;
     }
 
-    .btn-primary { background: #35BB9C; color: #fff; }
-    .btn-primary:hover { background: #2a9880; }
+    .btn-primary { background: var(--lxn-primary-800); color: #fff; }
+    .btn-primary:hover { background: var(--lxn-primary-700); }
     .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
     /* REMOVED (kept for reference — Send via Email as a full-width teal button
        under Apply, matching .apply-main's exact sizing. Moved back to the
@@ -626,21 +661,21 @@ export class LexenOfferSheet extends LitElement {
     .btn-preview:hover:not(:disabled) { background: #0a7777; }
     .btn-preview:disabled { opacity: 0.45; cursor: not-allowed; }
     */
-    .btn-reopen { background: #FAB515; color: #373737; }
+    .btn-reopen { background: var(--color-warning); color: #373737; }
     .btn-reopen:hover { color: #000; }
     .btn-reopen:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-green { background: #35BB9C; color: #fff; }
-    .btn-green:hover { background: #2a9880; }
-    .btn-green:disabled { background: #d0d5dd; color: #98a2b3; cursor: not-allowed; }
+    .btn-green { background: var(--lxn-primary-800); color: #fff; }
+    .btn-green:hover { background: var(--lxn-primary-700); }
+    .btn-green:disabled { background: var(--lxn-neutral-200); color: var(--lxn-neutral-400); cursor: not-allowed; }
 
     /* Status */
     .status { margin-top: 10px; font-size: 13px; min-height: 18px; text-align: center; }
-    .status.error { color: #c0392b; }
+    .status.error { color: var(--color-error); }
 
     .spinner {
       display: inline-block; width: 14px; height: 14px;
-      border: 2.5px solid rgba(53,187,156,0.2);
-      border-top-color: #35BB9C;
+      border: 2.5px solid rgba(33,156,136,0.2);
+      border-top-color: var(--lxn-primary-800);
       border-radius: 50%;
       animation: spin 0.65s linear infinite;
       vertical-align: middle;
@@ -658,11 +693,11 @@ export class LexenOfferSheet extends LitElement {
     }
     .preview-loading {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      width: 100%; aspect-ratio: 612 / 792; gap: 14px; color: #888; font-size: 14px;
+      width: 100%; aspect-ratio: 612 / 792; gap: 14px; color: var(--lxn-neutral-400); font-size: 14px;
     }
     .pulse-dots { display: flex; gap: 7px; }
     .pulse-dots span {
-      width: 9px; height: 9px; border-radius: 50%; background: #35BB9C;
+      width: 9px; height: 9px; border-radius: 50%; background: var(--lxn-primary-800);
       animation: pulse-dot 1.2s ease-in-out infinite;
     }
     .pulse-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -676,9 +711,9 @@ export class LexenOfferSheet extends LitElement {
       width: 100%;
       aspect-ratio: 612 / 792; /* US Letter — matches render.py's PAGE_W/PAGE_H */
       height: auto;
-      border: 1px solid #dde1e8;
-      border-radius: 8px;
-      background: #e8e8e8;
+      border: 1px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
+      background: var(--lxn-neutral-150);
     }
 
     .preview-card-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -712,10 +747,10 @@ export class LexenOfferSheet extends LitElement {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #35BB9C;
+      background: var(--lxn-primary-800);
       flex-shrink: 0;
     }
-    .preview-status-dot.stale { background: #f59f00; }
+    .preview-status-dot.stale { background: var(--color-warning); }
 
     /* Apply / Discard — both grey out with no pending changes, light up once
        something's been edited. Sit side by side above the reset-to-template
@@ -723,17 +758,17 @@ export class LexenOfferSheet extends LitElement {
     .apply-btn-wrap { display: flex; gap: 8px; width: 100%; }
     .apply-main {
       flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
-      background: #35BB9C; color: #fff; border: none;
-      border-radius: 8px; cursor: pointer; font-family: inherit;
-      transition: background 0.15s; text-align: center;
+      background: var(--lxn-primary-800); color: #fff; border: none;
+      border-radius: var(--radius-sm); cursor: pointer; font-family: inherit;
+      transition: background var(--motion-quick) var(--ease-standard); text-align: center;
     }
-    .apply-main:hover:not(:disabled) { background: #2a9880; }
-    .apply-main:disabled { background: #d0d5dd; color: #667085; opacity: 0.55; cursor: not-allowed; }
+    .apply-main:hover:not(:disabled) { background: var(--lxn-primary-700); }
+    .apply-main:disabled { background: var(--lxn-neutral-200); color: var(--lxn-neutral-400); opacity: 0.55; cursor: not-allowed; }
     .discard-btn {
       flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
-      background: #fff8e1; color: #b45309; border: 1px solid #f59f00;
-      border-radius: 8px; cursor: pointer; font-family: inherit;
-      transition: background 0.15s, color 0.15s, border-color 0.15s; text-align: center;
+      background: var(--color-warning-bg); color: #b45309; border: 1px solid var(--color-warning);
+      border-radius: var(--radius-sm); cursor: pointer; font-family: inherit;
+      transition: background var(--motion-quick) var(--ease-standard), color var(--motion-quick) var(--ease-standard), border-color var(--motion-quick) var(--ease-standard); text-align: center;
     }
     .discard-btn:hover:not(:disabled) { background: #ffedb3; border-color: #e08e00; }
     .discard-btn:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -764,10 +799,10 @@ export class LexenOfferSheet extends LitElement {
       justify-content: center;
       width: 100%;
       aspect-ratio: 612 / 792;
-      color: #aab4c0;
+      color: var(--lxn-neutral-300);
       font-size: 14px;
-      border: 2px dashed #dde1e8;
-      border-radius: 8px;
+      border: 2px dashed var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
     }
 
     /* Segmented control */
@@ -775,7 +810,7 @@ export class LexenOfferSheet extends LitElement {
       display: flex;
       gap: 3px;
       padding: 3px;
-      background: #f2f4f7;
+      background: var(--lxn-neutral-50);
       border-radius: 9px;
     }
 
@@ -786,18 +821,18 @@ export class LexenOfferSheet extends LitElement {
       font-weight: 500;
       background: transparent;
       border: 1.5px solid transparent;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      color: #667085;
+      color: var(--lxn-neutral-400);
       white-space: nowrap;
-      transition: all 0.15s;
+      transition: all var(--motion-quick) var(--ease-standard);
       outline: none;
     }
 
     .seg-btn.active {
-      background: #effcff;
-      border-color: #7fb8c3;
-      color: #006073;
+      background: var(--lxn-accent-tint);
+      border-color: var(--lxn-accent-light-teal);
+      color: var(--lxn-accent-deep-teal);
       font-weight: 700;
     }
 
@@ -823,7 +858,7 @@ export class LexenOfferSheet extends LitElement {
     .section-header span {
       font-size: 13px;
       font-weight: 600;
-      color: #222222;
+      color: var(--lxn-neutral-900);
     }
 
     .section-chevron {
@@ -832,8 +867,8 @@ export class LexenOfferSheet extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #667085;
-      transition: transform 0.2s;
+      color: var(--lxn-neutral-400);
+      transition: transform var(--motion-base) var(--ease-standard);
     }
 
     .section-chevron svg { display: block; }
@@ -848,38 +883,38 @@ export class LexenOfferSheet extends LitElement {
       padding: 6px 0 2px 0;
       gap: 8px;
       font-size: 12px;
-      color: #222222;
+      color: var(--lxn-neutral-900);
     }
 
     .config-row select {
       font-size: 12px;
       padding: 3px 8px;
-      border: 1.5px solid #d0d5dd;
-      border-radius: 6px;
+      border: 1.5px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
       background: #fff;
-      color: #222222;
+      color: var(--lxn-neutral-900);
       cursor: pointer;
       outline: none;
     }
 
-    .config-row select:focus { border-color: #006073; }
+    .config-row select:focus { border-color: var(--lxn-accent-deep-teal); }
 
     .tax-rate-wrapper {
       display: flex;
       align-items: center;
-      border: 1.5px solid #d0d5dd;
-      border-radius: 6px;
+      border: 1.5px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
       background: #fff;
       overflow: hidden;
     }
-    .tax-rate-wrapper:focus-within { border-color: #006073; }
+    .tax-rate-wrapper:focus-within { border-color: var(--lxn-accent-deep-teal); }
     .tax-rate-input {
       width: 40px;
       font-size: 12px;
       padding: 3px 4px 3px 8px;
       border: none;
       background: transparent;
-      color: #222222;
+      color: var(--lxn-neutral-900);
       outline: none;
       text-align: right;
     }
@@ -889,7 +924,7 @@ export class LexenOfferSheet extends LitElement {
     .tax-rate-suffix {
       font-size: 12px;
       padding: 3px 8px 3px 2px;
-      color: #667085;
+      color: var(--lxn-neutral-400);
     }
 
     /* Stepper */
@@ -898,27 +933,27 @@ export class LexenOfferSheet extends LitElement {
     .step-btn {
       width: 24px;
       height: 24px;
-      border: 1.5px solid #d0d5dd;
-      border-radius: 6px;
+      border: 1.5px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
       background: #fff;
       cursor: pointer;
       font-size: 15px;
       line-height: 1;
-      color: #344054;
+      color: var(--lxn-neutral-500);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: border-color 0.15s, color 0.15s;
+      transition: border-color var(--motion-quick) var(--ease-standard), color var(--motion-quick) var(--ease-standard);
       padding: 0;
     }
 
-    .step-btn:hover:not(:disabled) { border-color: #006073; color: #006073; }
+    .step-btn:hover:not(:disabled) { border-color: var(--lxn-accent-deep-teal); color: var(--lxn-accent-deep-teal); }
     .step-btn:disabled { opacity: 0.35; cursor: default; }
 
     .stepper-value {
       font-size: 12px;
       font-weight: 600;
-      color: #344054;
+      color: var(--lxn-neutral-500);
       min-width: 22px;
       text-align: center;
     }
@@ -926,7 +961,7 @@ export class LexenOfferSheet extends LitElement {
     .font-size-display { min-width: 82px; }
 
     /* Divider */
-    .divider { height: 1px; background: #eaecf0; margin: 16px 0; }
+    .divider { height: 1px; background: var(--lxn-neutral-150); margin: 16px 0; }
 
     /* Sortable list */
     .sortable-list { display: flex; flex-direction: column; gap: 4px; }
@@ -936,14 +971,14 @@ export class LexenOfferSheet extends LitElement {
       align-items: center;
       gap: 8px;
       padding: 7px 10px;
-      background: #f8f9fb;
-      border: 1.5px solid #e4e7ec;
-      border-radius: 6px;
+      background: var(--lxn-neutral-50);
+      border: 1.5px solid var(--lxn-neutral-150);
+      border-radius: var(--radius-sm);
       cursor: grab;
       user-select: none;
       font-size: 12px;
       font-weight: 500;
-      color: #344054;
+      color: var(--lxn-neutral-500);
       transition: background 0.1s, border-color 0.1s;
     }
 
@@ -951,7 +986,7 @@ export class LexenOfferSheet extends LitElement {
     .sortable-item.dragging { display: none; }
     .drop-line {
       height: 2px;
-      background: #006073;
+      background: var(--lxn-accent-deep-teal);
       border-radius: 1px;
       pointer-events: none;
     }
@@ -963,19 +998,19 @@ export class LexenOfferSheet extends LitElement {
     }
 
     @keyframes dropFade {
-      0%   { background: #effcff; border-color: #7fb8c3; color: #006073; }
-      75%  { background: #effcff; border-color: #7fb8c3; color: #006073; }
-      100% { background: #f8f9fb; border-color: #e4e7ec; color: #344054; }
+      0%   { background: var(--lxn-accent-tint); border-color: var(--lxn-accent-light-teal); color: var(--lxn-accent-deep-teal); }
+      75%  { background: var(--lxn-accent-tint); border-color: var(--lxn-accent-light-teal); color: var(--lxn-accent-deep-teal); }
+      100% { background: var(--lxn-neutral-50); border-color: var(--lxn-neutral-150); color: var(--lxn-neutral-500); }
     }
 
     .sortable-item.dropped {
       animation: dropFade 1s ease-out forwards;
     }
 
-    .drag-handle { color: #b0b8c4; font-size: 14px; line-height: 1; flex-shrink: 0; }
+    .drag-handle { color: var(--lxn-neutral-300); font-size: 14px; line-height: 1; flex-shrink: 0; }
     .sort-arrows { display: none; flex-direction: column; gap: 0; flex-shrink: 0; margin-left: auto; }
-    .sort-arrow { background: none; border: none; padding: 0 6px; min-height: 22px; font-size: 14px; color: #b0b8c4; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; }
-    .sort-arrow:active { color: #006073; }
+    .sort-arrow { background: none; border: none; padding: 0 6px; min-height: 22px; font-size: 14px; color: var(--lxn-neutral-300); cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    .sort-arrow:active { color: var(--lxn-accent-deep-teal); }
     .sort-arrow:disabled { opacity: 0.2; cursor: default; }
     @media (hover: none) and (pointer: coarse) {
       .sortable-item { min-height: 44px; padding: 10px; cursor: default; }
@@ -989,14 +1024,14 @@ export class LexenOfferSheet extends LitElement {
       height: 180px;
       font-size: 11px;
       font-family: ui-monospace, monospace;
-      border: 2px solid #d0d5dd;
-      border-radius: 8px;
+      border: 2px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
       padding: 10px 12px;
       resize: vertical;
       outline: none;
-      color: #222;
+      color: var(--lxn-neutral-900);
       line-height: 1.5;
-      transition: border-color 0.15s;
+      transition: border-color var(--motion-quick) var(--ease-standard);
       box-sizing: border-box;
     }
 
@@ -1006,38 +1041,38 @@ export class LexenOfferSheet extends LitElement {
       padding: 8px 14px;
       font-size: 12px;
       font-weight: 600;
-      background: #f2f4f7;
-      color: #344054;
-      border: 1.5px solid #d0d5dd;
-      border-radius: 8px;
+      background: var(--lxn-neutral-50);
+      color: var(--lxn-neutral-500);
+      border: 1.5px solid var(--lxn-neutral-200);
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
+      transition: border-color var(--motion-quick) var(--ease-standard), color var(--motion-quick) var(--ease-standard);
     }
 
-    .convert-btn:hover { border-color: #006073; color: #006073; }
+    .convert-btn:hover { border-color: var(--lxn-accent-deep-teal); color: var(--lxn-accent-deep-teal); }
 
     .parse-error {
       margin-top: 8px;
       font-size: 12px;
-      color: #c0392b;
+      color: var(--color-error);
     }
 
     .action-msg { font-size: 12px; line-height: 1.4; margin-top: 10px; text-align: center; }
-    .action-msg.success { color: #27ae60; }
-    .action-msg.error   { color: #c0392b; }
+    .action-msg.success { color: var(--color-success); }
+    .action-msg.error   { color: var(--color-error); }
 
     /* Lock controls */
     .lock-btn {
       width: 26px; height: 26px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      background: none; border: 1.5px solid #d0d5dd; border-radius: 6px;
-      cursor: pointer; color: #98a2b3; transition: all 0.15s; padding: 0;
+      background: none; border: 1.5px solid var(--lxn-neutral-200); border-radius: var(--radius-sm);
+      cursor: pointer; color: var(--lxn-neutral-400); transition: all var(--motion-quick) var(--ease-standard); padding: 0;
     }
-    .lock-btn:hover { background: #f2f4f7; color: #344054; border-color: #b0b8c4; }
-    .lock-btn.locked { background: #fff3cd; border-color: #f59f00; color: #b45309; }
+    .lock-btn:hover { background: var(--lxn-neutral-50); color: var(--lxn-neutral-500); border-color: var(--lxn-neutral-300); }
+    .lock-btn.locked { background: var(--color-warning-bg); border-color: var(--color-warning); color: #b45309; }
     .lock-indicator {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 20px; color: #b0b8c4; flex-shrink: 0;
+      width: 20px; color: var(--lxn-neutral-300); flex-shrink: 0;
     }
     .ctrl-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .ctrl-group.locked > :first-child { opacity: 0.5; pointer-events: none; }
@@ -1052,34 +1087,34 @@ export class LexenOfferSheet extends LitElement {
     .pill-group.group-off { opacity: 0.45; pointer-events: none; }
 
     .reset-btn {
-      width: 100%; padding: 9px 20px; background: transparent; color: #667085;
-      border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
+      width: 100%; padding: 9px 20px; background: transparent; color: var(--lxn-neutral-400);
+      border: 1px solid var(--lxn-neutral-200); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
       cursor: pointer; font-family: inherit;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      transition: background var(--motion-quick) var(--ease-standard), color var(--motion-quick) var(--ease-standard), border-color var(--motion-quick) var(--ease-standard);
     }
-    .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
+    .reset-btn:hover { background: var(--lxn-neutral-50); color: var(--lxn-neutral-500); border-color: var(--lxn-neutral-300); }
 
     .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
     .confirm-reset {
       margin-top: 8px; padding: 10px 12px;
-      background: #fff8e1; border: 1px solid #f59f00; border-radius: 8px;
+      background: var(--color-warning-bg); border: 1px solid var(--color-warning); border-radius: var(--radius-sm);
       display: flex; flex-direction: column; gap: 8px;
     }
-    .confirm-reset-msg { font-size: 12px; color: #344054; font-weight: 500; }
+    .confirm-reset-msg { font-size: 12px; color: var(--lxn-neutral-500); font-weight: 500; }
     .confirm-reset-btns { display: flex; gap: 6px; }
     .confirm-reset-yes {
-      flex: 1; padding: 6px; background: #d92d20; color: #fff;
-      border: none; border-radius: 6px; font-size: 12px; font-weight: 600;
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
+      flex: 1; padding: 6px; background: var(--color-negative); color: #fff;
+      border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background var(--motion-quick) var(--ease-standard);
     }
-    .confirm-reset-yes:hover { background: #b42318; }
+    .confirm-reset-yes:hover { background: var(--color-negative-press); }
     .confirm-reset-no {
-      flex: 1; padding: 6px; background: transparent; color: #344054;
-      border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-weight: 500;
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
+      flex: 1; padding: 6px; background: transparent; color: var(--lxn-neutral-500);
+      border: 1px solid var(--lxn-neutral-200); border-radius: var(--radius-sm); font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: background var(--motion-quick) var(--ease-standard);
     }
-    .confirm-reset-no:hover { background: #f2f4f7; }
+    .confirm-reset-no:hover { background: var(--lxn-neutral-50); }
 
     .offer-header-row {
       display: flex;
@@ -1095,10 +1130,10 @@ export class LexenOfferSheet extends LitElement {
     .email-icon-btn {
       display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
       padding: 0; background: transparent; border: none;
-      color: #475467; cursor: pointer; user-select: none; line-height: 0;
-      transition: color 0.15s;
+      color: var(--lxn-neutral-500); cursor: pointer; user-select: none; line-height: 0;
+      transition: color var(--motion-quick) var(--ease-standard);
     }
-    .email-icon-btn:hover:not(:disabled) { color: #1d2939; }
+    .email-icon-btn:hover:not(:disabled) { color: var(--lxn-neutral-900); }
     .email-icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     /* REMOVED (kept for reference — Send Email as a full-width teal button
@@ -1143,38 +1178,38 @@ export class LexenOfferSheet extends LitElement {
     .split-btn-wrap { display: flex; gap: 0; position: relative; width: 100%; }
     .split-main {
       flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
-      background: #35BB9C; color: #fff; border: none;
-      border-radius: 8px 0 0 8px; cursor: pointer; font-family: inherit;
-      transition: background 0.15s; text-align: center;
+      background: var(--lxn-primary-800); color: #fff; border: none;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm); cursor: pointer; font-family: inherit;
+      transition: background var(--motion-quick) var(--ease-standard); text-align: center;
     }
-    .split-main:hover:not(:disabled) { background: #2a9880; }
+    .split-main:hover:not(:disabled) { background: var(--lxn-primary-700); }
     .split-main:disabled { opacity: 0.6; cursor: not-allowed; }
-    .split-main.done { background: #d0d5dd; color: #667085; border-radius: 8px; cursor: default; }
-    .split-main.done:hover { background: #d0d5dd; }
+    .split-main.done { background: var(--lxn-neutral-200); color: var(--lxn-neutral-400); border-radius: var(--radius-sm); cursor: default; }
+    .split-main.done:hover { background: var(--lxn-neutral-200); }
     .split-arrow-btn {
       width: 34px; flex-shrink: 0; padding: 0;
-      background: #2a9880; color: #fff; border: none;
+      background: var(--lxn-primary-900); color: #fff; border: none;
       border-left: 1px solid rgba(255,255,255,0.25);
-      border-radius: 0 8px 8px 0; cursor: pointer;
-      font-size: 10px; transition: background 0.15s;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0; cursor: pointer;
+      font-size: 10px; transition: background var(--motion-quick) var(--ease-standard);
       display: flex; align-items: center; justify-content: center;
     }
-    .split-arrow-btn:hover { background: #1e7a68; }
+    .split-arrow-btn:hover { background: var(--lxn-primary-800); }
 
     .split-menu {
       position: absolute; top: calc(100% + 4px); right: 0; z-index: 10;
-      background: #fff; border: 1.5px solid #d0d5dd; border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12); min-width: 160px; overflow: hidden;
+      background: #fff; border: 1.5px solid var(--lxn-neutral-200); border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-md); min-width: 160px; overflow: hidden;
     }
     .split-menu-item {
       display: block; width: 100%; padding: 9px 14px; font-size: 13px;
       background: none; border: none; cursor: pointer; text-align: left;
-      color: #344054; font-family: inherit; transition: background 0.1s;
+      color: var(--lxn-neutral-500); font-family: inherit; transition: background 0.1s;
     }
-    .split-menu-item:hover { background: #f2f4f7; }
+    .split-menu-item:hover { background: var(--lxn-neutral-50); }
 
     .send-no-contact {
-      font-size: 12px; color: #98a2b3; text-align: center; padding: 4px 0;
+      font-size: 12px; color: var(--lxn-neutral-400); text-align: center; padding: 4px 0;
     }
   `;
 
@@ -1217,10 +1252,33 @@ export class LexenOfferSheet extends LitElement {
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
 
     // Show/Hide pills (path → bool)
-    this._pills = this._defaultPills();
+    this._pills = {
+      'general.condition': true,
+      'valuation.retail_value': true,
+      'valuation.recon': true,
+      'valuation.fixed_overhead': true,
+      'valuation.target_profit': true,
+      'valuation.tax_savings': true,
+      'sections.observations_highlights': true,
+      'sections.observations_comments': true,
+      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
+        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+      ])),
+    };
 
     // Group states
-    this._groups = this._defaultGroups();
+    this._groups = {
+      valuation: 'checked',
+      disclosures: 'checked',
+      observations: 'checked',
+      market: 'checked',
+      market_scenarios: 'unchecked', // new feature — off by default
+      selected_scenarios: 'unchecked', // new feature — off by default
+      recon: 'checked',
+      photos: 'checked',
+      signature: 'checked',
+    };
 
     // Pill-row expand/collapse — all groups start collapsed.
     this._pillsOpen = { valuation: false, market_scenarios: false, selected_scenarios: false };
@@ -1314,37 +1372,6 @@ export class LexenOfferSheet extends LitElement {
     };
   }
 
-  _defaultPills() {
-    return {
-      'general.condition': true,
-      'valuation.retail_value': true,
-      'valuation.recon': true,
-      'valuation.fixed_overhead': true,
-      'valuation.target_profit': true,
-      'valuation.tax_savings': true,
-      'sections.observations_highlights': true,
-      'sections.observations_comments': true,
-      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
-        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
-        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
-      ])),
-    };
-  }
-
-  _defaultGroups() {
-    return {
-      valuation: 'checked',
-      disclosures: 'checked',
-      observations: 'checked',
-      market: 'checked',
-      market_scenarios: 'unchecked', // new feature — off by default
-      selected_scenarios: 'unchecked', // new feature — off by default
-      recon: 'checked',
-      photos: 'checked',
-      signature: 'checked',
-    };
-  }
-
   _applySharedDisplay(d) {
     if (!d) return;
     const GROUP_KEYS = ['valuation','disclosures','observations','market','market_scenarios','selected_scenarios','recon','photos'];
@@ -1352,15 +1379,9 @@ export class LexenOfferSheet extends LitElement {
     const sec = d.sections || {};
 
     // Pills first — the recompute below needs the freshly loaded values.
-    // Start from the hardcoded defaults, not the current (possibly dirtied
-    // mid-session) pills — otherwise a pill/group missing from an older or
-    // partial saved display silently inherits whatever was on-screen before
-    // this load, instead of falling back to its real default.
-    this._pills = { ...this._defaultPills(), ...(d.pills || {}) };
+    if (d.pills != null) this._pills = { ...this._pills, ...d.pills };
 
-    // signature isn't part of GROUP_KEYS (that's _applyPdfDisplay's job) —
-    // preserve it rather than resetting it to the default here.
-    const newGroups = { ...this._defaultGroups(), signature: this._groups.signature };
+    const newGroups = { ...this._groups };
     GROUP_KEYS.forEach(k => { if (sec[k] != null) newGroups[k] = sec[k] ? 'checked' : 'unchecked'; });
     this._groups = newGroups;
 
@@ -1991,8 +2012,25 @@ export class LexenOfferSheet extends LitElement {
     this._marketDisplay = 'full';
     this._scenarioLayout = 'tiles';
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
-    this._pills = this._defaultPills();
-    this._groups = this._defaultGroups();
+    this._pills = {
+      'general.condition': true,
+      'valuation.retail_value': true,
+      'valuation.recon': true,
+      'valuation.fixed_overhead': true,
+      'valuation.target_profit': true,
+      'valuation.tax_savings': true,
+      'sections.observations_highlights': true,
+      'sections.observations_comments': true,
+      ...Object.fromEntries(SCENARIO_FIELDS.flatMap(f => [
+        [`market_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+        [`selected_scenarios.${f.key}`, !SCENARIO_DEFAULT_OFF_KEYS.has(f.key)],
+      ])),
+    };
+    this._groups = {
+      valuation: 'checked', disclosures: 'checked', observations: 'checked',
+      market: 'checked', market_scenarios: 'unchecked', selected_scenarios: 'unchecked',
+      recon: 'checked', photos: 'checked', signature: 'checked',
+    };
   }
 
   // ── Drag-and-drop ──────────────────────────────────────────────────────────
@@ -2106,38 +2144,35 @@ export class LexenOfferSheet extends LitElement {
     this._dragSrcIndex = -1;
   }
 
-  // ── Lock helpers — disabled for now, left in place to pick back up later ───
-  //
-  // /** True if `key` is explicitly locked, or if mode is locked to one_page —
-  //  * every other control is inert in one-page mode, so a mode lock cascades
-  //  * to lock everything else too (dealers can't edit their way back to full). */
-  // _effectiveLock(key) {
-  //   if (this._locks?.[key]) return true;
-  //   return key !== 'mode' && this._mode === 'one_page' && !!this._locks?.mode;
-  // }
-  //
-  // _isLocked(key) {
-  //   return !this.templateMode && this._effectiveLock(key);
-  // }
-  //
-  // _lk(key) {
-  //   const locked = !!this._locks?.[key];
-  //   if (this.templateMode) {
-  //     return html`
-  //       <button class="lock-btn ${locked ? 'locked' : ''}"
-  //               title="${locked ? 'Unlock for dealers' : 'Lock for dealers'}"
-  //               @click="${(e) => { e.stopPropagation(); this._locks = { ...this._locks, [key]: !locked }; }}">
-  //         ${locked ? lockClosedSvg : lockOpenSvg}
-  //       </button>`;
-  //   }
-  //   if (this._effectiveLock(key)) {
-  //     return html`<span class="lock-indicator" title="Locked by template">${lockClosedSvg}</span>`;
-  //   }
-  //   return nothing;
-  // }
-  _effectiveLock(key) { return false; }
-  _isLocked(key) { return false; }
-  _lk(key) { return nothing; }
+  // ── Lock helpers ───────────────────────────────────────────────────────────
+
+  /** True if `key` is explicitly locked, or if mode is locked to one_page —
+   * every other control is inert in one-page mode, so a mode lock cascades
+   * to lock everything else too (dealers can't edit their way back to full). */
+  _effectiveLock(key) {
+    if (this._locks?.[key]) return true;
+    return key !== 'mode' && this._mode === 'one_page' && !!this._locks?.mode;
+  }
+
+  _isLocked(key) {
+    return !this.templateMode && this._effectiveLock(key);
+  }
+
+  _lk(key) {
+    const locked = !!this._locks?.[key];
+    if (this.templateMode) {
+      return html`
+        <button class="lock-btn ${locked ? 'locked' : ''}"
+                title="${locked ? 'Unlock for dealers' : 'Lock for dealers'}"
+                @click="${(e) => { e.stopPropagation(); this._locks = { ...this._locks, [key]: !locked }; }}">
+          ${locked ? lockClosedSvg : lockOpenSvg}
+        </button>`;
+    }
+    if (this._effectiveLock(key)) {
+      return html`<span class="lock-indicator" title="Locked by template">${lockClosedSvg}</span>`;
+    }
+    return nothing;
+  }
 
   // ── Save Settings ──────────────────────────────────────────────────────────
 
@@ -2430,7 +2465,7 @@ export class LexenOfferSheet extends LitElement {
       return html`
         <div class="card">
           <h2>Template</h2>
-          <div style="font-size:13px; color:#667085; line-height:1.6;">
+          <div style="font-size:13px; color:var(--lxn-neutral-400); line-height:1.6;">
             Configure default printout settings for your location. Generate a preview below.
           </div>
         </div>
@@ -2447,9 +2482,9 @@ export class LexenOfferSheet extends LitElement {
           <div class="vehicle-info">
             <div class="amount">${vi.amount}</div>
             <div class="desc">${vi.desc}</div>
-            ${vi.vin ? html`<div style="font-size:11px;color:#006073;margin-top:2px;">${vi.vin}</div>` : nothing}
+            ${vi.vin ? html`<div style="font-size:11px;color:var(--lxn-accent-deep-teal);margin-top:2px;">${vi.vin}</div>` : nothing}
           </div>
-        ` : html`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ` : html`<div style="font-size:13px; color:var(--lxn-neutral-300);">Loading offer details…</div>`}
       </div>
     `;
   }
@@ -2554,7 +2589,7 @@ export class LexenOfferSheet extends LitElement {
               <div class="ctrl-group ${this._isLocked('profit_label') ? 'locked' : ''}">
                 <input
                   type="text"
-                  style="font-size:12px;padding:4px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;width:110px;"
+                  style="font-size:12px;padding:4px 8px;border:1.5px solid var(--lxn-neutral-200);border-radius:var(--radius-sm);background:#fff;color:var(--lxn-neutral-900);outline:none;width:110px;"
                   placeholder="Target Profit"
                   .value="${this._profitName ?? ''}"
                   ?disabled="${this._isLocked('profit_label')}"
@@ -2567,7 +2602,7 @@ export class LexenOfferSheet extends LitElement {
               <div class="config-row">
                 <span>Employee</span>
                 <select
-                  style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
+                  style="font-size:12px;padding:3px 8px;border:1.5px solid var(--lxn-neutral-200);border-radius:var(--radius-sm);background:#fff;color:var(--lxn-neutral-900);cursor:pointer;outline:none;"
                   @change="${(e) => { this._selectedEmployeeIndex = parseInt(e.target.value); }}"
                 >
                   ${this.employees.map((emp, i) => html`
@@ -2646,13 +2681,13 @@ export class LexenOfferSheet extends LitElement {
             </div>
             <div style="padding:8px 0 4px;">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                <span style="font-size:12px;color:#222222;">Disclaimer (appended to footer)</span>
+                <span style="font-size:12px;color:var(--lxn-neutral-900);">Disclaimer (appended to footer)</span>
                 ${this._lk('disclaimer')}
               </div>
               <div class="config-row ${this._isLocked('disclaimer') ? 'disabled' : ''}" style="margin-bottom:6px;padding-left:16px;">
                 <span>Separator</span>
                 <select
-                  style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
+                  style="font-size:12px;padding:3px 8px;border:1.5px solid var(--lxn-neutral-200);border-radius:var(--radius-sm);background:#fff;color:var(--lxn-neutral-900);cursor:pointer;outline:none;"
                   ?disabled="${this._isLocked('disclaimer')}"
                   @change="${(e) => { this._disclaimerPunct = e.target.value; }}"
                 >
@@ -2662,7 +2697,7 @@ export class LexenOfferSheet extends LitElement {
                 </select>
               </div>
               <textarea
-                style="width:calc(100% - 16px);font-size:12px;padding:6px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;outline:none;resize:vertical;min-height:60px;font-family:inherit;line-height:1.4;margin-left:16px;${this._isLocked('disclaimer') ? 'opacity:0.5;pointer-events:none;' : ''}"
+                style="width:calc(100% - 16px);font-size:12px;padding:6px 8px;border:1.5px solid var(--lxn-neutral-200);border-radius:var(--radius-sm);background:#fff;color:var(--lxn-neutral-900);outline:none;resize:vertical;min-height:60px;font-family:inherit;line-height:1.4;margin-left:16px;${this._isLocked('disclaimer') ? 'opacity:0.5;pointer-events:none;' : ''}"
                 placeholder="e.g., subject to Carfax History and Lien report."
                 .value="${this._disclaimerText ?? ''}"
                 ?disabled="${this._isLocked('disclaimer')}"
@@ -2684,7 +2719,7 @@ export class LexenOfferSheet extends LitElement {
             <!-- Header group (no checkbox) -->
             <div class="toggle-group">
               <div class="group-row">
-                <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#222222;cursor:default;">Header</label>
+                <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--lxn-neutral-900);cursor:default;">Header</label>
                 ${this._lk('condition')}
               </div>
               <div class="pill-group ${this._isLocked('condition') ? 'locked' : ''}">
@@ -2860,9 +2895,6 @@ export class LexenOfferSheet extends LitElement {
   _pillKeysForGroup(group) {
     if (group === 'valuation') {
       return ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'];
-    }
-    if (group === 'observations') {
-      return ['sections.observations_highlights', 'sections.observations_comments'];
     }
     if (group === 'market_scenarios' || group === 'selected_scenarios') {
       return SCENARIO_FIELDS.map(f => `${group}.${f.key}`);
@@ -3177,7 +3209,7 @@ export class LexenOfferSheet extends LitElement {
               <span class="preview-status-dot ${this._previewStale ? 'stale' : ''}"></span>
             </div>
             ${!this.templateMode && hasPdf && !busy && canInlinePdf ? html`
-              <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
+              <em style="font-size:13px;color:var(--lxn-neutral-400);">Download PDF via toolbar below</em>
             ` : nothing}
           </div>
           ${showLoading ? html`
@@ -3195,7 +3227,7 @@ export class LexenOfferSheet extends LitElement {
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
           ` : nothing}
           ${hasPdf && !busy && !canInlinePdf ? html`
-            <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
+            <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid var(--lxn-neutral-200);border-radius:var(--radius-sm);">
               ${window.natively ? html`
                 <button
                   class="btn btn-primary"

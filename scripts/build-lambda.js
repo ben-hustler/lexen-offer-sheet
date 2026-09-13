@@ -8,9 +8,9 @@ import path from 'path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.join(__dirname, '..', 'lambda', 'printout-offer');
-const destDir = path.join(__dirname, '..', '..', 'lexen-bubble-web-comp', 'lambda', 'printout', 'printout-offer');
+const destDir = path.join(__dirname, '..', '..', '..', 'lxn-gh', 'lexen-bubble-web-comp', 'lambda', 'printout', 'printout-offer');
 
-if (!existsSync(path.join(__dirname, '..', '..', 'lexen-bubble-web-comp'))) {
+if (!existsSync(path.join(__dirname, '..', '..', '..', 'lxn-gh', 'lexen-bubble-web-comp'))) {
   console.log('lexen-bubble-web-comp not found, skipping');
   process.exit(0);
 }
