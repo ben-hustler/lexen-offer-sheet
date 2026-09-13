@@ -1832,9 +1832,23 @@ export class LexenOfferSheet extends LitElement {
 
     const pillBearingGroups = ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'];
     if (checked && pillBearingGroups.includes(group)) {
-      // Re-derive the true tri-state from the untouched pills (e.g. still
-      // indeterminate at 4/5) rather than leaving it forced to 'checked'.
-      this._recomputeGroupState(group);
+      const pillKeys = this._pillKeysForGroup(group);
+      const active = pillKeys.filter(k => this._pills[k]).length;
+      if (active === 0) {
+        // Every pill was individually clicked off, so there's no partial
+        // selection left to restore — re-deriving from the (all-false)
+        // pills would immediately recompute back to 'unchecked', which
+        // re-freezes the pill-group (.group-off has pointer-events: none)
+        // and leaves the checkbox impossible to check again. Turn every
+        // pill on instead, same as checking a fresh group.
+        const newPills = { ...this._pills };
+        pillKeys.forEach(k => { newPills[k] = true; });
+        this._pills = newPills;
+      } else {
+        // Re-derive the true tri-state from the untouched pills (e.g. still
+        // indeterminate at 4/5) rather than leaving it forced to 'checked'.
+        this._recomputeGroupState(group);
+      }
     }
 
     if (group !== 'signature') {
