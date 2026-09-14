@@ -1,0 +1,32 @@
+{
+  "mode": "full",
+  "valueDisplay": "tax_savings",
+  "taxRatePct": 12,
+  "profitName": "Target Profit",
+  "disclaimerText": "",
+  "disclaimerPunct": ",",
+  "fontSizeIndex": 2,
+  "photosPerRow": 3,
+  "discLayout": "horizontal",
+  "marketDisplay": "full",
+  "sectionOrder": ["valuation", "disclosures", "observations", "market", "recon", "photos"],
+  "pills": {
+    "general.condition": true,
+    "valuation.retail_value": false,
+    "valuation.recon": false,
+    "valuation.fixed_overhead": false,
+    "valuation.target_profit": false,
+    "valuation.tax_savings": false,
+    "sections.observations_highlights": false,
+    "sections.observations_comments": false
+  },
+  "groups": {
+    "valuation": "unchecked",
+    "disclosures": "unchecked",
+    "observations": "unchecked",
+    "market": "unchecked",
+    "recon": "unchecked",
+    "photos": "unchecked",
+    "signature": "checked"
+  }
+}

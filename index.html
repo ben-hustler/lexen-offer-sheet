@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lexen-offer-sheet dev</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f2f4f7; color: #222; }
+
+    .dev-shell { display: flex; height: 100dvh; overflow: hidden; }
+
+    /* ── Controls panel ── */
+    .controls {
+      width: 340px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e4e7ec;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .controls-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid #e4e7ec;
+      font-size: 13px;
+      font-weight: 700;
+      color: #344054;
+      letter-spacing: 0.3px;
+    }
+
+    .field { padding: 10px 20px; display: flex; flex-direction: column; gap: 5px; border-bottom: 1px solid #f2f4f7; }
+    .field label { font-size: 11px; font-weight: 600; color: #667085; text-transform: uppercase; letter-spacing: 0.4px; }
+    .field input, .field textarea, .field select {
+      font-size: 13px;
+      padding: 7px 10px;
+      border: 1.5px solid #d0d5dd;
+      border-radius: 7px;
+      outline: none;
+      font-family: inherit;
+      color: #222;
+      background: #fff;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: #35BB9C; }
+    .field textarea { font-family: ui-monospace, monospace; font-size: 11px; resize: vertical; height: 140px; }
+    #payloadJson { height: 320px; }
+
+    .field-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .field-row label { font-size: 12px; color: #344054; text-transform: none; }
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; background: #d0d5dd; border-radius: 10px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute; left: 3px; top: 3px;
+      width: 14px; height: 14px; border-radius: 50%; background: #fff;
+      transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #35BB9C; }
+    .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
+
+    .parse-error { font-size: 11px; color: #f04438; margin-top: 4px; display: none; }
+    .parse-error.visible { display: block; }
+
+    .actions { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 16px; font-size: 13px; font-weight: 600; font-family: inherit;
+      border: none; border-radius: 8px; cursor: pointer; transition: background 0.15s;
+      width: 100%;
+    }
+    .btn-primary { background: #35BB9C; color: #fff; }
+    .btn-primary:hover { background: #2a9880; }
+    .btn-secondary { background: #f2f4f7; color: #344054; border: 1.5px solid #d0d5dd; }
+    .btn-secondary:hover { background: #e4e7ec; }
+
+    .event-log { padding: 8px 20px 20px; font-size: 11px; font-family: ui-monospace, monospace; color: #667085; }
+    .event-log-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #98a2b3; margin-bottom: 4px; }
+    .event-entry { padding: 2px 0; word-break: break-all; }
+    .event-entry.highlight { color: #35BB9C; }
+
+    /* ── Preview ── */
+    /* overflow: hidden here (not auto) — the component scrolls its own two
+       panes internally now; this wrapper should just hand it a definite
+       height to fill, not become a second, competing scroll container. */
+    .preview { flex: 1; overflow: hidden; }
+    lexen-offer-sheet { display: block; height: 100%; }
+  </style>
+</head>
+<body>
+  <div class="dev-shell">
+    <div class="controls">
+      <div class="controls-header">lexen-offer-sheet dev harness</div>
+
+      <div class="field">
+        <label>API Base URL</label>
+        <input id="apiBaseUrl" value="http://localhost:8787" />
+        <small style="font-weight:400;color:#98a2b3;">local_server.py default — swap for the sbox URL to test against real AWS</small>
+      </div>
+
+      <div class="field">
+        <label>Auth Token</label>
+        <input id="authToken" placeholder="optional" />
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label>Template Mode</label>
+          <label class="toggle">
+            <input type="checkbox" id="templateMode" />
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label>Locked</label>
+          <label class="toggle">
+            <input type="checkbox" id="locked" />
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tax Rate (%)</label>
+        <input id="taxRate" type="number" step="0.01" placeholder="e.g. 12" />
+      </div>
+
+      <div class="field">
+        <label>Profit Label</label>
+        <input id="profitLabel" placeholder="Target Profit" />
+      </div>
+
+      <div class="field">
+        <label>Disclaimer Text</label>
+        <input id="disclaimerText" placeholder="subject to Carfax History..." />
+      </div>
+
+      <div class="field">
+        <label>Payload (JSON) <small style="font-weight:400;text-transform:none">— blank = built-in template payload</small></label>
+        <textarea id="payloadJson" placeholder="leave blank to use the component's built-in template payload">{
+  "dealer": {
+    "name": "Dealership Name",
+    "location": "Dealership Name",
+    "address": "1234 Street\nCity, PR",
+    "phone": null,
+    "logo_url": null
+  },
+  "employee": { "name": "Employee Name", "phone": "(000) 000-0000" },
+  "customer": { "name": "Customer Name", "email": "customer@example.com" },
+  "vehicle": {
+    "year": 2024, "make": "Make", "model": "Model", "trim": "Trim",
+    "color": "Colour", "vin": "1A2B3C4D5E6F7G8H9", "mileage_km": 50000
+  },
+  "offer": {
+    "amount": 25000, "valid_until": "2026-08-21",
+    "appraisal_date": "2026-07-22", "classification": "Good Condition"
+  },
+  "valuation": {
+    "retail_value": 32000, "recon_total": 2500, "fixed_overhead": 500,
+    "target_profit": { "amount": 2500, "label": "Target Profit" },
+    "tax_savings": { "rate_pct": 13.0, "amount": 3250, "gross_value": 28250 }
+  },
+  "disclosures": [
+    { "question": "Disclosure Question #1", "answer": "Answer #1" },
+    { "question": "Disclosure Question #2", "answer": "Answer #2" },
+    { "question": "Disclosure Question #3", "answer": "Answer #3" }
+  ],
+  "observations": {
+    "highlights": "Vehicle Highlights",
+    "comments": "Vehicle Comments",
+    "claims": { "count": 0, "amount": 0 }
+  },
+  "market": {
+    "summary": {
+      "comparables_count": 6, "avg_mileage_km": 45000,
+      "avg_price": 35000, "avg_distance_km": 100, "avg_days": 90
+    },
+    "comparables": [
+      { "year": 2024, "description": "Make Model", "trim": "Trim A", "vin": "1A2B3C4D5E6F7G8H1", "dealer": "Dealer Name", "mileage_km": 42000, "price": 36500, "distance_km": 85,  "days_on_market": 45 },
+      { "year": 2024, "description": "Make Model", "trim": "Trim B", "vin": "1A2B3C4D5E6F7G8H2", "dealer": "Dealer Name", "mileage_km": 38000, "price": 37200, "distance_km": 120, "days_on_market": 30 },
+      { "year": 2024, "description": "Make Model", "trim": "Trim C", "vin": "1A2B3C4D5E6F7G8H3", "dealer": "Dealer Name", "mileage_km": 51000, "price": 34800, "distance_km": 60,  "days_on_market": 90 },
+      { "year": 2023, "description": "Make Model", "trim": "Trim A", "vin": "1A2B3C4D5E6F7G8H4", "dealer": "Dealer Name", "mileage_km": 65000, "price": 33000, "distance_km": 95,  "days_on_market": 120 },
+      { "year": 2023, "description": "Make Model", "trim": "Trim D", "vin": "1A2B3C4D5E6F7G8H5", "dealer": "Dealer Name", "mileage_km": 47000, "price": 35500, "distance_km": 150, "days_on_market": 60 },
+      { "year": 2024, "description": "Make Model", "trim": "Trim B", "vin": "1A2B3C4D5E6F7G8H6", "dealer": "Dealer Name", "mileage_km": 29000, "price": 38000, "distance_km": 110, "days_on_market": 15 }
+    ]
+  },
+  "scenarios": {
+    "market": {
+      "vehicles": 318,
+      "avgRetail": "$25,608",
+      "avgMileage": "45,913",
+      "listedDays": "86",
+      "prcMkt": "100%",
+      "prcMktAdj": "92%",
+      "costMkt": "100%",
+      "priceRank": "156 of 319",
+      "mileageRank": "46 of 319",
+      "perception": "49 of 319",
+      "retail": "$25,608",
+      "ACV": "$22,608"
+    },
+    "selected": {
+      "vehicles": "2",
+      "avgRetail": "$20,493",
+      "avgMileage": "105,501",
+      "listedDays": 64,
+      "prcMkt": "115%",
+      "prcMktAdj": "98%",
+      "costMkt": "115%",
+      "priceRank": "3 of 3",
+      "mileageRank": "1 of 3",
+      "perception": "3 of 3",
+      "retail": "$25,608",
+      "ACV": "$22,608"
+    }
+  },
+  "recon": {
+    "items": [
+      { "description": "Recon Item #1", "amount": 1000 },
+      { "description": "Recon Item #2", "amount": 1000 },
+      { "description": "Recon Item #3", "amount": 500 }
+    ],
+    "total": 2500
+  },
+  "photos": [
+    { "url": "placeholder", "category": "Exterior", "caption": null },
+    { "url": "placeholder", "category": "Exterior", "caption": null },
+    { "url": "placeholder", "category": "Exterior", "caption": null },
+    { "url": "placeholder", "category": "Interior", "caption": null },
+    { "url": "placeholder", "category": "Interior", "caption": null },
+    { "url": "placeholder", "category": "Highlights", "caption": null },
+    { "url": "placeholder", "category": "Damages ($000)", "caption": "Sample Damage" }
+  ],
+  "disclaimer": ", subject to Carfax History and Lien Report",
+  "display": {
+    "valuation": {
+      "retail_value": true, "recon": true, "fixed_overhead": true,
+      "target_profit": true, "tax_savings": true
+    },
+    "sections": {
+      "valuation": false,
+      "disclosures": false, "disclosures_horizontal": false, "disclosures_signature": false,
+      "observations": false, "observations_highlights": false, "observations_comments": false,
+      "market_summary": true, "market_comparables": false,
+      "market_scenarios": true, "selected_scenarios": true,
+      "recon_breakdown": false, "photos": false
+    },
+    "general": { "offer_label": true, "condition": true, "value_display": "offer" }
+  }
+}</textarea>
+        <div class="parse-error" id="payloadError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>Employees (JSON)</label>
+        <textarea id="employeesJson" style="height:80px">[
+  { "name": "Ben Hustler", "phone": "6045551234", "email": "ben@example.com" }
+]</textarea>
+        <div class="parse-error" id="employeesError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>Shared Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null</small></label>
+        <textarea id="sharedDisplayJson" style="height:80px">{ "sections": { "market_scenarios": true, "selected_scenarios": true } }</textarea>
+        <div class="parse-error" id="sharedError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>PDF Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null</small></label>
+        <textarea id="pdfDisplayJson" style="height:80px"></textarea>
+        <div class="parse-error" id="pdfError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>Template Shared Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null; used by "Reset to template"</small></label>
+        <textarea id="templateSharedDisplayJson" style="height:80px"></textarea>
+        <div class="parse-error" id="templateSharedError">Invalid JSON</div>
+      </div>
+
+      <div class="field">
+        <label>Template PDF Display (JSON) <small style="font-weight:400;text-transform:none">— blank = null; used by "Reset to template"</small></label>
+        <textarea id="templatePdfDisplayJson" style="height:80px"></textarea>
+        <div class="parse-error" id="templatePdfError">Invalid JSON</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="applyBtn">Apply &amp; Load</button>
+        <button class="btn btn-secondary" id="reloadBtn">Force Re-render</button>
+      </div>
+
+      <div class="event-log">
+        <div class="event-log-title">Events</div>
+        <div id="eventLog"></div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <lexen-offer-sheet id="sheet"></lexen-offer-sheet>
+    </div>
+  </div>
+
+  <script type="module" src="/src/lexen-offer-sheet.js"></script>
+  <script>
+    const sheet = document.getElementById('sheet');
+
+    const apiBaseUrlEl     = document.getElementById('apiBaseUrl');
+    const authTokenEl      = document.getElementById('authToken');
+    const templateModeEl   = document.getElementById('templateMode');
+    const lockedEl         = document.getElementById('locked');
+    const taxRateEl        = document.getElementById('taxRate');
+    const profitLabelEl    = document.getElementById('profitLabel');
+    const disclaimerTextEl = document.getElementById('disclaimerText');
+    const payloadJsonEl    = document.getElementById('payloadJson');
+    const employeesJsonEl  = document.getElementById('employeesJson');
+    const sharedDisplayEl  = document.getElementById('sharedDisplayJson');
+    const pdfDisplayEl     = document.getElementById('pdfDisplayJson');
+    const templateSharedDisplayEl = document.getElementById('templateSharedDisplayJson');
+    const templatePdfDisplayEl    = document.getElementById('templatePdfDisplayJson');
+
+    const payloadError   = document.getElementById('payloadError');
+    const employeesError = document.getElementById('employeesError');
+    const sharedError    = document.getElementById('sharedError');
+    const pdfError       = document.getElementById('pdfError');
+    const templateSharedError = document.getElementById('templateSharedError');
+    const templatePdfError    = document.getElementById('templatePdfError');
+
+    const eventLog = document.getElementById('eventLog');
+
+    function logEvent(name, detail, highlight = false) {
+      const el = document.createElement('div');
+      el.className = 'event-entry' + (highlight ? ' highlight' : '');
+      let detailStr = '';
+      if (detail !== undefined && detail !== null) {
+        try { detailStr = ' ' + JSON.stringify(detail); } catch (_) { detailStr = ' [unserializable]'; }
+      }
+      el.textContent = `${new Date().toLocaleTimeString()} → ${name}${detailStr}`;
+      eventLog.prepend(el);
+    }
+
+    ['component-ready', 'offer-generated', 'display-save', 'template-save', 'pdf-send'].forEach(name => {
+      sheet.addEventListener(name, e => logEvent(name, e.detail, name !== 'component-ready'));
+    });
+
+    function parseJsonField(el, errorEl, fallback) {
+      const raw = el.value.trim();
+      if (!raw) { errorEl.classList.remove('visible'); return fallback; }
+      try {
+        const parsed = JSON.parse(raw);
+        errorEl.classList.remove('visible');
+        return parsed;
+      } catch (_) {
+        errorEl.classList.add('visible');
+        return undefined;
+      }
+    }
+
+    function apply() {
+      const payload       = parseJsonField(payloadJsonEl, payloadError, null);
+      const employees     = parseJsonField(employeesJsonEl, employeesError, []);
+      const sharedDisplay = parseJsonField(sharedDisplayEl, sharedError, null);
+      const pdfDisplay    = parseJsonField(pdfDisplayEl, pdfError, null);
+      const templateSharedDisplay = parseJsonField(templateSharedDisplayEl, templateSharedError, null);
+      const templatePdfDisplay    = parseJsonField(templatePdfDisplayEl, templatePdfError, null);
+
+      if (payload === undefined || employees === undefined || sharedDisplay === undefined || pdfDisplay === undefined
+          || templateSharedDisplay === undefined || templatePdfDisplay === undefined) {
+        return; // one of the JSON fields is invalid — bail without touching the component
+      }
+
+      sheet.apiBaseUrl     = apiBaseUrlEl.value.trim();
+      sheet.apiMode        = 'binary'; // matches index.py's direct-PDF-in-response contract
+      sheet.authToken      = authTokenEl.value.trim();
+      sheet.templateMode   = templateModeEl.checked;
+      sheet.locked         = lockedEl.checked;
+      sheet.taxRate        = taxRateEl.value.trim() === '' ? null : parseFloat(taxRateEl.value);
+      sheet.profitLabel    = profitLabelEl.value.trim() || null;
+      sheet.disclaimerText = disclaimerTextEl.value.trim() || null;
+      sheet.employees      = employees;
+      sheet.sharedDisplay  = sharedDisplay;
+      sheet.pdfDisplay     = pdfDisplay;
+      sheet.templateSharedDisplay = templateSharedDisplay;
+      sheet.templatePdfDisplay    = templatePdfDisplay;
+      sheet.payload        = payload;
+
+      logEvent('harness:applied', null);
+    }
+
+    document.getElementById('applyBtn').addEventListener('click', apply);
+    document.getElementById('reloadBtn').addEventListener('click', () => location.reload());
+
+    // Auto-apply once on load so the component renders immediately with defaults.
+    apply();
+  </script>
+</body>
+</html>

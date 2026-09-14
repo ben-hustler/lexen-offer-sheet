@@ -1,2 +1,7 @@
 node_modules/
 dist/
+
+# printout-offer lambda — local dev/test artifacts
+__pycache__/
+*.pyc
+lambda/printout-offer/dev/output.pdf
