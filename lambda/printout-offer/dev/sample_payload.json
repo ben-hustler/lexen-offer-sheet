@@ -17,7 +17,7 @@
     "appraisal_date": "2026-07-22", "classification": "Good Condition"
   },
   "valuation": {
-    "retail_value": 32000, "recon_total": 2500, "fixed_overhead": 500,
+    "retail_value": 32000, "recon_total": 3500, "fixed_overhead": 500,
     "target_profit": { "amount": 2500, "label": "Target Profit" },
     "tax_savings": { "rate_pct": 13.0, "amount": 3250, "gross_value": 28250 }
   },
@@ -27,7 +27,10 @@
     { "question": "Disclosure Question #3", "answer": "Answer #3" }
   ],
   "observations": {
-    "highlights": "Vehicle Highlights",
+    "highlights": [
+      { "description": "Upgraded alloy wheels", "amount": 500 },
+      { "description": "New tires", "amount": 750 }
+    ],
     "comments": "Vehicle Comments",
     "claims": { "count": 0, "amount": 0 }
   },
@@ -81,7 +84,11 @@
       { "description": "Recon Item #2", "amount": 1000 },
       { "description": "Recon Item #3", "amount": 500 }
     ],
-    "total": 2500
+    "damages": [
+      { "description": "Front bumper scratch", "amount": 350 },
+      { "description": "Windshield chip", "amount": 150 }
+    ],
+    "total": 3500
   },
   "photos": [
     { "url": "placeholder", "category": "Exterior", "caption": null },
@@ -101,11 +108,12 @@
     "sections": {
       "valuation": false,
       "disclosures": false, "disclosures_horizontal": false, "disclosures_signature": false,
-      "observations": false, "observations_highlights": false, "observations_comments": false,
+      "observations": true, "observations_highlights": true, "observations_comments": true,
       "market_summary": true, "market_comparables": false,
       "market_scenarios": true, "selected_scenarios": true,
-      "recon_breakdown": false, "photos": false
+      "recon_breakdown": true, "photos": false
     },
-    "general": { "offer_label": true, "condition": true, "value_display": "offer" }
+    "general": { "offer_label": true, "condition": true, "value_display": "offer" },
+    "recon_view": "detail"
   }
 }

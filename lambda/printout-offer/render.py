@@ -431,6 +431,12 @@ def _get_display(p):
         },
         # "tiles" (KPI grid, default) or "rows" (label/value rows, like Valuation).
         "scenario_layout": display.get("scenario_layout", "tiles"),
+        # "summary" (default — aggregate count+total row) or "detail" (every
+        # damage note listed individually, italicized-prefix, non-interleaved).
+        "recon_view": display.get("recon_view", "summary"),
+        # Same summary/detail concept as recon_view, but independent — lets
+        # Highlights (Observations) and damages (Recon) be toggled separately.
+        "highlights_view": display.get("highlights_view", "summary"),
     }
 
 
@@ -851,45 +857,58 @@ def _build_disclosures(p):
 
 
 def _build_observations(p):
-    """Observations: Highlights, Comments — each individually togglable."""
+    """Observations: Highlights (plain text lines — count+total in "summary"
+    view, one "description — $amount" line per highlight in "detail" view;
+    purely informational, never part of any recon money total) and Comments."""
     obs = p.get("observations", {})
-    ds = _get_display(p)["sections"]
+    display = _get_display(p)
+    ds = display["sections"]
     show_highlights = ds["observations_highlights"]
     show_comments = ds["observations_comments"]
+    highlights_raw = obs.get("highlights") if show_highlights else None
 
-    highlights = obs.get("highlights") if show_highlights else None
-    comments = obs.get("comments") if show_comments else None
+    # Pre-itemization payloads (Bubble not yet updated — see
+    # BUBBLE-PAYLOAD-CHANGES.md) send `highlights` as a single freeform
+    # string rather than a list of {description, amount}. Degrade to
+    # rendering it as plain text instead of crashing on the shape mismatch.
+    legacy_highlights_text = highlights_raw if isinstance(highlights_raw, str) else None
+    highlights = highlights_raw if isinstance(highlights_raw, list) else []
 
-    if not highlights and not comments and not show_highlights and not show_comments:
+    if not show_highlights and not show_comments:
         return []
 
     _d = p.get("_font_size_delta", 0)
     _lbl = _adj_style(STYLE_LABEL, _d)
     _val = _adj_style(STYLE_VALUE, _d)
-    _none = _adj_style(STYLE_LABEL, _d)  # same style, italic-ish via content
 
-    highlights_text = highlights or ("No highlights" if show_highlights else None)
-    comments_text = comments or ("No comments" if show_comments else None)
+    elements = [Paragraph("Observations", STYLE_SECTION_HEADER)]
 
-    first_content = []
     if show_highlights:
-        first_content = [Paragraph("<b>Highlights</b>", _lbl), Paragraph(highlights_text, _val)]
-    elif show_comments:
-        first_content = [Paragraph("<b>Comments</b>", _lbl), Paragraph(comments_text, _val)]
+        elements.append(Paragraph("<b>Highlights</b>", _lbl))
+        if highlights:
+            if display["highlights_view"] == "detail":
+                for h in highlights:
+                    elements.append(Paragraph(
+                        f"{h.get('description', '')} — {_fmt_price(h.get('amount'))}", _val,
+                    ))
+            else:
+                total = sum(h.get("amount", 0) for h in highlights)
+                elements.append(Paragraph(
+                    f"Highlights ({len(highlights)}) — {_fmt_price(total)}", _val,
+                ))
+        elif legacy_highlights_text:
+            elements.append(Paragraph(legacy_highlights_text, _val))
+        else:
+            elements.append(Paragraph("No highlights", _val))
+        if show_comments:
+            elements.append(Spacer(1, 10))
 
-    elements = [KeepTogether([Paragraph("Observations", STYLE_SECTION_HEADER)] + first_content)]
-
-    if show_highlights and show_comments:
-        elements.append(Spacer(1, 12))
+    if show_comments:
+        comments_text = obs.get("comments") or "No comments"
         elements.append(Paragraph("<b>Comments</b>", _lbl))
         elements.append(Paragraph(comments_text, _val))
-        elements.append(Spacer(1, 6))
-    elif show_highlights:
-        elements.append(Spacer(1, 12))
-    elif show_comments:
-        elements.append(Spacer(1, 6))
 
-    return elements
+    return [KeepTogether(elements)]
 
 
 def _build_market_summary(p):
@@ -1208,16 +1227,34 @@ def _build_market_comparables(p):
 
 
 def _build_recon(p):
-    """Recon breakdown: itemized table with total."""
+    """Recon breakdown: presets/other (always itemized) + damages.
+
+    Damages render as one aggregate count+total row in "summary" view, or as
+    their own non-interleaved group of individually prefixed rows in "detail"
+    view. (Highlights get the same summary/detail treatment, but live in the
+    Observations section — see _build_observations — since they're
+    informational and never feed recon math.)
+    """
     recon = p.get("recon", {})
     items = recon.get("items", [])
-    recon_adjustment = (p.get("valuation") or {}).get("recon_total") or 0
+    damages = recon.get("damages", [])
+    # valuation.recon_total is the GRAND total (items + damages + a manual
+    # adjustment, already summed together upstream) — it is NOT a standalone
+    # adjustment figure. Isolate the adjustment-only portion by subtracting
+    # the itemized amounts back out, so the displayed Total matches
+    # valuation.recon_total exactly instead of double-counting items/damages.
+    recon_total_field = (p.get("valuation") or {}).get("recon_total") or 0
 
-    if not items and not recon_adjustment:
+    display = _get_display(p)
+    recon_view = display["recon_view"]
+
+    if not items and not damages and not recon_total_field:
         return []
 
     items_sum = sum(item.get("amount", 0) for item in items)
-    total = items_sum + recon_adjustment
+    damages_sum = sum(d.get("amount", 0) for d in damages)
+    recon_adjustment = recon_total_field - items_sum - damages_sum
+    total = recon_total_field
 
     _d = p.get("_font_size_delta", 0)
     _hdr = ParagraphStyle("_rh",  parent=_base["Normal"], fontName="Helvetica-Bold",
@@ -1255,48 +1292,74 @@ def _build_recon(p):
         Paragraph("Amount",      _hdr_r),
     ], HEADER_BG)
 
-    row_pairs = []
-    for i, item in enumerate(items):
-        row_pairs.append([Spacer(1, 3), _row_tbl([
-            Paragraph(item.get("description", ""), _val),
-            Paragraph(_fmt_price(item.get("amount")), _val_r),
-        ], _alt if i % 2 == 1 else white)])
+    # Single running counter drives zebra-striping across every row in the
+    # section — every group and the adjustment row share one continuous
+    # alternation instead of each restarting/guessing parity.
+    _row_count = [0]
 
-    # Recon Adjustment row (always last item row, before total)
-    adj_row_pair = [Spacer(1, 3), _row_tbl([
-        Paragraph("Recon Adjustment", _val),
-        Paragraph(_fmt_price(recon_adjustment), _val_r),
-    ], _alt if len(items) % 2 == 1 else white)]
+    def _next_bg():
+        bg = _alt if _row_count[0] % 2 == 1 else white
+        _row_count[0] += 1
+        return bg
+
+    def _row_pair(description, amount):
+        return [Spacer(1, 3), _row_tbl([
+            Paragraph(description, _val),
+            Paragraph(_fmt_price(amount), _val_r),
+        ], _next_bg())]
+
+    def _detail_pairs(entries, prefix):
+        """Individually listed, each description prefixed with an italicized
+        label (e.g. "Damage — Front bumper scratch") so they read as their
+        own kind of line without a separate subheader/grouping container."""
+        pairs = []
+        for entry in entries:
+            desc = f"<i>{prefix}</i> — {entry.get('description', '')}"
+            pairs.append(_row_pair(desc, entry.get("amount")))
+        return pairs
+
+    # Order is always Damages, then Recon items/other — each group's rows
+    # contiguous (never interleaved with the other).
+    all_pairs = []
+    if recon_view == "detail":
+        all_pairs.extend(_detail_pairs(damages, "Damage"))
+    else:
+        if damages:
+            all_pairs.append(_row_pair(f"Visible Damage ({len(damages)})", damages_sum))
+    for item in items:
+        all_pairs.append(_row_pair(item.get("description", ""), item.get("amount")))
+
+    # Recon Adjustment + Total (always last, kept together)
+    adj_row_pair = _row_pair("Recon Adjustment", recon_adjustment)
 
     total_pair = [Spacer(1, 3), _row_tbl([
         Paragraph("<b>Total</b>", _tot),
         Paragraph(f"<b>{_fmt_price(total)}</b>", _tot_r),
     ], _totbg)]
 
-    all_rows = row_pairs + [adj_row_pair]
-    n = len(all_rows)
+    heading = Paragraph("Recon", STYLE_SECTION_HEADER)
+    all_pairs.append(adj_row_pair)
+    n = len(all_pairs)
 
     if n <= 2:
-        anchor = [Paragraph("Recon", STYLE_SECTION_HEADER), col_hdr]
-        for pair in all_rows:
+        anchor = [heading, col_hdr]
+        for pair in all_pairs:
             anchor.extend(pair)
         anchor.extend(total_pair)
         return [KeepTogether(anchor)]
 
-    # Anchor: heading + col header + first 2 item rows
-    anchor = [Paragraph("Recon", STYLE_SECTION_HEADER), col_hdr]
-    for pair in all_rows[:2]:
+    # Anchor: heading + col header + first 2 rows
+    anchor = [heading, col_hdr]
+    for pair in all_pairs[:2]:
         anchor.extend(pair)
-
     elements = [KeepTogether(anchor)]
 
     # Middle rows flow freely
-    for pair in all_rows[2:-1]:
+    for pair in all_pairs[2:-1]:
         elements.extend(pair)
 
-    # Last row + total kept together
-    tail = list(all_rows[-1]) + list(total_pair)
-    elements.append(KeepTogether(tail))
+    # Last row (adjustment) + total kept together
+    elements.append(KeepTogether(all_pairs[-1] + total_pair))
 
     return elements
 
