@@ -6,6 +6,7 @@ automatically when sections are hidden via the display block.
 
 import io
 import os
+import re
 import urllib.request
 from datetime import datetime
 
@@ -318,6 +319,16 @@ def _fmt_km(km):
     if km is None:
         return ""
     return f"{km:,.0f} KM" if isinstance(km, (int, float)) else str(km)
+
+
+_TRAILING_AMOUNT_RE = re.compile(r"\s*\(\$[\d,]+(?:\.\d+)?\)\s*$")
+
+
+def _strip_trailing_amount(text):
+    """"New tires ($60)" -> "New tires" — some upstream data embeds the
+    amount in the description itself, which would otherwise show twice
+    once we append our own "— $amount" alongside it."""
+    return _TRAILING_AMOUNT_RE.sub("", text or "")
 
 
 def _fmt_scenario_km(value):
@@ -888,8 +899,9 @@ def _build_observations(p):
         if highlights:
             if display["highlights_view"] == "detail":
                 for h in highlights:
+                    desc = _strip_trailing_amount(h.get("description", ""))
                     elements.append(Paragraph(
-                        f"{h.get('description', '')} — {_fmt_price(h.get('amount'))}", _val,
+                        f"{desc} — {_fmt_price(h.get('amount'))}", _val,
                     ))
             else:
                 total = sum(h.get("amount", 0) for h in highlights)
