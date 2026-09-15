@@ -33,7 +33,7 @@ function _templatePayload() {
       appraisal_date: fmt(today), classification: 'Good Condition',
     },
     valuation: {
-      retail_value: 32000, recon_total: 2500, fixed_overhead: 500,
+      retail_value: 32000, recon_total: 3500, fixed_overhead: 500,
       target_profit: { amount: 2500, label: 'Target Profit' },
       tax_savings: { rate_pct: 13.0, amount: 3250, gross_value: 28250 },
     },
@@ -43,7 +43,10 @@ function _templatePayload() {
       { question: 'Disclosure Question #3', answer: 'Answer #3' },
     ],
     observations: {
-      highlights: 'Vehicle Highlights',
+      highlights: [
+        { description: 'Upgraded alloy wheels', amount: 500 },
+        { description: 'New tires', amount: 750 },
+      ],
       comments: 'Vehicle Comments',
       claims: { count: 0, amount: 0 },
     },
@@ -67,7 +70,11 @@ function _templatePayload() {
         { description: 'Recon Item #2', amount: 1000 },
         { description: 'Recon Item #3', amount: 500 },
       ],
-      total: 2500,
+      damages: [
+        { description: 'Front bumper scratch', amount: 350 },
+        { description: 'Windshield chip', amount: 150 },
+      ],
+      total: 3500,
     },
     photos: [
       { url: 'placeholder', category: 'Exterior', caption: null },
@@ -145,6 +152,8 @@ export class LexenOfferSheet extends LitElement {
     _photosPerRow:      { type: Number,  state: true },
     _discLayout:        { type: String,  state: true },  // 'vertical' | 'horizontal'
     _marketDisplay:     { type: String,  state: true },  // 'summary' | 'full'
+    _reconView:         { type: String,  state: true },  // 'summary' | 'detail'
+    _highlightsView:    { type: String,  state: true },  // 'summary' | 'detail'
 
     _sectionOrder:      { type: Array,   state: true },
 
@@ -773,6 +782,8 @@ export class LexenOfferSheet extends LitElement {
     this._photosPerRow = 3;
     this._discLayout = 'horizontal';
     this._marketDisplay = 'full';
+    this._reconView = 'summary';
+    this._highlightsView = 'summary';
 
     // Layout order
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
@@ -832,6 +843,8 @@ export class LexenOfferSheet extends LitElement {
       photosPerRow: this._photosPerRow,
       discLayout: this._discLayout,
       marketDisplay: this._marketDisplay,
+      reconView: this._reconView,
+      highlightsView: this._highlightsView,
       sectionOrder: [...this._sectionOrder],
       pills: { ...this._pills },
       groups: { ...this._groups },
@@ -855,6 +868,8 @@ export class LexenOfferSheet extends LitElement {
     if (state.photosPerRow !== undefined) this._photosPerRow = state.photosPerRow;
     if (state.discLayout !== undefined) this._discLayout = state.discLayout;
     if (state.marketDisplay !== undefined) this._marketDisplay = state.marketDisplay;
+    if (state.reconView !== undefined) this._reconView = state.reconView;
+    if (state.highlightsView !== undefined) this._highlightsView = state.highlightsView;
     if (state.sectionOrder !== undefined) this._sectionOrder = state.sectionOrder.filter(s => DEFAULT_LAYOUT_ORDER.includes(s));
     if (state.pills !== undefined) this._pills = { ...state.pills };
     if (state.groups !== undefined) this._groups = { ...state.groups };
@@ -924,7 +939,7 @@ export class LexenOfferSheet extends LitElement {
     // Clear "Changes saved" message when the user modifies any setting
     if (this._savedConfirm && !changedProps.has('_savedConfirm')) {
       const settingKeys = ['_mode', '_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
-        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay',
+        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay', '_reconView', '_highlightsView',
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex'];
       if (settingKeys.some(k => changedProps.has(k))) {
         this._savedConfirm = false;
@@ -1055,6 +1070,8 @@ export class LexenOfferSheet extends LitElement {
       photosPerRow: this._photosPerRow,
       discLayout: this._discLayout,
       marketDisplay: this._marketDisplay,
+      reconView: this._reconView,
+      highlightsView: this._highlightsView,
       sectionOrder: [...this._sectionOrder],
       pills: { ...this._pills },
       groups: { ...this._groups },
@@ -1091,6 +1108,11 @@ export class LexenOfferSheet extends LitElement {
         condition: p['general.condition'],
         value_display: this._valueDisplay,
       },
+      // "summary" (default — aggregate count+total row) or "detail" (every
+      // damage note listed individually, italicized-prefix, non-interleaved).
+      recon_view: this._reconView,
+      // Same summary/detail concept, independent toggle for Observations' Highlights.
+      highlights_view: this._highlightsView,
     };
 
     return display;
@@ -1189,6 +1211,8 @@ export class LexenOfferSheet extends LitElement {
     if (controlId === 'value-display') this._valueDisplay = value;
     else if (controlId === 'disc-layout') this._discLayout = value;
     else if (controlId === 'market-display') this._marketDisplay = value;
+    else if (controlId === 'recon-display') this._reconView = value;
+    else if (controlId === 'highlights-display') this._highlightsView = value;
   }
 
   _handleTaxRateInput(e) {
@@ -1226,6 +1250,8 @@ export class LexenOfferSheet extends LitElement {
     this._photosPerRow = 3;
     this._discLayout = 'horizontal';
     this._marketDisplay = 'full';
+    this._reconView = 'summary';
+    this._highlightsView = 'summary';
     this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
     this._pills = {
       'general.condition': true,
@@ -1750,6 +1776,32 @@ export class LexenOfferSheet extends LitElement {
                   class="seg-btn ${this._marketDisplay === 'full' ? 'active' : ''}"
                   @click="${() => this._handleSegmentedClick('market-display', 'full')}"
                 >Full</button>
+              </div>
+            </div>
+            <div class="config-row ${onePage ? 'disabled' : ''}">
+              <span>Recon</span>
+              <div class="segmented-control ${onePage ? 'disabled' : ''}">
+                <button
+                  class="seg-btn ${this._reconView === 'summary' ? 'active' : ''}"
+                  @click="${() => this._handleSegmentedClick('recon-display', 'summary')}"
+                >Summary</button>
+                <button
+                  class="seg-btn ${this._reconView === 'detail' ? 'active' : ''}"
+                  @click="${() => this._handleSegmentedClick('recon-display', 'detail')}"
+                >Detail</button>
+              </div>
+            </div>
+            <div class="config-row">
+              <span>Highlights</span>
+              <div class="segmented-control">
+                <button
+                  class="seg-btn ${this._highlightsView === 'summary' ? 'active' : ''}"
+                  @click="${() => this._handleSegmentedClick('highlights-display', 'summary')}"
+                >Summary</button>
+                <button
+                  class="seg-btn ${this._highlightsView === 'detail' ? 'active' : ''}"
+                  @click="${() => this._handleSegmentedClick('highlights-display', 'detail')}"
+                >Detail</button>
               </div>
             </div>
             <div style="padding:8px 0 4px;">

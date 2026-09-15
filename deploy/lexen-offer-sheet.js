@@ -1,6 +1,6 @@
 var Ee = Object.defineProperty;
-var Oe = (a, e, t) => e in a ? Ee(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
-var q = (a, e, t) => Oe(a, typeof e != "symbol" ? e + "" : e, t);
+var Ce = (a, e, t) => e in a ? Ee(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
+var q = (a, e, t) => Ce(a, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
@@ -25,14 +25,14 @@ let be = class {
     return this.cssText;
   }
 };
-const Ce = (a) => new be(typeof a == "string" ? a : a + "", void 0, te), ze = (a, ...e) => {
+const Oe = (a) => new be(typeof a == "string" ? a : a + "", void 0, te), Re = (a, ...e) => {
   const t = a.length === 1 ? a[0] : e.reduce((i, s, o) => i + ((r) => {
     if (r._$cssResult$ === !0) return r.cssText;
     if (typeof r == "number") return r;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(s) + a[o + 1], a[0]);
   return new be(t, a, te);
-}, Re = (a, e) => {
+}, ze = (a, e) => {
   if (ee) a.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
     const i = document.createElement("style"), s = F.litNonce;
@@ -41,7 +41,7 @@ const Ce = (a) => new be(typeof a == "string" ? a : a + "", void 0, te), ze = (a
 }, ne = ee ? (a) => a : (a) => a instanceof CSSStyleSheet ? ((e) => {
   let t = "";
   for (const i of e.cssRules) t += i.cssText;
-  return Ce(t);
+  return Oe(t);
 })(a) : a;
 /**
  * @license
@@ -162,7 +162,7 @@ let E = class extends HTMLElement {
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Re(e, this.constructor.elementStyles), e;
+    return ze(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     var e;
@@ -287,22 +287,22 @@ E.elementStyles = [], E.shadowRootOptions = { mode: "open" }, E[T("elementProper
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const M = globalThis, ce = (a) => a, j = M.trustedTypes, pe = j ? j.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, xe = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + $, He = `<${$e}>`, A = document, U = () => A.createComment(""), L = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
-\f\r]`, R = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, k = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, ge = /"/g, we = /^(?:script|style|textarea|title)$/i, je = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), h = je(1), O = Symbol.for("lit-noChange"), f = Symbol.for("lit-nothing"), _e = /* @__PURE__ */ new WeakMap(), S = A.createTreeWalker(A, 129);
+const M = globalThis, ce = (a) => a, V = M.trustedTypes, pe = V ? V.createPolicy("lit-html", { createHTML: (a) => a }) : void 0, xe = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + $, He = `<${$e}>`, A = document, U = () => A.createComment(""), L = (a) => a === null || typeof a != "object" && typeof a != "function", ie = Array.isArray, Fe = (a) => ie(a) || typeof (a == null ? void 0 : a[Symbol.iterator]) == "function", K = `[ 	
+\f\r]`, z = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ue = />/g, k = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, ge = /"/g, we = /^(?:script|style|textarea|title)$/i, Ve = (a) => (e, ...t) => ({ _$litType$: a, strings: e, values: t }), h = Ve(1), C = Symbol.for("lit-noChange"), f = Symbol.for("lit-nothing"), _e = /* @__PURE__ */ new WeakMap(), S = A.createTreeWalker(A, 129);
 function ke(a, e) {
   if (!ie(a) || !a.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return pe !== void 0 ? pe.createHTML(e) : e;
 }
-const Ge = (a, e) => {
+const je = (a, e) => {
   const t = a.length - 1, i = [];
-  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = R;
+  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", r = z;
   for (let l = 0; l < t; l++) {
     const n = a[l];
     let c, u, p = -1, m = 0;
-    for (; m < n.length && (r.lastIndex = m, u = r.exec(n), u !== null); ) m = r.lastIndex, r === R ? u[1] === "!--" ? r = he : u[1] !== void 0 ? r = ue : u[2] !== void 0 ? (we.test(u[2]) && (s = RegExp("</" + u[2], "g")), r = k) : u[3] !== void 0 && (r = k) : r === k ? u[0] === ">" ? (r = s ?? R, p = -1) : u[1] === void 0 ? p = -2 : (p = r.lastIndex - u[2].length, c = u[1], r = u[3] === void 0 ? k : u[3] === '"' ? ge : fe) : r === ge || r === fe ? r = k : r === he || r === ue ? r = R : (r = k, s = void 0);
+    for (; m < n.length && (r.lastIndex = m, u = r.exec(n), u !== null); ) m = r.lastIndex, r === z ? u[1] === "!--" ? r = he : u[1] !== void 0 ? r = ue : u[2] !== void 0 ? (we.test(u[2]) && (s = RegExp("</" + u[2], "g")), r = k) : u[3] !== void 0 && (r = k) : r === k ? u[0] === ">" ? (r = s ?? z, p = -1) : u[1] === void 0 ? p = -2 : (p = r.lastIndex - u[2].length, c = u[1], r = u[3] === void 0 ? k : u[3] === '"' ? ge : fe) : r === ge || r === fe ? r = k : r === he || r === ue ? r = z : (r = k, s = void 0);
     const b = r === k && a[l + 1].startsWith("/>") ? " " : "";
-    o += r === R ? n + He : p >= 0 ? (i.push(c), n.slice(0, p) + xe + n.slice(p) + $ + b) : n + $ + (p === -2 ? l : b);
+    o += r === z ? n + He : p >= 0 ? (i.push(c), n.slice(0, p) + xe + n.slice(p) + $ + b) : n + $ + (p === -2 ? l : b);
   }
   return [ke(a, o + (a[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
@@ -311,7 +311,7 @@ class I {
     let s;
     this.parts = [];
     let o = 0, r = 0;
-    const l = e.length - 1, n = this.parts, [c, u] = Ge(e, t);
+    const l = e.length - 1, n = this.parts, [c, u] = je(e, t);
     if (this.el = I.createElement(c, i), S.currentNode = this.el.content, t === 2 || t === 3) {
       const p = this.el.content.firstChild;
       p.replaceWith(...p.childNodes);
@@ -320,12 +320,12 @@ class I {
       if (s.nodeType === 1) {
         if (s.hasAttributes()) for (const p of s.getAttributeNames()) if (p.endsWith(xe)) {
           const m = u[r++], b = s.getAttribute(p).split($), d = /([.?@])?(.*)/.exec(m);
-          n.push({ type: 1, index: o, name: d[2], strings: b, ctor: d[1] === "." ? qe : d[1] === "?" ? We : d[1] === "@" ? Ke : G }), s.removeAttribute(p);
+          n.push({ type: 1, index: o, name: d[2], strings: b, ctor: d[1] === "." ? qe : d[1] === "?" ? We : d[1] === "@" ? Ke : j }), s.removeAttribute(p);
         } else p.startsWith($) && (n.push({ type: 6, index: o }), s.removeAttribute(p));
         if (we.test(s.tagName)) {
           const p = s.textContent.split($), m = p.length - 1;
           if (m > 0) {
-            s.textContent = j ? j.emptyScript : "";
+            s.textContent = V ? V.emptyScript : "";
             for (let b = 0; b < m; b++) s.append(p[b], U()), S.nextNode(), n.push({ type: 2, index: ++o });
             s.append(p[m], U());
           }
@@ -343,14 +343,14 @@ class I {
     return i.innerHTML = e, i;
   }
 }
-function C(a, e, t = a, i) {
+function O(a, e, t = a, i) {
   var r, l;
-  if (e === O) return e;
+  if (e === C) return e;
   let s = i !== void 0 ? (r = t._$Co) == null ? void 0 : r[i] : t._$Cl;
   const o = L(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== o && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = C(a, s._$AS(a, e.values), s, i)), e;
+  return (s == null ? void 0 : s.constructor) !== o && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), o === void 0 ? s = void 0 : (s = new o(a), s._$AT(a, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = O(a, s._$AS(a, e.values), s, i)), e;
 }
-class Ve {
+class Ge {
   constructor(e, t) {
     this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
   }
@@ -398,7 +398,7 @@ class B {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = C(this, e, t), L(e) ? e === f || e == null || e === "" ? (this._$AH !== f && this._$AR(), this._$AH = f) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Fe(e) ? this.k(e) : this._(e);
+    e = O(this, e, t), L(e) ? e === f || e == null || e === "" ? (this._$AH !== f && this._$AR(), this._$AH = f) : e !== this._$AH && e !== C && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Fe(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -414,7 +414,7 @@ class B {
     const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = I.createElement(ke(i.h, i.h[0]), this.options)), i);
     if (((o = this._$AH) == null ? void 0 : o._$AD) === s) this._$AH.p(t);
     else {
-      const r = new Ve(s, this), l = r.u(this.options);
+      const r = new Ge(s, this), l = r.u(this.options);
       r.p(t), this.T(l), this._$AH = r;
     }
   }
@@ -441,7 +441,7 @@ class B {
     this._$AM === void 0 && (this._$Cv = e, (t = this._$AP) == null || t.call(this, e));
   }
 }
-class G {
+class j {
   get tagName() {
     return this.element.tagName;
   }
@@ -454,11 +454,11 @@ class G {
   _$AI(e, t = this, i, s) {
     const o = this.strings;
     let r = !1;
-    if (o === void 0) e = C(this, e, t, 0), r = !L(e) || e !== this._$AH && e !== O, r && (this._$AH = e);
+    if (o === void 0) e = O(this, e, t, 0), r = !L(e) || e !== this._$AH && e !== C, r && (this._$AH = e);
     else {
       const l = e;
       let n, c;
-      for (e = o[0], n = 0; n < o.length - 1; n++) c = C(this, l[i + n], t, n), c === O && (c = this._$AH[n]), r || (r = !L(c) || c !== this._$AH[n]), c === f ? e = f : e !== f && (e += (c ?? "") + o[n + 1]), this._$AH[n] = c;
+      for (e = o[0], n = 0; n < o.length - 1; n++) c = O(this, l[i + n], t, n), c === C && (c = this._$AH[n]), r || (r = !L(c) || c !== this._$AH[n]), c === f ? e = f : e !== f && (e += (c ?? "") + o[n + 1]), this._$AH[n] = c;
     }
     r && !s && this.j(e);
   }
@@ -466,7 +466,7 @@ class G {
     e === f ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
-class qe extends G {
+class qe extends j {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -474,7 +474,7 @@ class qe extends G {
     this.element[this.name] = e === f ? void 0 : e;
   }
 }
-class We extends G {
+class We extends j {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -482,12 +482,12 @@ class We extends G {
     this.element.toggleAttribute(this.name, !!e && e !== f);
   }
 }
-class Ke extends G {
+class Ke extends j {
   constructor(e, t, i, s, o) {
     super(e, t, i, s, o), this.type = 5;
   }
   _$AI(e, t = this) {
-    if ((e = C(this, e, t, 0) ?? f) === O) return;
+    if ((e = O(this, e, t, 0) ?? f) === C) return;
     const i = this._$AH, s = e === f && i !== f || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== f && (i === f || s);
     s && this.element.removeEventListener(this.name, this, i), o && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
@@ -504,7 +504,7 @@ class Ze {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    C(this, e);
+    O(this, e);
   }
 }
 const Z = M.litHtmlPolyfillSupport;
@@ -546,7 +546,7 @@ class N extends E {
     super.disconnectedCallback(), (e = this._$Do) == null || e.setConnected(!1);
   }
   render() {
-    return O;
+    return C;
   }
 }
 var ve;
@@ -590,7 +590,7 @@ City, PR`,
     },
     valuation: {
       retail_value: 32e3,
-      recon_total: 2500,
+      recon_total: 3500,
       fixed_overhead: 500,
       target_profit: { amount: 2500, label: "Target Profit" },
       tax_savings: { rate_pct: 13, amount: 3250, gross_value: 28250 }
@@ -601,7 +601,10 @@ City, PR`,
       { question: "Disclosure Question #3", answer: "Answer #3" }
     ],
     observations: {
-      highlights: "Vehicle Highlights",
+      highlights: [
+        { description: "Upgraded alloy wheels", amount: 500 },
+        { description: "New tires", amount: 750 }
+      ],
       comments: "Vehicle Comments",
       claims: { count: 0, amount: 0 }
     },
@@ -628,7 +631,11 @@ City, PR`,
         { description: "Recon Item #2", amount: 1e3 },
         { description: "Recon Item #3", amount: 500 }
       ],
-      total: 2500
+      damages: [
+        { description: "Front bumper scratch", amount: 350 },
+        { description: "Windshield chip", amount: 150 }
+      ],
+      total: 3500
     },
     photos: [
       { url: "placeholder", category: "Exterior", caption: null },
@@ -663,7 +670,7 @@ const H = [
 }, Q = h`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 class X extends N {
   constructor() {
-    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.defaultDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...D], this._pills = {
+    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.defaultDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...D], this._pills = {
       "general.condition": !0,
       "valuation.retail_value": !0,
       "valuation.recon": !0,
@@ -692,13 +699,15 @@ class X extends N {
       photosPerRow: this._photosPerRow,
       discLayout: this._discLayout,
       marketDisplay: this._marketDisplay,
+      reconView: this._reconView,
+      highlightsView: this._highlightsView,
       sectionOrder: [...this._sectionOrder],
       pills: { ...this._pills },
       groups: { ...this._groups }
     };
   }
   _applyDisplayState(e) {
-    e.mode !== void 0 && (this._mode = e.mode), e.valueDisplay !== void 0 && (this._valueDisplay = e.valueDisplay), e.taxRatePct !== void 0 && (this._taxRatePct = e.taxRatePct), e.disclaimerPunct !== void 0 && (this._disclaimerPunct = e.disclaimerPunct), this.templateMode && (e.profitName !== void 0 && (this._profitName = e.profitName), e.disclaimerText !== void 0 && (this._disclaimerText = e.disclaimerText)), e.fontSizeIndex !== void 0 && (this._fontSizeIndex = e.fontSizeIndex), e.photosPerRow !== void 0 && (this._photosPerRow = e.photosPerRow), e.discLayout !== void 0 && (this._discLayout = e.discLayout), e.marketDisplay !== void 0 && (this._marketDisplay = e.marketDisplay), e.sectionOrder !== void 0 && (this._sectionOrder = e.sectionOrder.filter((t) => D.includes(t))), e.pills !== void 0 && (this._pills = { ...e.pills }), e.groups !== void 0 && (this._groups = { ...e.groups });
+    e.mode !== void 0 && (this._mode = e.mode), e.valueDisplay !== void 0 && (this._valueDisplay = e.valueDisplay), e.taxRatePct !== void 0 && (this._taxRatePct = e.taxRatePct), e.disclaimerPunct !== void 0 && (this._disclaimerPunct = e.disclaimerPunct), this.templateMode && (e.profitName !== void 0 && (this._profitName = e.profitName), e.disclaimerText !== void 0 && (this._disclaimerText = e.disclaimerText)), e.fontSizeIndex !== void 0 && (this._fontSizeIndex = e.fontSizeIndex), e.photosPerRow !== void 0 && (this._photosPerRow = e.photosPerRow), e.discLayout !== void 0 && (this._discLayout = e.discLayout), e.marketDisplay !== void 0 && (this._marketDisplay = e.marketDisplay), e.reconView !== void 0 && (this._reconView = e.reconView), e.highlightsView !== void 0 && (this._highlightsView = e.highlightsView), e.sectionOrder !== void 0 && (this._sectionOrder = e.sectionOrder.filter((t) => D.includes(t))), e.pills !== void 0 && (this._pills = { ...e.pills }), e.groups !== void 0 && (this._groups = { ...e.groups });
   }
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   firstUpdated() {
@@ -730,6 +739,8 @@ class X extends N {
       "_photosPerRow",
       "_discLayout",
       "_marketDisplay",
+      "_reconView",
+      "_highlightsView",
       "_sectionOrder",
       "_pills",
       "_groups",
@@ -799,6 +810,8 @@ class X extends N {
       photosPerRow: this._photosPerRow,
       discLayout: this._discLayout,
       marketDisplay: this._marketDisplay,
+      reconView: this._reconView,
+      highlightsView: this._highlightsView,
       sectionOrder: [...this._sectionOrder],
       pills: { ...this._pills },
       groups: { ...this._groups }
@@ -831,7 +844,12 @@ class X extends N {
         offer_label: !1,
         condition: e["general.condition"],
         value_display: this._valueDisplay
-      }
+      },
+      // "summary" (default — aggregate count+total row) or "detail" (every
+      // damage note listed individually, italicized-prefix, non-interleaved).
+      recon_view: this._reconView,
+      // Same summary/detail concept, independent toggle for Observations' Highlights.
+      highlights_view: this._highlightsView
     };
   }
   // ── Event handlers ─────────────────────────────────────────────────────────
@@ -873,7 +891,7 @@ class X extends N {
     t >= 2 && t <= 4 && (this._photosPerRow = t);
   }
   _handleSegmentedClick(e, t) {
-    e === "value-display" ? this._valueDisplay = t : e === "disc-layout" ? this._discLayout = t : e === "market-display" && (this._marketDisplay = t);
+    e === "value-display" ? this._valueDisplay = t : e === "disc-layout" ? this._discLayout = t : e === "market-display" ? this._marketDisplay = t : e === "recon-display" ? this._reconView = t : e === "highlights-display" && (this._highlightsView = t);
   }
   _handleTaxRateInput(e) {
     const t = parseFloat(e.target.value);
@@ -892,7 +910,7 @@ class X extends N {
     var t, i, s;
     this._mode = "full", this._valueDisplay = "offer";
     const e = (s = (i = (t = this.payload) == null ? void 0 : t.valuation) == null ? void 0 : i.tax_savings) == null ? void 0 : s.rate_pct;
-    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._sectionOrder = [...D], this._pills = {
+    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...D], this._pills = {
       "general.condition": !0,
       "valuation.retail_value": !0,
       "valuation.recon": !0,
@@ -990,9 +1008,9 @@ class X extends N {
         ...d.valuation,
         target_profit: { ...d.valuation.target_profit, label: se || "Target Profit" }
       });
-      const V = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
-      if (V !== null) {
-        const g = this._disclaimerPunct ?? ".", v = V ? V.replace(/\.+$/, "") : "";
+      const G = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
+      if (G !== null) {
+        const g = this._disclaimerPunct ?? ".", v = G ? G.replace(/\.+$/, "") : "";
         d.disclaimer = v ? g + " " + v : "";
       }
       if ((s = (i = d.dealer) == null ? void 0 : i.logo_url) != null && s.startsWith("//") && (d.dealer = { ...d.dealer, logo_url: "https:" + d.dealer.logo_url }), (o = d.employee) != null && o.phone && (d.employee = { ...d.employee, phone: me(d.employee.phone) }), this.employees && this.employees.length > 0) {
@@ -1024,21 +1042,21 @@ class X extends N {
       }
       const Se = { ...b, raw_payload: d }, oe = { "Content-Type": "application/json", Accept: "application/pdf" };
       this.authToken && (oe.Authorization = `Bearer ${this.authToken}`);
-      const z = await fetch(`${this.apiBaseUrl}/printout-offer`, {
+      const R = await fetch(`${this.apiBaseUrl}/printout-offer`, {
         method: "POST",
         headers: oe,
         body: JSON.stringify(Se)
       });
       if (this.apiMode === "binary") {
-        if (!z.ok) {
+        if (!R.ok) {
           let y = "Request failed";
           try {
-            y = (await z.json()).error || y;
+            y = (await R.json()).error || y;
           } catch {
           }
           throw new Error(y);
         }
-        const g = await z.blob(), v = await new Promise((y, _) => {
+        const g = await R.blob(), v = await new Promise((y, _) => {
           const x = new FileReader();
           x.onload = () => y(x.result), x.onerror = _, x.readAsDataURL(g);
         });
@@ -1050,11 +1068,11 @@ class X extends N {
       } else {
         let g;
         try {
-          g = await z.json();
+          g = await R.json();
         } catch {
           throw new Error("Server error — check terminal for traceback");
         }
-        if (!z.ok) throw new Error(g.error || "Failed");
+        if (!R.ok) throw new Error(g.error || "Failed");
         const v = this.apiBaseUrl + g.pdf_url + "?t=" + Date.now();
         this._pdfVehicle = g.vehicle;
         const y = { "ngrok-skip-browser-warning": "true" };
@@ -1270,6 +1288,32 @@ class X extends N {
                   class="seg-btn ${this._marketDisplay === "full" ? "active" : ""}"
                   @click="${() => this._handleSegmentedClick("market-display", "full")}"
                 >Full</button>
+              </div>
+            </div>
+            <div class="config-row ${e ? "disabled" : ""}">
+              <span>Recon</span>
+              <div class="segmented-control ${e ? "disabled" : ""}">
+                <button
+                  class="seg-btn ${this._reconView === "summary" ? "active" : ""}"
+                  @click="${() => this._handleSegmentedClick("recon-display", "summary")}"
+                >Summary</button>
+                <button
+                  class="seg-btn ${this._reconView === "detail" ? "active" : ""}"
+                  @click="${() => this._handleSegmentedClick("recon-display", "detail")}"
+                >Detail</button>
+              </div>
+            </div>
+            <div class="config-row">
+              <span>Highlights</span>
+              <div class="segmented-control">
+                <button
+                  class="seg-btn ${this._highlightsView === "summary" ? "active" : ""}"
+                  @click="${() => this._handleSegmentedClick("highlights-display", "summary")}"
+                >Summary</button>
+                <button
+                  class="seg-btn ${this._highlightsView === "detail" ? "active" : ""}"
+                  @click="${() => this._handleSegmentedClick("highlights-display", "detail")}"
+                >Detail</button>
               </div>
             </div>
             <div style="padding:8px 0 4px;">
@@ -1601,6 +1645,10 @@ q(X, "properties", {
   // 'vertical' | 'horizontal'
   _marketDisplay: { type: String, state: !0 },
   // 'summary' | 'full'
+  _reconView: { type: String, state: !0 },
+  // 'summary' | 'detail'
+  _highlightsView: { type: String, state: !0 },
+  // 'summary' | 'detail'
   _sectionOrder: { type: Array, state: !0 },
   // Show/Hide pill state — flat object of path → bool
   _pills: { type: Object, state: !0 },
@@ -1614,7 +1662,7 @@ q(X, "properties", {
   _pdfUrl: { type: String, state: !0 },
   _pdfVehicle: { type: Object, state: !0 },
   _savedConfirm: { type: Boolean, state: !0 }
-}), q(X, "styles", ze`
+}), q(X, "styles", Re`
     :host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #EEEEEE; color: #222222; min-height: 100vh; }
 
     * { box-sizing: border-box; }
