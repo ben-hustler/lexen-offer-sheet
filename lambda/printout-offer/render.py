@@ -1116,7 +1116,7 @@ def _build_selected_scenarios(p):
 
 
 def _build_market_comparables(p):
-    """Market Comparables: full table of comparable vehicles."""
+    """Selected Comparables: full table of comparable vehicles."""
     market = p.get("market", {})
     comps = market.get("comparables", [])
     summary = market.get("summary", {})
@@ -1211,7 +1211,7 @@ def _build_market_comparables(p):
     # Anchor: header + avg + first data row (all n rows if n <= 2)
     anchor_count = min(n, 1) if n >= 3 else n
     anchor = [
-        Paragraph("Market Comparables", STYLE_SECTION_HEADER),
+        Paragraph("Selected Comparables", STYLE_SECTION_HEADER),
         Spacer(1, 4),
         hdr_tbl,
         Spacer(1, 3),

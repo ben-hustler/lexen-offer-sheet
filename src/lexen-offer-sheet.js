@@ -123,7 +123,7 @@ const DEFAULT_LAYOUT_ORDER = ['valuation', 'disclosures', 'observations', 'marke
 
 const SECTION_LABELS = {
   valuation: 'Valuation', disclosures: 'Disclosures', observations: 'Observations',
-  market: 'Market Comparables', market_scenarios: 'Market Scenarios', selected_scenarios: 'Selected Scenarios',
+  market: 'Selected Comparables', market_scenarios: 'Market Scenarios', selected_scenarios: 'Selected Scenarios',
   recon: 'Recon', photos: 'Photos',
 };
 
@@ -1233,8 +1233,8 @@ export class LexenOfferSheet extends LitElement {
     // Group states
     this._groups = this._defaultGroups();
 
-    // Pill-row expand/collapse — all groups start collapsed.
-    this._pillsOpen = { valuation: false, market_scenarios: false, selected_scenarios: false };
+    // Pill-row expand/collapse — all groups start expanded.
+    this._pillsOpen = { valuation: true, market_scenarios: true, selected_scenarios: true };
 
     // Finalized state
     this._finalized = false;
@@ -2883,7 +2883,7 @@ export class LexenOfferSheet extends LitElement {
 
     const locked     = this._isLocked(section);
     const groupState = this._groups[section];
-    const LABELS     = { valuation:'Valuation', disclosures:'Disclosures', observations:'Observations', market:'Market Comparables', recon:'Recon', photos:'Photos' };
+    const LABELS     = { valuation:'Valuation', disclosures:'Disclosures', observations:'Observations', market:'Selected Comparables', recon:'Recon', photos:'Photos' };
 
     const row = html`
       <div class="group-row ${locked ? 'group-row-locked' : ''}">
@@ -2944,7 +2944,7 @@ export class LexenOfferSheet extends LitElement {
     return [];
   }
 
-  /** Independent toggle — not nested under Market Comparables, not part of the
+  /** Independent toggle — not nested under Selected Comparables, not part of the
    * draggable section order (mirrors how Signature is handled). Each of the 12
    * KPI fields gets its own pill, same idiom as Valuation/Observations. */
   _renderPillsToggle(group) {
@@ -3130,7 +3130,10 @@ export class LexenOfferSheet extends LitElement {
       <button
         class="email-icon-btn"
         ?disabled="${!canSend}"
+        @mouseenter="${(e) => this._showTooltip(e, 'Email offer printout')}"
+        @mouseleave="${() => this._hideTooltip()}"
         @click="${() => {
+          this._hideTooltip();
           this._confirmSendEmail    = true;
           this._sendMessageType     = null;
           this._manualCustomerEmail = '';

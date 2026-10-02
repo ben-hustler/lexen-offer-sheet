@@ -694,7 +694,7 @@ const j = [
   valuation: "Valuation",
   disclosures: "Disclosures",
   observations: "Observations",
-  market: "Market Comparables",
+  market: "Selected Comparables",
   market_scenarios: "Market Scenarios",
   selected_scenarios: "Selected Scenarios",
   recon: "Recon",
@@ -718,7 +718,7 @@ c`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.
 const tt = c`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`, it = c`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 class ee extends B {
   constructor() {
-    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...D], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !1, market_scenarios: !1, selected_scenarios: !1 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
+    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...D], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !0, market_scenarios: !0, selected_scenarios: !0 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
       mode: !1,
       condition: !1,
       value_display: !1,
@@ -1838,7 +1838,7 @@ class ee extends B {
             .checked="${i === "checked" || i === "indeterminate"}"
             ?disabled="${t}"
             @change="${(a) => this._handleGroupChange(e, a.target.checked)}"
-          >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Market Comparables", recon: "Recon", photos: "Photos" }[e]}
+          >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Selected Comparables", recon: "Recon", photos: "Photos" }[e]}
         </label>
         ${this._lk(e)}
       </div>`;
@@ -1875,7 +1875,7 @@ class ee extends B {
   _pillKeysForGroup(e) {
     return e === "valuation" ? ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"] : e === "observations" ? ["sections.observations_highlights", "sections.observations_comments"] : e === "market_scenarios" || e === "selected_scenarios" ? A.map((t) => `${e}.${t.key}`) : [];
   }
-  /** Independent toggle — not nested under Market Comparables, not part of the
+  /** Independent toggle — not nested under Selected Comparables, not part of the
    * draggable section order (mirrors how Signature is handled). Each of the 12
    * KPI fields gets its own pill, same idiom as Valuation/Observations. */
   _renderPillsToggle(e) {
@@ -2011,8 +2011,10 @@ class ee extends B {
       <button
         class="email-icon-btn"
         ?disabled="${!i}"
+        @mouseenter="${(a) => this._showTooltip(a, "Email offer printout")}"
+        @mouseleave="${() => this._hideTooltip()}"
         @click="${() => {
-      this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
+      this._hideTooltip(), this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
     }}"
       >${tt}</button>
       ${this._confirmSendEmail ? this._renderSendConfirmModal() : h}
