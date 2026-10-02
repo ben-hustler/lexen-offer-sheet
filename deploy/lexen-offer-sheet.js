@@ -665,7 +665,7 @@ City, PR`,
         { description: "Front bumper scratch", amount: 350 },
         { description: "Windshield chip", amount: 150 }
       ],
-      total: 3e3
+      total: 3500
     },
     photos: [
       { url: "placeholder", category: "Exterior", caption: null },
