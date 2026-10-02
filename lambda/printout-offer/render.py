@@ -452,6 +452,12 @@ def _get_display(p):
         # Same summary/detail concept as recon_view, but independent — lets
         # Highlights (Observations) and damages (Recon) be toggled separately.
         "highlights_view": display.get("highlights_view", "summary"),
+        # "detailed" (full offer header + thank-you footer, default), "simple"
+        # (plain title/vehicle header, no footer text) or "hide" (content only —
+        # no header, footer or page numbers).
+        "header_footer": (display.get("header_footer")
+                          if display.get("header_footer") in ("detailed", "simple", "hide")
+                          else "detailed"),
     }
 
 
@@ -505,6 +511,7 @@ class _NumberedCanvas(_rl_canvas.Canvas):
 
     _watermark = False  # set to True via subclass for preview PDFs
     _font_size_delta = 0  # set via subclass to match renderer delta
+    _page_numbers = True  # set to False via subclass when header/footer is hidden
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -527,12 +534,13 @@ class _NumberedCanvas(_rl_canvas.Canvas):
                 self.rotate(45)
                 self.drawCentredString(0, 0, "PREVIEW")
                 self.restoreState()
-            self.setFont(_FONT, 8 + self._font_size_delta)
-            self.setFillColor(TEXT_GREY)
-            self.drawRightString(
-                PAGE_W - MARGIN_LR, MARGIN_TB / 2 + 16,
-                f"{self._pageNumber} of {total}",
-            )
+            if self._page_numbers:
+                self.setFont(_FONT, 8 + self._font_size_delta)
+                self.setFillColor(TEXT_GREY)
+                self.drawRightString(
+                    PAGE_W - MARGIN_LR, MARGIN_TB / 2 + 16,
+                    f"{self._pageNumber} of {total}",
+                )
             super().showPage()
         super().save()
 
@@ -1526,6 +1534,48 @@ def _build_photos(p):
 
 
 
+def _build_simple_header(p):
+    """Plain header (header_footer="simple"), modelled on the comparables
+    printout: location, vehicle, VIN · mileage and customer as plain lines,
+    with the print date opposite the first."""
+    vehicle = p.get("vehicle", {})
+    dealer = p.get("dealer", {})
+    customer = p.get("customer", {})
+    _d = p.get("_font_size_delta", 0)
+
+    line_style = ParagraphStyle("_simple_line", parent=_base["Normal"], fontName=_FONT,
+                                fontSize=10 + _d, leading=13 + _d, textColor=black)
+    date_style = ParagraphStyle("_simple_date", parent=line_style, textColor=TEXT_MID,
+                                alignment=TA_RIGHT)
+
+    vin = vehicle.get("vin", "")
+    mileage = _fmt_km(vehicle["mileage_km"]) if vehicle.get("mileage_km") is not None else ""
+    lines = [l for l in [
+        dealer.get("location") or dealer.get("name", ""),
+        _vehicle_desc(vehicle),
+        " · ".join(filter(None, [vin, mileage])),
+        customer.get("name", ""),
+    ] if l]
+
+    print_date = _fmt_date(p.get("print_date") or datetime.now().strftime("%Y-%m-%d"))
+    first_row = Table(
+        [[Paragraph(lines[0] if lines else "", line_style), Paragraph(print_date, date_style)]],
+        colWidths=[CONTENT_W * 0.6, CONTENT_W * 0.4],
+    )
+    first_row.setStyle(TableStyle([
+        ("VALIGN",        (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING",  (0, 0), (-1, -1), 0),
+        ("TOPPADDING",    (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+
+    story = [first_row]
+    story.extend(Paragraph(line, line_style) for line in lines[1:])
+    story.append(Spacer(1, 14))
+    return story
+
+
 def _build_footer(p):
     """Footer: thank you message, validity, disclaimer."""
     dealer = p.get("dealer", {})
@@ -1659,6 +1709,7 @@ def render_offer(payload: dict, preview_logo: bool = False, preview_photos: bool
 
     # Resolve display flags (missing = True)
     ds = _get_display(payload)["sections"]
+    header_footer = _get_display(payload)["header_footer"]
 
     def _build_section(name):
         if name == "valuation":
@@ -1708,26 +1759,24 @@ def render_offer(payload: dict, preview_logo: bool = False, preview_photos: bool
         if key and ds[sec] and scenario_flags[key].get("vehicles", True):
             footnote_owner = sec
 
-    # Assemble sections — header and footer always render
+    # Assemble sections — header/footer per the header_footer setting
     story = []
-    story.extend(_build_header(payload))
+    if header_footer == "detailed":
+        story.extend(_build_header(payload))
+    elif header_footer == "simple":
+        story.extend(_build_simple_header(payload))
     for sec in order:
         story.extend(_build_section(sec))
-    story.extend(_build_footer(payload))
+    if header_footer == "detailed":
+        story.extend(_build_footer(payload))
     story.extend(_build_signature(payload))
 
     _delta = payload.get("_font_size_delta", 0)
-    if watermark:
-        class _PreviewCanvas(_NumberedCanvas):
-            _watermark = True
-            _font_size_delta = _delta
-        canvasmaker = _PreviewCanvas
-    elif _delta:
-        class _DeltaCanvas(_NumberedCanvas):
-            _font_size_delta = _delta
-        canvasmaker = _DeltaCanvas
-    else:
-        canvasmaker = _NumberedCanvas
+    canvasmaker = type("_OfferCanvas", (_NumberedCanvas,), {
+        "_watermark": watermark,
+        "_font_size_delta": _delta,
+        "_page_numbers": header_footer != "hide",
+    })
     doc.build(story, canvasmaker=canvasmaker)
 
     if font_roboto and _ROBOTO_AVAILABLE:

@@ -153,7 +153,11 @@ const SCENARIO_DEFAULT_OFF_KEYS = new Set(['costMkt', 'prcMktAdj', 'retail', 'AC
 const chevronSvg    = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const lockClosedSvg = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const lockOpenSvg   = html`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const mailSvg       = html`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const mailSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`;
+// Material Icons `local_printshop` (filled) — same printer as lxn-doc-viewer.
+const printSvg      = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`;
+// Material Icons `more_horiz` — opens the individual-sections print/email modal.
+const moreSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
 const alertCircleSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -230,6 +234,11 @@ export class LexenOfferSheet extends LitElement {
     _sendMessageType:  { type: String,  state: true },
     _manualCustomerEmail: { type: String, state: true },
     _previewStale: { type: Boolean, state: true },
+    // Individual-sections modal — selection lives for the session only, never saved
+    _individualOpen:      { type: Boolean, state: true },
+    _individualSections: { type: Array,   state: true },
+    _individualBusy:      { type: Boolean, state: true },
+    _individualError:     { type: String,  state: true },
   };
 
   static styles = css`
@@ -443,7 +452,8 @@ export class LexenOfferSheet extends LitElement {
       display: flex; align-items: center; gap: 8px;
       font-size: 13px; color: #344054; cursor: pointer; user-select: none;
     }
-    .modal-recipient-option input[type="radio"] { cursor: pointer; }
+    .modal-recipient-option input[type="radio"],
+    .modal-recipient-option input[type="checkbox"] { cursor: pointer; }
     .modal-email-input {
       width: 100%; box-sizing: border-box; padding: 8px 10px; margin: 0 0 14px;
       font-size: 13px; font-family: inherit; color: #222222;
@@ -458,12 +468,19 @@ export class LexenOfferSheet extends LitElement {
     }
     .modal-btn-confirm:hover:not(:disabled) { background: #2a9880; }
     .modal-btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; }
+    .modal-title { font-weight: 700; }
+    /* Print/Email in the individual-sections modal carry their toolbar icons */
+    .modal-btn-icon { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .modal-btn-icon svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .modal-btn-teal { background: #0f8f8f; }
+    .modal-btn-teal:hover:not(:disabled) { background: #0a7777; }
     .modal-btn-cancel {
       flex: 1; padding: 9px; background: transparent; color: #344054;
       border: 1px solid #d0d5dd; border-radius: 6px; font-size: 13px; font-weight: 500;
       cursor: pointer; font-family: inherit; transition: background 0.15s;
     }
-    .modal-btn-cancel:hover { background: #f2f4f7; }
+    .modal-btn-cancel:hover:not(:disabled) { background: #f2f4f7; }
+    .modal-btn-cancel:disabled { opacity: 0.45; cursor: not-allowed; }
 
     /* Toggle groups */
     .toggle-group { margin-bottom: 4px; }
@@ -1101,9 +1118,11 @@ export class LexenOfferSheet extends LitElement {
 
     /* Matches the unselected/greyed segment look of .seg-btn (Full/One-Page
        etc.) — deliberately not the teal .seg-btn.active treatment. */
+    .preview-icon-btns { display: flex; align-items: center; }
     .email-icon-btn {
       display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-      padding: 0; background: transparent; border: none;
+      box-sizing: border-box; width: 40px; height: 40px; padding: 0;
+      background: transparent; border: none;
       color: #475467; cursor: pointer; user-select: none; line-height: 0;
       transition: color 0.15s;
     }
@@ -1253,6 +1272,14 @@ export class LexenOfferSheet extends LitElement {
     this._sendMessageType = null;
     this._manualCustomerEmail = '';
     this._previewStale = false;
+
+    // Individual-sections modal. _sendPayloadOverride swaps the individual-sections request
+    // into the shared email-confirm modal in place of the main printout.
+    this._individualOpen      = false;
+    this._individualSections = [];
+    this._individualBusy      = false;
+    this._individualError     = '';
+    this._sendPayloadOverride = null;
 
     // Generate state
     this._generating = false;
@@ -2204,121 +2231,154 @@ export class LexenOfferSheet extends LitElement {
 
   // ── Generate ───────────────────────────────────────────────────────────────
 
+  /** The exact /printout-offer request body for a given display block —
+   * shared by the main preview and individual-section prints so both apply the
+   * same payload overrides (profit label, disclaimer, employee, tax rate…). */
+  _buildPrintoutRequest(display, watermark = false) {
+    const commonFields = {
+      mode: this._mode,
+      display,
+      preview_logo: true,
+      preview_photos: true,
+      font_roboto: true,
+      font_size_delta: FONT_SIZE_OPTIONS[this._fontSizeIndex].delta,
+      photos_per_row: this._photosPerRow,
+      section_order: this._sectionOrder,
+      watermark,
+    };
+
+    const payloadData = { ...this._getPayloadData() };
+
+    // Override target profit label from _profitName (set via template settings or profitLabel prop)
+    const effectiveProfitName = this._profitName != null ? this._profitName : this.profitLabel;
+    if (effectiveProfitName != null && payloadData.valuation?.target_profit) {
+      payloadData.valuation = {
+        ...payloadData.valuation,
+        target_profit: { ...payloadData.valuation.target_profit, label: effectiveProfitName || 'Target Profit' },
+      };
+    }
+
+    // Override disclaimer: combine punctuation + space + text, or empty if no text
+    const rawDisclaimerText = this._disclaimerText != null ? this._disclaimerText : (this.disclaimerText ?? null);
+    if (rawDisclaimerText !== null) {
+      const punct = this._disclaimerPunct ?? '.';
+      const trimmedText = rawDisclaimerText ? rawDisclaimerText.replace(/\.+$/, '') : '';
+      payloadData.disclaimer = trimmedText ? (punct + ' ' + trimmedText) : '';
+    }
+
+    // Fix protocol-relative logo URLs (Bubble CDN returns "//..." without scheme)
+    if (payloadData.dealer?.logo_url?.startsWith('//')) {
+      payloadData.dealer = { ...payloadData.dealer, logo_url: 'https:' + payloadData.dealer.logo_url };
+    }
+
+    // Format phone number
+    if (payloadData.employee?.phone) {
+      payloadData.employee = { ...payloadData.employee, phone: fmtPhone(payloadData.employee.phone) };
+    }
+
+    // Override employee from selector if available
+    if (this.employees && this.employees.length > 0) {
+      const emp = this.employees[this._selectedEmployeeIndex] || this.employees[0];
+      payloadData.employee = { name: emp.name || '', phone: fmtPhone(emp.phone || ''), email: emp.email || '' };
+    }
+
+    // Filter disclosures with no answer
+    if (payloadData.disclosures) {
+      payloadData.disclosures = payloadData.disclosures.filter(d => d.answer && d.answer.trim() !== '');
+    }
+
+    // Resolve days_on_market for delisted comparables; recompute avg_days from adjusted values
+    if (payloadData.market?.comparables) {
+      const adjustedComps = payloadData.market.comparables.map(c => ({
+        ...c,
+        days_on_market: c.listing_type === 'delisted' ? (c.delisted_days || c.days_on_market) : c.days_on_market,
+      }));
+      const daysValues = adjustedComps.map(c => c.days_on_market).filter(d => d != null);
+      const avgDays = daysValues.length > 0
+        ? Math.round(daysValues.reduce((a, b) => a + b, 0) / daysValues.length)
+        : payloadData.market.summary?.avg_days;
+      payloadData.market = {
+        ...payloadData.market,
+        comparables: adjustedComps,
+        summary: { ...payloadData.market.summary, avg_days: avgDays },
+      };
+    }
+    // Override tax savings with custom rate
+    if (this._taxRatePct !== null && payloadData.valuation?.tax_savings && payloadData.offer?.amount != null) {
+      const taxAmount = Math.round(payloadData.offer.amount * this._taxRatePct / 100);
+      payloadData.valuation = {
+        ...payloadData.valuation,
+        tax_savings: {
+          ...payloadData.valuation.tax_savings,
+          rate_pct: this._taxRatePct,
+          amount: taxAmount,
+          gross_value: payloadData.offer.amount + taxAmount,
+        },
+      };
+    }
+
+    return { ...commonFields, raw_payload: payloadData };
+  }
+
+  /** POSTs a printout request and returns the rendered PDF as a Blob, handling
+   * both api modes. `vehicle`/`rawUrl` are only set in url mode. */
+  async _fetchPrintout(requestBody) {
+    const headers = { 'Content-Type': 'application/json', 'Accept': 'application/pdf' };
+    if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
+
+    const resp = await fetch(`${this.apiBaseUrl}/printout-offer`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (this.apiMode === 'binary') {
+      if (!resp.ok) {
+        let errMsg = 'Request failed';
+        try {
+          const errData = await resp.json();
+          errMsg = errData.error || errMsg;
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
+      return { blob: await resp.blob(), vehicle: null, rawUrl: null };
+    }
+
+    // url mode
+    let data;
+    try { data = await resp.json(); }
+    catch (e) { throw new Error('Server error — check terminal for traceback'); }
+    if (!resp.ok) throw new Error(data.error || 'Failed');
+
+    const rawUrl = this.apiBaseUrl + data.pdf_url + '?t=' + Date.now();
+
+    // Fetch PDF as blob so the iframe never hits the API server directly.
+    // Avoids ngrok interstitial and cross-origin cookie issues on mobile.
+    const pdfHeaders = { 'ngrok-skip-browser-warning': 'true' };
+    if (this.authToken) pdfHeaders['Authorization'] = `Bearer ${this.authToken}`;
+    const pdfResp = await fetch(rawUrl, { headers: pdfHeaders });
+    return { blob: await pdfResp.blob(), vehicle: data.vehicle, rawUrl };
+  }
+
   async _handleGenerate(watermark = false) {
     this._generating = true;
     this._statusMsg = 'Generating…';
     this._statusError = false;
 
     try {
-      const display = this._buildDisplay();
-      const commonFields = {
-        mode: this._mode,
-        display,
-        preview_logo: true,
-        preview_photos: true,
-        font_roboto: true,
-        font_size_delta: FONT_SIZE_OPTIONS[this._fontSizeIndex].delta,
-        photos_per_row: this._photosPerRow,
-        section_order: this._sectionOrder,
-        watermark,
-      };
-
-      const payloadData = { ...this._getPayloadData() };
-
-      // Override target profit label from _profitName (set via template settings or profitLabel prop)
-      const effectiveProfitName = this._profitName != null ? this._profitName : this.profitLabel;
-      if (effectiveProfitName != null && payloadData.valuation?.target_profit) {
-        payloadData.valuation = {
-          ...payloadData.valuation,
-          target_profit: { ...payloadData.valuation.target_profit, label: effectiveProfitName || 'Target Profit' },
-        };
-      }
-
-      // Override disclaimer: combine punctuation + space + text, or empty if no text
-      const rawDisclaimerText = this._disclaimerText != null ? this._disclaimerText : (this.disclaimerText ?? null);
-      if (rawDisclaimerText !== null) {
-        const punct = this._disclaimerPunct ?? '.';
-        const trimmedText = rawDisclaimerText ? rawDisclaimerText.replace(/\.+$/, '') : '';
-        payloadData.disclaimer = trimmedText ? (punct + ' ' + trimmedText) : '';
-      }
-
-      // Fix protocol-relative logo URLs (Bubble CDN returns "//..." without scheme)
-      if (payloadData.dealer?.logo_url?.startsWith('//')) {
-        payloadData.dealer = { ...payloadData.dealer, logo_url: 'https:' + payloadData.dealer.logo_url };
-      }
-
-      // Format phone number
-      if (payloadData.employee?.phone) {
-        payloadData.employee = { ...payloadData.employee, phone: fmtPhone(payloadData.employee.phone) };
-      }
-
-      // Override employee from selector if available
-      if (this.employees && this.employees.length > 0) {
-        const emp = this.employees[this._selectedEmployeeIndex] || this.employees[0];
-        payloadData.employee = { name: emp.name || '', phone: fmtPhone(emp.phone || ''), email: emp.email || '' };
-      }
-
-      // Filter disclosures with no answer
-      if (payloadData.disclosures) {
-        payloadData.disclosures = payloadData.disclosures.filter(d => d.answer && d.answer.trim() !== '');
-      }
-
-      // Resolve days_on_market for delisted comparables; recompute avg_days from adjusted values
-      if (payloadData.market?.comparables) {
-        const adjustedComps = payloadData.market.comparables.map(c => ({
-          ...c,
-          days_on_market: c.listing_type === 'delisted' ? (c.delisted_days || c.days_on_market) : c.days_on_market,
-        }));
-        const daysValues = adjustedComps.map(c => c.days_on_market).filter(d => d != null);
-        const avgDays = daysValues.length > 0
-          ? Math.round(daysValues.reduce((a, b) => a + b, 0) / daysValues.length)
-          : payloadData.market.summary?.avg_days;
-        payloadData.market = {
-          ...payloadData.market,
-          comparables: adjustedComps,
-          summary: { ...payloadData.market.summary, avg_days: avgDays },
-        };
-      }
-      // Override tax savings with custom rate
-      if (this._taxRatePct !== null && payloadData.valuation?.tax_savings && payloadData.offer?.amount != null) {
-        const taxAmount = Math.round(payloadData.offer.amount * this._taxRatePct / 100);
-        payloadData.valuation = {
-          ...payloadData.valuation,
-          tax_savings: {
-            ...payloadData.valuation.tax_savings,
-            rate_pct: this._taxRatePct,
-            amount: taxAmount,
-            gross_value: payloadData.offer.amount + taxAmount,
-          },
-        };
-      }
-
-      const requestBody = { ...commonFields, raw_payload: payloadData };
+      const requestBody = this._buildPrintoutRequest(this._buildDisplay(), watermark);
+      const payloadData = requestBody.raw_payload;
 
       // Snapshot the exact Lambda request body — reused by pdf-send and display-save
       // so Bubble can call /printout-offer directly without re-deriving anything.
       this._lastPrintoutRequest = { ...requestBody };
 
-      const headers = { 'Content-Type': 'application/json', 'Accept': 'application/pdf' };
-      if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
-
-      const resp = await fetch(`${this.apiBaseUrl}/printout-offer`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(requestBody),
-      });
+      const { blob, vehicle, rawUrl } = await this._fetchPrintout(requestBody);
+      const customerName = (payloadData.customer?.name || 'Customer').replace(/[^a-zA-Z0-9 ]/g, '').trim();
 
       if (this.apiMode === 'binary') {
-        if (!resp.ok) {
-          let errMsg = 'Request failed';
-          try {
-            const errData = await resp.json();
-            errMsg = errData.error || errMsg;
-          } catch (_) {}
-          throw new Error(errMsg);
-        }
-        const blob = await resp.blob();
         const blobUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
+        this._pdfFilename = `${customerName}_${payloadData.vehicle?.vin || 'offer'}.pdf`;
         this._pdfUrl = blobUrl;
         this._statusMsg = '';
         this._previewStale = false;
@@ -2330,26 +2390,10 @@ export class LexenOfferSheet extends LitElement {
           bubbles: true, composed: true,
         }));
       } else {
-        // url mode
-        let data;
-        try { data = await resp.json(); }
-        catch (e) { throw new Error('Server error — check terminal for traceback'); }
-        if (!resp.ok) throw new Error(data.error || 'Failed');
-
-        const rawUrl = this.apiBaseUrl + data.pdf_url + '?t=' + Date.now();
-        this._pdfVehicle = data.vehicle;
-
-        // Fetch PDF as blob so the iframe never hits the API server directly.
-        // Avoids ngrok interstitial and cross-origin cookie issues on mobile.
-        const pdfHeaders = { 'ngrok-skip-browser-warning': 'true' };
-        if (this.authToken) pdfHeaders['Authorization'] = `Bearer ${this.authToken}`;
-        const pdfResp = await fetch(rawUrl, { headers: pdfHeaders });
-        const pdfBlob = await pdfResp.blob();
-
-        const customerName = (payloadData.customer?.name || 'Customer').replace(/[^a-zA-Z0-9 ]/g, '').trim();
-        const vin = data.vehicle?.vin || 'offer';
+        this._pdfVehicle = vehicle;
+        const vin = vehicle?.vin || 'offer';
         this._pdfFilename = `${customerName}_${vin}.pdf`;
-        const pdfFile = new File([pdfBlob], this._pdfFilename, { type: 'application/pdf' });
+        const pdfFile = new File([blob], this._pdfFilename, { type: 'application/pdf' });
 
         if (this._currentBlobUrl) URL.revokeObjectURL(this._currentBlobUrl);
         const blobUrl = URL.createObjectURL(pdfFile);
@@ -2375,6 +2419,103 @@ export class LexenOfferSheet extends LitElement {
     }
 
     this._generating = false;
+  }
+
+  /** Display block for printing only `sections` on their own: every other
+   * section off, simple header, no footer or signature. Each section's
+   * specifics (pills, market/recon/highlights views, scenario fields, layout)
+   * come straight from the main settings — whether or not that section is
+   * switched on in the main sheet. */
+  _buildIndividualDisplay(sections) {
+    const on = (s) => sections.includes(s);
+    const display = this._buildDisplay();
+
+    // A pill group with nothing selected would print an empty section — print
+    // all of its fields instead.
+    const allOff = (obj) => Object.values(obj).every(v => !v);
+    const allOn = (obj) => Object.fromEntries(Object.keys(obj).map(k => [k, true]));
+    const valuation = allOff(display.valuation) ? allOn(display.valuation) : display.valuation;
+    const scenarios = Object.fromEntries(Object.entries(display.scenarios).map(([k, flags]) => [
+      k, allOff(flags) ? allOn(flags) : flags,
+    ]));
+    const obsAllOff = !display.sections.observations_highlights && !display.sections.observations_comments;
+
+    return {
+      ...display,
+      valuation,
+      scenarios,
+      sections: {
+        ...display.sections,
+        valuation:               on('valuation'),
+        disclosures:             on('disclosures'),
+        disclosures_signature:   false,
+        observations:            on('observations'),
+        observations_highlights: obsAllOff || display.sections.observations_highlights,
+        observations_comments:   obsAllOff || display.sections.observations_comments,
+        market_summary:          on('market') && this._marketDisplay === 'summary',
+        market_comparables:      on('market') && this._marketDisplay === 'full',
+        market_scenarios:        on('market_scenarios'),
+        selected_scenarios:      on('selected_scenarios'),
+        recon_breakdown:         on('recon'),
+        photos:                  on('photos'),
+      },
+      header_footer: 'simple',
+    };
+  }
+
+  _toggleIndividualSection(section, checked) {
+    const set = new Set(this._individualSections);
+    if (checked) set.add(section); else set.delete(section);
+    this._individualSections = DEFAULT_LAYOUT_ORDER.filter(s => set.has(s));
+  }
+
+  _individualFilename(payloadData) {
+    const customerName = (payloadData.customer?.name || 'Customer').replace(/[^a-zA-Z0-9 ]/g, '').trim();
+    return `${customerName}_${payloadData.vehicle?.vin || 'offer'}_sections.pdf`;
+  }
+
+  async _handleIndividualPrint() {
+    this._individualBusy = true;
+    this._individualError = '';
+    try {
+      const requestBody = this._buildPrintoutRequest(this._buildIndividualDisplay(this._individualSections));
+      const { blob } = await this._fetchPrintout(requestBody);
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = this._individualFilename(requestBody.raw_payload);
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+      this._individualOpen = false;
+    } catch (err) {
+      this._individualError = err.message || 'Could not generate the printout';
+    }
+    this._individualBusy = false;
+  }
+
+  /** Hands the individual-sections request to the regular email-confirm modal, which
+   * picks the recipient and sends it through the same pdf-send event. */
+  _handleIndividualEmail() {
+    const requestBody = this._buildPrintoutRequest(this._buildIndividualDisplay(this._individualSections));
+    // kind/sections let send-pdf word the email as section details, not an offer.
+    const sectionNames = this._sectionOrder
+      .filter(sec => this._individualSections.includes(sec))
+      .map(sec => (sec === 'market' && this._marketDisplay === 'summary') ? 'Market Summary' : SECTION_LABELS[sec]);
+    this._sendPayloadOverride = {
+      ...requestBody,
+      filename: this._individualFilename(requestBody.raw_payload),
+      kind: 'sections',
+      sections: sectionNames,
+    };
+    this._individualOpen         = false;
+    this._confirmSendEmail    = true;
+    this._sendMessageType     = null;
+    this._manualCustomerEmail = '';
+  }
+
+  _closeSendModal() {
+    this._confirmSendEmail = false;
+    this._sendPayloadOverride = null;
   }
 
   async _handleApply() {
@@ -2440,10 +2581,16 @@ export class LexenOfferSheet extends LitElement {
 
   _handleSend(sendVia, toEmail, messageType) {
     this._splitOpen   = false;
-    this._doneSentVia = sendVia;
-    this._pdfSent     = true;
 
-    const payload = {
+    // An individual-sections send doesn't count as sending the main offer.
+    const individual = this._sendPayloadOverride;
+    this._sendPayloadOverride = null;
+    if (!individual) {
+      this._doneSentVia = sendVia;
+      this._pdfSent     = true;
+    }
+
+    const payload = individual || {
       ...this._lastPrintoutRequest,
       filename: this._pdfFilename || null,
     };
@@ -2487,7 +2634,6 @@ export class LexenOfferSheet extends LitElement {
       <div class="card">
         <div class="offer-header-row">
           <h2>Offer</h2>
-          ${this._renderSendInline()}
         </div>
         ${vi ? html`
           <div class="vehicle-info">
@@ -3059,7 +3205,11 @@ export class LexenOfferSheet extends LitElement {
     const outer  = this._ensureTooltip();
     const bubble = this._tooltipBubble;
     const label  = this._tooltipLabel;
-    const rect   = e.currentTarget.getBoundingClientRect();
+    // Icon buttons are 40px boxes around a 24px glyph — anchor to the glyph
+    // so the bubble sits right above the icon, not the button's empty edge.
+    const target = e.currentTarget;
+    const anchor = target.classList.contains('email-icon-btn') ? (target.querySelector('svg') || target) : target;
+    const rect   = anchor.getBoundingClientRect();
 
     // No CSS sizing keyword (width:max-content, display:table/inline-block)
     // actually shrinks a box to its post-wrap line width — they all just
@@ -3134,12 +3284,12 @@ export class LexenOfferSheet extends LitElement {
         @mouseleave="${() => this._hideTooltip()}"
         @click="${() => {
           this._hideTooltip();
+          this._sendPayloadOverride = null;
           this._confirmSendEmail    = true;
           this._sendMessageType     = null;
           this._manualCustomerEmail = '';
         }}"
       >${mailSvg}</button>
-      ${this._confirmSendEmail ? this._renderSendConfirmModal() : nothing}
     `;
   }
 
@@ -3159,10 +3309,12 @@ export class LexenOfferSheet extends LitElement {
     const canConfirmSend = !!toEmail;
 
     return html`
-      <div class="modal-overlay" @click="${() => { this._confirmSendEmail = false; }}">
+      <div class="modal-overlay" @click="${() => this._closeSendModal()}">
         <div class="modal-box" @click="${(e) => e.stopPropagation()}">
           <p class="modal-msg">
-            Send this offer as an offer made by <strong>${employeeName}</strong>?
+            ${this._sendPayloadOverride
+              ? html`Send the selected sections?`
+              : html`Send this offer as an offer made by <strong>${employeeName}</strong>?`}
           </p>
 
           <div class="modal-recipient-group">
@@ -3203,7 +3355,52 @@ export class LexenOfferSheet extends LitElement {
               ?disabled="${!canConfirmSend}"
               @click="${() => { this._confirmSendEmail = false; this._handleSend('email', toEmail, messageType); }}"
             >Yes, send</button>
-            <button class="modal-btn-cancel" @click="${() => { this._confirmSendEmail = false; }}">Cancel</button>
+            <button class="modal-btn-cancel" @click="${() => this._closeSendModal()}">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  _renderIndividualModal() {
+    const employee     = this._resolveEmployee();
+    const hasRecipient = !!this.payload?.customer || !!employee?.email;
+    const none         = this._individualSections.length === 0;
+    const busy         = this._individualBusy;
+
+    return html`
+      <div class="modal-overlay" @click="${() => { if (!busy) this._individualOpen = false; }}">
+        <div class="modal-box" @click="${(e) => e.stopPropagation()}">
+          <p class="modal-msg modal-title">Download or Email Individual Sections</p>
+
+          <div class="modal-recipient-group">
+            ${this._sectionOrder.map(sec => html`
+              <label class="modal-recipient-option">
+                <input
+                  type="checkbox"
+                  .checked="${this._individualSections.includes(sec)}"
+                  ?disabled="${busy}"
+                  @change="${(e) => this._toggleIndividualSection(sec, e.target.checked)}"
+                />
+                <span>${SECTION_LABELS[sec]}</span>
+              </label>
+            `)}
+          </div>
+
+          ${this._individualError ? html`<div class="action-msg error" style="margin:0 0 12px;">${this._individualError}</div>` : nothing}
+
+          <div class="modal-btns">
+            <button class="modal-btn-confirm modal-btn-icon"
+              ?disabled="${none || busy}"
+              @click="${() => this._handleIndividualPrint()}"
+            >${busy ? 'Generating…' : html`${printSvg}Download`}</button>
+            ${hasRecipient ? html`
+              <button class="modal-btn-confirm modal-btn-icon modal-btn-teal"
+                ?disabled="${none || busy}"
+                @click="${() => this._handleIndividualEmail()}"
+              >${mailSvg}Email</button>
+            ` : nothing}
+            <button class="modal-btn-cancel" ?disabled="${busy}" @click="${() => { this._individualOpen = false; }}">Cancel</button>
           </div>
         </div>
       </div>
@@ -3253,8 +3450,29 @@ export class LexenOfferSheet extends LitElement {
               <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
               <span class="preview-status-dot ${this._previewStale ? 'stale' : ''}"></span>
             </div>
-            ${!this.templateMode && hasPdf && !busy && canInlinePdf ? html`
-              <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
+            ${!this.templateMode ? html`
+              <div class="preview-icon-btns">
+                ${this._renderSendInline()}
+                ${hasPdf && !busy && canInlinePdf ? html`
+                  <button
+                    class="email-icon-btn"
+                    type="button"
+                    @mouseenter="${(e) => this._showTooltip(e, 'Download printout')}"
+                    @mouseleave="${() => this._hideTooltip()}"
+                    @click="${() => { this._hideTooltip(); this._handleDownloadPdf(); }}"
+                  >${printSvg}</button>
+                ` : nothing}
+                <button
+                  class="email-icon-btn"
+                  type="button"
+                  ?disabled="${!this.apiBaseUrl}"
+                  @mouseenter="${(e) => this._showTooltip(e, 'Download or Email Individual Sections')}"
+                  @mouseleave="${() => this._hideTooltip()}"
+                  @click="${() => { this._hideTooltip(); this._individualError = ''; this._individualOpen = true; }}"
+                >${moreSvg}</button>
+              </div>
+              ${this._confirmSendEmail ? this._renderSendConfirmModal() : nothing}
+              ${this._individualOpen ? this._renderIndividualModal() : nothing}
             ` : nothing}
           </div>
           ${showLoading ? html`

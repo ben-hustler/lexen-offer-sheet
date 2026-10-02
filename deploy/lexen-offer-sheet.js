@@ -1,23 +1,23 @@
-var Oe = Object.defineProperty;
-var Le = (r, e, t) => e in r ? Oe(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
-var K = (r, e, t) => Le(r, typeof e != "symbol" ? e + "" : e, t);
+var Se = Object.defineProperty;
+var Ee = (n, e, t) => e in n ? Se(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
+var F = (n, e, t) => Ee(n, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const F = globalThis, te = F.ShadowRoot && (F.ShadyCSS === void 0 || F.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ie = Symbol(), le = /* @__PURE__ */ new WeakMap();
-let ke = class {
+const U = globalThis, Q = U.ShadowRoot && (U.ShadyCSS === void 0 || U.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, X = Symbol(), te = /* @__PURE__ */ new WeakMap();
+let ge = class {
   constructor(e, t, i) {
-    if (this._$cssResult$ = !0, i !== ie) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, i !== X) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = e, this.t = t;
   }
   get styleSheet() {
     let e = this.o;
     const t = this.t;
-    if (te && e === void 0) {
+    if (Q && e === void 0) {
       const i = t !== void 0 && t.length === 1;
-      i && (e = le.get(t)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && le.set(t, e));
+      i && (e = te.get(t)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && te.set(t, e));
     }
     return e;
   }
@@ -25,95 +25,95 @@ let ke = class {
     return this.cssText;
   }
 };
-const Re = (r) => new ke(typeof r == "string" ? r : r + "", void 0, ie), ze = (r, ...e) => {
-  const t = r.length === 1 ? r[0] : e.reduce((i, s, o) => i + ((a) => {
-    if (a._$cssResult$ === !0) return a.cssText;
-    if (typeof a == "number") return a;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + a + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(s) + r[o + 1], r[0]);
-  return new ke(t, r, ie);
-}, Te = (r, e) => {
-  if (te) r.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
+const Pe = (n) => new ge(typeof n == "string" ? n : n + "", void 0, X), De = (n, ...e) => {
+  const t = n.length === 1 ? n[0] : e.reduce((i, s, a) => i + ((o) => {
+    if (o._$cssResult$ === !0) return o.cssText;
+    if (typeof o == "number") return o;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + o + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(s) + n[a + 1], n[0]);
+  return new ge(t, n, X);
+}, Oe = (n, e) => {
+  if (Q) n.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
-    const i = document.createElement("style"), s = F.litNonce;
-    s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, r.appendChild(i);
+    const i = document.createElement("style"), s = U.litNonce;
+    s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, n.appendChild(i);
   }
-}, de = te ? (r) => r : (r) => r instanceof CSSStyleSheet ? ((e) => {
+}, ie = Q ? (n) => n : (n) => n instanceof CSSStyleSheet ? ((e) => {
   let t = "";
   for (const i of e.cssRules) t += i.cssText;
-  return Re(t);
-})(r) : r;
+  return Pe(t);
+})(n) : n;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Me, defineProperty: Be, getOwnPropertyDescriptor: Ne, getOwnPropertyNames: Ue, getOwnPropertySymbols: Ie, getPrototypeOf: Ve } = Object, w = globalThis, ce = w.trustedTypes, je = ce ? ce.emptyScript : "", W = w.reactiveElementPolyfillSupport, T = (r, e) => r, X = { toAttribute(r, e) {
+const { is: Ce, defineProperty: Ae, getOwnPropertyDescriptor: Le, getOwnPropertyNames: Re, getOwnPropertySymbols: ze, getPrototypeOf: Te } = Object, v = globalThis, se = v.trustedTypes, Me = se ? se.emptyScript : "", H = v.reactiveElementPolyfillSupport, L = (n, e) => n, Z = { toAttribute(n, e) {
   switch (e) {
     case Boolean:
-      r = r ? je : null;
+      n = n ? Me : null;
       break;
     case Object:
     case Array:
-      r = r == null ? r : JSON.stringify(r);
+      n = n == null ? n : JSON.stringify(n);
   }
-  return r;
-}, fromAttribute(r, e) {
-  let t = r;
+  return n;
+}, fromAttribute(n, e) {
+  let t = n;
   switch (e) {
     case Boolean:
-      t = r !== null;
+      t = n !== null;
       break;
     case Number:
-      t = r === null ? null : Number(r);
+      t = n === null ? null : Number(n);
       break;
     case Object:
     case Array:
       try {
-        t = JSON.parse(r);
+        t = JSON.parse(n);
       } catch {
         t = null;
       }
   }
   return t;
-} }, we = (r, e) => !Me(r, e), pe = { attribute: !0, type: String, converter: X, reflect: !1, useDefault: !1, hasChanged: we };
-Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), w.litPropertyMetadata ?? (w.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
-let C = class extends HTMLElement {
+} }, be = (n, e) => !Ce(n, e), oe = { attribute: !0, type: String, converter: Z, reflect: !1, useDefault: !1, hasChanged: be };
+Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), v.litPropertyMetadata ?? (v.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+let D = class extends HTMLElement {
   static addInitializer(e) {
     this._$Ei(), (this.l ?? (this.l = [])).push(e);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(e, t = pe) {
+  static createProperty(e, t = oe) {
     if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
       const i = Symbol(), s = this.getPropertyDescriptor(e, i, t);
-      s !== void 0 && Be(this.prototype, e, s);
+      s !== void 0 && Ae(this.prototype, e, s);
     }
   }
   static getPropertyDescriptor(e, t, i) {
-    const { get: s, set: o } = Ne(this.prototype, e) ?? { get() {
+    const { get: s, set: a } = Le(this.prototype, e) ?? { get() {
       return this[t];
-    }, set(a) {
-      this[t] = a;
+    }, set(o) {
+      this[t] = o;
     } };
-    return { get: s, set(a) {
-      const n = s == null ? void 0 : s.call(this);
-      o == null || o.call(this, a), this.requestUpdate(e, n, i);
+    return { get: s, set(o) {
+      const l = s == null ? void 0 : s.call(this);
+      a == null || a.call(this, o), this.requestUpdate(e, l, i);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(e) {
-    return this.elementProperties.get(e) ?? pe;
+    return this.elementProperties.get(e) ?? oe;
   }
   static _$Ei() {
-    if (this.hasOwnProperty(T("elementProperties"))) return;
-    const e = Ve(this);
+    if (this.hasOwnProperty(L("elementProperties"))) return;
+    const e = Te(this);
     e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
   }
   static finalize() {
-    if (this.hasOwnProperty(T("finalized"))) return;
-    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(T("properties"))) {
-      const t = this.properties, i = [...Ue(t), ...Ie(t)];
+    if (this.hasOwnProperty(L("finalized"))) return;
+    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(L("properties"))) {
+      const t = this.properties, i = [...Re(t), ...ze(t)];
       for (const s of i) this.createProperty(s, t[s]);
     }
     const e = this[Symbol.metadata];
@@ -132,8 +132,8 @@ let C = class extends HTMLElement {
     const t = [];
     if (Array.isArray(e)) {
       const i = new Set(e.flat(1 / 0).reverse());
-      for (const s of i) t.unshift(de(s));
-    } else e !== void 0 && t.push(de(e));
+      for (const s of i) t.unshift(ie(s));
+    } else e !== void 0 && t.push(ie(e));
     return t;
   }
   static _$Eu(e, t) {
@@ -162,7 +162,7 @@ let C = class extends HTMLElement {
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Te(e, this.constructor.elementStyles), e;
+    return Oe(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     var e;
@@ -184,34 +184,34 @@ let C = class extends HTMLElement {
     this._$AK(e, i);
   }
   _$ET(e, t) {
-    var o;
+    var a;
     const i = this.constructor.elementProperties.get(e), s = this.constructor._$Eu(e, i);
     if (s !== void 0 && i.reflect === !0) {
-      const a = (((o = i.converter) == null ? void 0 : o.toAttribute) !== void 0 ? i.converter : X).toAttribute(t, i.type);
-      this._$Em = e, a == null ? this.removeAttribute(s) : this.setAttribute(s, a), this._$Em = null;
+      const o = (((a = i.converter) == null ? void 0 : a.toAttribute) !== void 0 ? i.converter : Z).toAttribute(t, i.type);
+      this._$Em = e, o == null ? this.removeAttribute(s) : this.setAttribute(s, o), this._$Em = null;
     }
   }
   _$AK(e, t) {
-    var o, a;
+    var a, o;
     const i = this.constructor, s = i._$Eh.get(e);
     if (s !== void 0 && this._$Em !== s) {
-      const n = i.getPropertyOptions(s), l = typeof n.converter == "function" ? { fromAttribute: n.converter } : ((o = n.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? n.converter : X;
+      const l = i.getPropertyOptions(s), r = typeof l.converter == "function" ? { fromAttribute: l.converter } : ((a = l.converter) == null ? void 0 : a.fromAttribute) !== void 0 ? l.converter : Z;
       this._$Em = s;
-      const p = l.fromAttribute(t, n.type);
-      this[s] = p ?? ((a = this._$Ej) == null ? void 0 : a.get(s)) ?? p, this._$Em = null;
+      const p = r.fromAttribute(t, l.type);
+      this[s] = p ?? ((o = this._$Ej) == null ? void 0 : o.get(s)) ?? p, this._$Em = null;
     }
   }
-  requestUpdate(e, t, i, s = !1, o) {
-    var a;
+  requestUpdate(e, t, i, s = !1, a) {
+    var o;
     if (e !== void 0) {
-      const n = this.constructor;
-      if (s === !1 && (o = this[e]), i ?? (i = n.getPropertyOptions(e)), !((i.hasChanged ?? we)(o, t) || i.useDefault && i.reflect && o === ((a = this._$Ej) == null ? void 0 : a.get(e)) && !this.hasAttribute(n._$Eu(e, i)))) return;
+      const l = this.constructor;
+      if (s === !1 && (a = this[e]), i ?? (i = l.getPropertyOptions(e)), !((i.hasChanged ?? be)(a, t) || i.useDefault && i.reflect && a === ((o = this._$Ej) == null ? void 0 : o.get(e)) && !this.hasAttribute(l._$Eu(e, i)))) return;
       this.C(e, t, i);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
   }
-  C(e, t, { useDefault: i, reflect: s, wrapped: o }, a) {
-    i && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(e) && (this._$Ej.set(e, a ?? t ?? this[e]), o !== !0 || a !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (t = void 0), this._$AL.set(e, t)), s === !0 && this._$Em !== e && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(e));
+  C(e, t, { useDefault: i, reflect: s, wrapped: a }, o) {
+    i && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(e) && (this._$Ej.set(e, o ?? t ?? this[e]), a !== !0 || o !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (t = void 0), this._$AL.set(e, t)), s === !0 && this._$Em !== e && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(e));
   }
   async _$EP() {
     this.isUpdatePending = !0;
@@ -231,21 +231,21 @@ let C = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
-        for (const [o, a] of this._$Ep) this[o] = a;
+        for (const [a, o] of this._$Ep) this[a] = o;
         this._$Ep = void 0;
       }
       const s = this.constructor.elementProperties;
-      if (s.size > 0) for (const [o, a] of s) {
-        const { wrapped: n } = a, l = this[o];
-        n !== !0 || this._$AL.has(o) || l === void 0 || this.C(o, void 0, a, l);
+      if (s.size > 0) for (const [a, o] of s) {
+        const { wrapped: l } = o, r = this[a];
+        l !== !0 || this._$AL.has(a) || r === void 0 || this.C(a, void 0, o, r);
       }
     }
     let e = !1;
     const t = this._$AL;
     try {
       e = this.shouldUpdate(t), e ? (this.willUpdate(t), (i = this._$EO) == null || i.forEach((s) => {
-        var o;
-        return (o = s.hostUpdate) == null ? void 0 : o.call(s);
+        var a;
+        return (a = s.hostUpdate) == null ? void 0 : a.call(s);
       }), this.update(t)) : this._$EM();
     } catch (s) {
       throw e = !1, this._$EM(), s;
@@ -281,76 +281,76 @@ let C = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-C.elementStyles = [], C.shadowRootOptions = { mode: "open" }, C[T("elementProperties")] = /* @__PURE__ */ new Map(), C[T("finalized")] = /* @__PURE__ */ new Map(), W == null || W({ ReactiveElement: C }), (w.reactiveElementVersions ?? (w.reactiveElementVersions = [])).push("2.1.2");
+D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[L("elementProperties")] = /* @__PURE__ */ new Map(), D[L("finalized")] = /* @__PURE__ */ new Map(), H == null || H({ ReactiveElement: D }), (v.reactiveElementVersions ?? (v.reactiveElementVersions = [])).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const M = globalThis, he = (r) => r, H = M.trustedTypes, ue = H ? H.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, $e = "$lit$", k = `lit$${Math.random().toFixed(9).slice(2)}$`, Se = "?" + k, Fe = `<${Se}>`, P = document, N = () => P.createComment(""), U = (r) => r === null || typeof r != "object" && typeof r != "function", se = Array.isArray, He = (r) => se(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", Y = `[ 	
-\f\r]`, z = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, fe = /-->/g, _e = />/g, $ = RegExp(`>|${Y}(?:([^\\s"'>=/]+)(${Y}*=${Y}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), ge = /'/g, me = /"/g, Ee = /^(?:script|style|textarea|title)$/i, Ge = (r) => (e, ...t) => ({ _$litType$: r, strings: e, values: t }), c = Ge(1), O = Symbol.for("lit-noChange"), h = Symbol.for("lit-nothing"), be = /* @__PURE__ */ new WeakMap(), S = P.createTreeWalker(P, 129);
-function Pe(r, e) {
-  if (!se(r) || !r.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return ue !== void 0 ? ue.createHTML(e) : e;
+const R = globalThis, ae = (n) => n, V = R.trustedTypes, re = V ? V.createPolicy("lit-html", { createHTML: (n) => n }) : void 0, ve = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, ye = "?" + b, Be = `<${ye}>`, S = document, T = () => S.createComment(""), M = (n) => n === null || typeof n != "object" && typeof n != "function", ee = Array.isArray, Ie = (n) => ee(n) || typeof (n == null ? void 0 : n[Symbol.iterator]) == "function", G = `[ 	
+\f\r]`, A = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ne = /-->/g, le = />/g, x = RegExp(`>|${G}(?:([^\\s"'>=/]+)(${G}*=${G}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), de = /'/g, ce = /"/g, xe = /^(?:script|style|textarea|title)$/i, Ne = (n) => (e, ...t) => ({ _$litType$: n, strings: e, values: t }), d = Ne(1), O = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), pe = /* @__PURE__ */ new WeakMap(), w = S.createTreeWalker(S, 129);
+function ke(n, e) {
+  if (!ee(n) || !n.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return re !== void 0 ? re.createHTML(e) : e;
 }
-const qe = (r, e) => {
-  const t = r.length - 1, i = [];
-  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", a = z;
-  for (let n = 0; n < t; n++) {
-    const l = r[n];
-    let p, f, d = -1, _ = 0;
-    for (; _ < l.length && (a.lastIndex = _, f = a.exec(l), f !== null); ) _ = a.lastIndex, a === z ? f[1] === "!--" ? a = fe : f[1] !== void 0 ? a = _e : f[2] !== void 0 ? (Ee.test(f[2]) && (s = RegExp("</" + f[2], "g")), a = $) : f[3] !== void 0 && (a = $) : a === $ ? f[0] === ">" ? (a = s ?? z, d = -1) : f[1] === void 0 ? d = -2 : (d = a.lastIndex - f[2].length, p = f[1], a = f[3] === void 0 ? $ : f[3] === '"' ? me : ge) : a === me || a === ge ? a = $ : a === fe || a === _e ? a = z : (a = $, s = void 0);
-    const m = a === $ && r[n + 1].startsWith("/>") ? " " : "";
-    o += a === z ? l + Fe : d >= 0 ? (i.push(p), l.slice(0, d) + $e + l.slice(d) + k + m) : l + k + (d === -2 ? n : m);
+const Ue = (n, e) => {
+  const t = n.length - 1, i = [];
+  let s, a = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", o = A;
+  for (let l = 0; l < t; l++) {
+    const r = n[l];
+    let p, h, c = -1, f = 0;
+    for (; f < r.length && (o.lastIndex = f, h = o.exec(r), h !== null); ) f = o.lastIndex, o === A ? h[1] === "!--" ? o = ne : h[1] !== void 0 ? o = le : h[2] !== void 0 ? (xe.test(h[2]) && (s = RegExp("</" + h[2], "g")), o = x) : h[3] !== void 0 && (o = x) : o === x ? h[0] === ">" ? (o = s ?? A, c = -1) : h[1] === void 0 ? c = -2 : (c = o.lastIndex - h[2].length, p = h[1], o = h[3] === void 0 ? x : h[3] === '"' ? ce : de) : o === ce || o === de ? o = x : o === ne || o === le ? o = A : (o = x, s = void 0);
+    const _ = o === x && n[l + 1].startsWith("/>") ? " " : "";
+    a += o === A ? r + Be : c >= 0 ? (i.push(p), r.slice(0, c) + ve + r.slice(c) + b + _) : r + b + (c === -2 ? l : _);
   }
-  return [Pe(r, o + (r[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
+  return [ke(n, a + (n[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
-class I {
+class B {
   constructor({ strings: e, _$litType$: t }, i) {
     let s;
     this.parts = [];
-    let o = 0, a = 0;
-    const n = e.length - 1, l = this.parts, [p, f] = qe(e, t);
-    if (this.el = I.createElement(p, i), S.currentNode = this.el.content, t === 2 || t === 3) {
-      const d = this.el.content.firstChild;
-      d.replaceWith(...d.childNodes);
+    let a = 0, o = 0;
+    const l = e.length - 1, r = this.parts, [p, h] = Ue(e, t);
+    if (this.el = B.createElement(p, i), w.currentNode = this.el.content, t === 2 || t === 3) {
+      const c = this.el.content.firstChild;
+      c.replaceWith(...c.childNodes);
     }
-    for (; (s = S.nextNode()) !== null && l.length < n; ) {
+    for (; (s = w.nextNode()) !== null && r.length < l; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const d of s.getAttributeNames()) if (d.endsWith($e)) {
-          const _ = f[a++], m = s.getAttribute(d).split(k), u = /([.?@])?(.*)/.exec(_);
-          l.push({ type: 1, index: o, name: u[2], strings: m, ctor: u[1] === "." ? We : u[1] === "?" ? Ye : u[1] === "@" ? Ze : G }), s.removeAttribute(d);
-        } else d.startsWith(k) && (l.push({ type: 6, index: o }), s.removeAttribute(d));
-        if (Ee.test(s.tagName)) {
-          const d = s.textContent.split(k), _ = d.length - 1;
-          if (_ > 0) {
-            s.textContent = H ? H.emptyScript : "";
-            for (let m = 0; m < _; m++) s.append(d[m], N()), S.nextNode(), l.push({ type: 2, index: ++o });
-            s.append(d[_], N());
+        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith(ve)) {
+          const f = h[o++], _ = s.getAttribute(c).split(b), y = /([.?@])?(.*)/.exec(f);
+          r.push({ type: 1, index: a, name: y[2], strings: _, ctor: y[1] === "." ? je : y[1] === "?" ? Fe : y[1] === "@" ? He : j }), s.removeAttribute(c);
+        } else c.startsWith(b) && (r.push({ type: 6, index: a }), s.removeAttribute(c));
+        if (xe.test(s.tagName)) {
+          const c = s.textContent.split(b), f = c.length - 1;
+          if (f > 0) {
+            s.textContent = V ? V.emptyScript : "";
+            for (let _ = 0; _ < f; _++) s.append(c[_], T()), w.nextNode(), r.push({ type: 2, index: ++a });
+            s.append(c[f], T());
           }
         }
-      } else if (s.nodeType === 8) if (s.data === Se) l.push({ type: 2, index: o });
+      } else if (s.nodeType === 8) if (s.data === ye) r.push({ type: 2, index: a });
       else {
-        let d = -1;
-        for (; (d = s.data.indexOf(k, d + 1)) !== -1; ) l.push({ type: 7, index: o }), d += k.length - 1;
+        let c = -1;
+        for (; (c = s.data.indexOf(b, c + 1)) !== -1; ) r.push({ type: 7, index: a }), c += b.length - 1;
       }
-      o++;
+      a++;
     }
   }
   static createElement(e, t) {
-    const i = P.createElement("template");
+    const i = S.createElement("template");
     return i.innerHTML = e, i;
   }
 }
-function L(r, e, t = r, i) {
-  var a, n;
+function C(n, e, t = n, i) {
+  var o, l;
   if (e === O) return e;
-  let s = i !== void 0 ? (a = t._$Co) == null ? void 0 : a[i] : t._$Cl;
-  const o = U(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== o && ((n = s == null ? void 0 : s._$AO) == null || n.call(s, !1), o === void 0 ? s = void 0 : (s = new o(r), s._$AT(r, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = L(r, s._$AS(r, e.values), s, i)), e;
+  let s = i !== void 0 ? (o = t._$Co) == null ? void 0 : o[i] : t._$Cl;
+  const a = M(e) ? void 0 : e._$litDirective$;
+  return (s == null ? void 0 : s.constructor) !== a && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), a === void 0 ? s = void 0 : (s = new a(n), s._$AT(n, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = C(n, s._$AS(n, e.values), s, i)), e;
 }
-class Ke {
+class Ve {
   constructor(e, t) {
     this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
   }
@@ -361,30 +361,30 @@ class Ke {
     return this._$AM._$AU;
   }
   u(e) {
-    const { el: { content: t }, parts: i } = this._$AD, s = ((e == null ? void 0 : e.creationScope) ?? P).importNode(t, !0);
-    S.currentNode = s;
-    let o = S.nextNode(), a = 0, n = 0, l = i[0];
-    for (; l !== void 0; ) {
-      if (a === l.index) {
+    const { el: { content: t }, parts: i } = this._$AD, s = ((e == null ? void 0 : e.creationScope) ?? S).importNode(t, !0);
+    w.currentNode = s;
+    let a = w.nextNode(), o = 0, l = 0, r = i[0];
+    for (; r !== void 0; ) {
+      if (o === r.index) {
         let p;
-        l.type === 2 ? p = new V(o, o.nextSibling, this, e) : l.type === 1 ? p = new l.ctor(o, l.name, l.strings, this, e) : l.type === 6 && (p = new Je(o, this, e)), this._$AV.push(p), l = i[++n];
+        r.type === 2 ? p = new I(a, a.nextSibling, this, e) : r.type === 1 ? p = new r.ctor(a, r.name, r.strings, this, e) : r.type === 6 && (p = new Ge(a, this, e)), this._$AV.push(p), r = i[++l];
       }
-      a !== (l == null ? void 0 : l.index) && (o = S.nextNode(), a++);
+      o !== (r == null ? void 0 : r.index) && (a = w.nextNode(), o++);
     }
-    return S.currentNode = P, s;
+    return w.currentNode = S, s;
   }
   p(e) {
     let t = 0;
     for (const i of this._$AV) i !== void 0 && (i.strings !== void 0 ? (i._$AI(e, i, t), t += i.strings.length - 2) : i._$AI(e[t])), t++;
   }
 }
-class V {
+class I {
   get _$AU() {
     var e;
     return ((e = this._$AM) == null ? void 0 : e._$AU) ?? this._$Cv;
   }
   constructor(e, t, i, s) {
-    this.type = 2, this._$AH = h, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = i, this.options = s, this._$Cv = (s == null ? void 0 : s.isConnected) ?? !0;
+    this.type = 2, this._$AH = u, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = i, this.options = s, this._$Cv = (s == null ? void 0 : s.isConnected) ?? !0;
   }
   get parentNode() {
     let e = this._$AA.parentNode;
@@ -398,7 +398,7 @@ class V {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = L(this, e, t), U(e) ? e === h || e == null || e === "" ? (this._$AH !== h && this._$AR(), this._$AH = h) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : He(e) ? this.k(e) : this._(e);
+    e = C(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Ie(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -407,33 +407,33 @@ class V {
     this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
   }
   _(e) {
-    this._$AH !== h && U(this._$AH) ? this._$AA.nextSibling.data = e : this.T(P.createTextNode(e)), this._$AH = e;
+    this._$AH !== u && M(this._$AH) ? this._$AA.nextSibling.data = e : this.T(S.createTextNode(e)), this._$AH = e;
   }
   $(e) {
-    var o;
-    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = I.createElement(Pe(i.h, i.h[0]), this.options)), i);
-    if (((o = this._$AH) == null ? void 0 : o._$AD) === s) this._$AH.p(t);
+    var a;
+    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = B.createElement(ke(i.h, i.h[0]), this.options)), i);
+    if (((a = this._$AH) == null ? void 0 : a._$AD) === s) this._$AH.p(t);
     else {
-      const a = new Ke(s, this), n = a.u(this.options);
-      a.p(t), this.T(n), this._$AH = a;
+      const o = new Ve(s, this), l = o.u(this.options);
+      o.p(t), this.T(l), this._$AH = o;
     }
   }
   _$AC(e) {
-    let t = be.get(e.strings);
-    return t === void 0 && be.set(e.strings, t = new I(e)), t;
+    let t = pe.get(e.strings);
+    return t === void 0 && pe.set(e.strings, t = new B(e)), t;
   }
   k(e) {
-    se(this._$AH) || (this._$AH = [], this._$AR());
+    ee(this._$AH) || (this._$AH = [], this._$AR());
     const t = this._$AH;
     let i, s = 0;
-    for (const o of e) s === t.length ? t.push(i = new V(this.O(N()), this.O(N()), this, this.options)) : i = t[s], i._$AI(o), s++;
+    for (const a of e) s === t.length ? t.push(i = new I(this.O(T()), this.O(T()), this, this.options)) : i = t[s], i._$AI(a), s++;
     s < t.length && (this._$AR(i && i._$AB.nextSibling, s), t.length = s);
   }
   _$AR(e = this._$AA.nextSibling, t) {
     var i;
     for ((i = this._$AP) == null ? void 0 : i.call(this, !1, !0, t); e !== this._$AB; ) {
-      const s = he(e).nextSibling;
-      he(e).remove(), e = s;
+      const s = ae(e).nextSibling;
+      ae(e).remove(), e = s;
     }
   }
   setConnected(e) {
@@ -441,62 +441,62 @@ class V {
     this._$AM === void 0 && (this._$Cv = e, (t = this._$AP) == null || t.call(this, e));
   }
 }
-class G {
+class j {
   get tagName() {
     return this.element.tagName;
   }
   get _$AU() {
     return this._$AM._$AU;
   }
-  constructor(e, t, i, s, o) {
-    this.type = 1, this._$AH = h, this._$AN = void 0, this.element = e, this.name = t, this._$AM = s, this.options = o, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = h;
+  constructor(e, t, i, s, a) {
+    this.type = 1, this._$AH = u, this._$AN = void 0, this.element = e, this.name = t, this._$AM = s, this.options = a, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = u;
   }
   _$AI(e, t = this, i, s) {
-    const o = this.strings;
-    let a = !1;
-    if (o === void 0) e = L(this, e, t, 0), a = !U(e) || e !== this._$AH && e !== O, a && (this._$AH = e);
+    const a = this.strings;
+    let o = !1;
+    if (a === void 0) e = C(this, e, t, 0), o = !M(e) || e !== this._$AH && e !== O, o && (this._$AH = e);
     else {
-      const n = e;
-      let l, p;
-      for (e = o[0], l = 0; l < o.length - 1; l++) p = L(this, n[i + l], t, l), p === O && (p = this._$AH[l]), a || (a = !U(p) || p !== this._$AH[l]), p === h ? e = h : e !== h && (e += (p ?? "") + o[l + 1]), this._$AH[l] = p;
+      const l = e;
+      let r, p;
+      for (e = a[0], r = 0; r < a.length - 1; r++) p = C(this, l[i + r], t, r), p === O && (p = this._$AH[r]), o || (o = !M(p) || p !== this._$AH[r]), p === u ? e = u : e !== u && (e += (p ?? "") + a[r + 1]), this._$AH[r] = p;
     }
-    a && !s && this.j(e);
+    o && !s && this.j(e);
   }
   j(e) {
-    e === h ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
+    e === u ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
-class We extends G {
+class je extends j {
   constructor() {
     super(...arguments), this.type = 3;
   }
   j(e) {
-    this.element[this.name] = e === h ? void 0 : e;
+    this.element[this.name] = e === u ? void 0 : e;
   }
 }
-class Ye extends G {
+class Fe extends j {
   constructor() {
     super(...arguments), this.type = 4;
   }
   j(e) {
-    this.element.toggleAttribute(this.name, !!e && e !== h);
+    this.element.toggleAttribute(this.name, !!e && e !== u);
   }
 }
-class Ze extends G {
-  constructor(e, t, i, s, o) {
-    super(e, t, i, s, o), this.type = 5;
+class He extends j {
+  constructor(e, t, i, s, a) {
+    super(e, t, i, s, a), this.type = 5;
   }
   _$AI(e, t = this) {
-    if ((e = L(this, e, t, 0) ?? h) === O) return;
-    const i = this._$AH, s = e === h && i !== h || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== h && (i === h || s);
-    s && this.element.removeEventListener(this.name, this, i), o && this.element.addEventListener(this.name, this, e), this._$AH = e;
+    if ((e = C(this, e, t, 0) ?? u) === O) return;
+    const i = this._$AH, s = e === u && i !== u || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, a = e !== u && (i === u || s);
+    s && this.element.removeEventListener(this.name, this, i), a && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
   handleEvent(e) {
     var t;
     typeof this._$AH == "function" ? this._$AH.call(((t = this.options) == null ? void 0 : t.host) ?? this.element, e) : this._$AH.handleEvent(e);
   }
 }
-class Je {
+class Ge {
   constructor(e, t, i) {
     this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = i;
   }
@@ -504,27 +504,27 @@ class Je {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    L(this, e);
+    C(this, e);
   }
 }
-const Z = M.litHtmlPolyfillSupport;
-Z == null || Z(I, V), (M.litHtmlVersions ?? (M.litHtmlVersions = [])).push("3.3.3");
-const Qe = (r, e, t) => {
+const q = R.litHtmlPolyfillSupport;
+q == null || q(B, I), (R.litHtmlVersions ?? (R.litHtmlVersions = [])).push("3.3.3");
+const qe = (n, e, t) => {
   const i = (t == null ? void 0 : t.renderBefore) ?? e;
   let s = i._$litPart$;
   if (s === void 0) {
-    const o = (t == null ? void 0 : t.renderBefore) ?? null;
-    i._$litPart$ = s = new V(e.insertBefore(N(), o), o, void 0, t ?? {});
+    const a = (t == null ? void 0 : t.renderBefore) ?? null;
+    i._$litPart$ = s = new I(e.insertBefore(T(), a), a, void 0, t ?? {});
   }
-  return s._$AI(r), s;
+  return s._$AI(n), s;
 };
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const E = globalThis;
-class B extends C {
+const $ = globalThis;
+class z extends D {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -535,7 +535,7 @@ class B extends C {
   }
   update(e) {
     const t = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Qe(t, this.renderRoot, this.renderOptions);
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = qe(t, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     var e;
@@ -549,18 +549,18 @@ class B extends C {
     return O;
   }
 }
-var xe;
-B._$litElement$ = !0, B.finalized = !0, (xe = E.litElementHydrateSupport) == null || xe.call(E, { LitElement: B });
-const J = E.litElementPolyfillSupport;
-J == null || J({ LitElement: B });
-(E.litElementVersions ?? (E.litElementVersions = [])).push("4.2.2");
-function ye(r) {
-  const e = String(r || "").replace(/\D/g, "");
-  return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : r || "";
+var me;
+z._$litElement$ = !0, z.finalized = !0, (me = $.litElementHydrateSupport) == null || me.call($, { LitElement: z });
+const K = $.litElementPolyfillSupport;
+K == null || K({ LitElement: z });
+($.litElementVersions ?? ($.litElementVersions = [])).push("4.2.2");
+function he(n) {
+  const e = String(n || "").replace(/\D/g, "");
+  return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : n || "";
 }
-function Xe() {
-  const r = /* @__PURE__ */ new Date(), e = new Date(r);
-  e.setDate(r.getDate() + 30);
+function Ke() {
+  const n = /* @__PURE__ */ new Date(), e = new Date(n);
+  e.setDate(n.getDate() + 30);
   const t = (s) => s.toISOString().slice(0, 10);
   return {
     dealer: {
@@ -585,7 +585,7 @@ City, PR`,
     offer: {
       amount: 25e3,
       valid_until: t(e),
-      appraisal_date: t(r),
+      appraisal_date: t(n),
       classification: "Good Condition"
     },
     valuation: {
@@ -684,13 +684,13 @@ City, PR`,
     disclaimer: ", subject to Carfax History and Lien Report"
   };
 }
-const j = [
+const N = [
   { label: "Extra Small", delta: -1 },
   { label: "Small", delta: 0 },
   { label: "Medium", delta: 1 },
   { label: "Large", delta: 2 },
   { label: "Extra Large", delta: 3 }
-], D = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], et = {
+], k = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], W = {
   valuation: "Valuation",
   disclosures: "Disclosures",
   observations: "Observations",
@@ -699,7 +699,7 @@ const j = [
   selected_scenarios: "Selected Scenarios",
   recon: "Recon",
   photos: "Photos"
-}, A = [
+}, P = [
   { key: "vehicles", label: "Vehicles" },
   { key: "avgRetail", label: "Average Retail" },
   { key: "avgMileage", label: "Average Mileage" },
@@ -712,13 +712,13 @@ const j = [
   { key: "perception", label: "Perception" },
   { key: "retail", label: "Retail" },
   { key: "ACV", label: "Actual Cash Value" }
-], ve = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), Q = c`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-c`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-c`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const tt = c`<svg width="26" height="26" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5L8 8.5L13.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`, it = c`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
-class ee extends B {
+], ue = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), Y = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const fe = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, _e = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, We = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, Ye = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
+class J extends z {
   constructor() {
-    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...D], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !0, market_scenarios: !0, selected_scenarios: !0 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
+    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...k], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !0, market_scenarios: !0, selected_scenarios: !0 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._individualOpen = !1, this._individualSections = [], this._individualBusy = !1, this._individualError = "", this._sendPayloadOverride = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
       mode: !1,
       condition: !1,
       value_display: !1,
@@ -772,9 +772,9 @@ class ee extends B {
       "valuation.tax_savings": !0,
       "sections.observations_highlights": !0,
       "sections.observations_comments": !0,
-      ...Object.fromEntries(A.flatMap((e) => [
-        [`market_scenarios.${e.key}`, !ve.has(e.key)],
-        [`selected_scenarios.${e.key}`, !ve.has(e.key)]
+      ...Object.fromEntries(P.flatMap((e) => [
+        [`market_scenarios.${e.key}`, !ue.has(e.key)],
+        [`selected_scenarios.${e.key}`, !ue.has(e.key)]
       ]))
     };
   }
@@ -797,12 +797,12 @@ class ee extends B {
     if (!e) return;
     const t = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], i = ["valuation", "observations", "market_scenarios", "selected_scenarios"], s = e.sections || {};
     this._pills = { ...this._defaultPills(), ...e.pills || {} };
-    const o = { ...this._defaultGroups(), signature: this._groups.signature };
-    t.forEach((a) => {
-      s[a] != null && (o[a] = s[a] ? "checked" : "unchecked");
-    }), this._groups = o, i.forEach((a) => {
-      this._groups[a] === "checked" && this._recomputeGroupState(a);
-    }), e.section_order != null && (this._sectionOrder = e.section_order.filter((a) => D.includes(a))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full"), e.recon_view != null && (this._reconView = e.recon_view === "detail" ? "detail" : "summary"), e.highlights_view != null && (this._highlightsView = e.highlights_view === "detail" ? "detail" : "summary");
+    const a = { ...this._defaultGroups(), signature: this._groups.signature };
+    t.forEach((o) => {
+      s[o] != null && (a[o] = s[o] ? "checked" : "unchecked");
+    }), this._groups = a, i.forEach((o) => {
+      this._groups[o] === "checked" && this._recomputeGroupState(o);
+    }), e.section_order != null && (this._sectionOrder = e.section_order.filter((o) => k.includes(o))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full"), e.recon_view != null && (this._reconView = e.recon_view === "detail" ? "detail" : "summary"), e.highlights_view != null && (this._highlightsView = e.highlights_view === "detail" ? "detail" : "summary");
   }
   _applyPdfDisplay(e) {
     e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.scenario_layout != null && (this._scenarioLayout = e.scenario_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.signature != null && (this._groups = { ...this._groups, signature: e.signature ? "checked" : "unchecked" }), e.locks && (this._locks = { ...this._locks, ...e.locks }));
@@ -818,17 +818,17 @@ class ee extends B {
     }));
   }
   updated(e) {
-    var o, a, n, l, p, f;
+    var a, o, l, r, p, h;
     const t = this._pendingDataLoad;
     if (e.has("sharedDisplay") || e.has("pdfDisplay") ? this._pendingDataLoad = !0 : this._pendingDataLoad && (this._pendingDataLoad = !1), e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const d = (n = (a = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : a.tax_savings) == null ? void 0 : n.rate_pct;
-      this._taxRatePct = d != null ? parseFloat(parseFloat(d).toFixed(2)) : 0;
+      const c = (l = (o = (a = this.payload) == null ? void 0 : a.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : l.rate_pct;
+      this._taxRatePct = c != null ? parseFloat(parseFloat(c).toFixed(2)) : 0;
     }
-    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((l = this.employees) != null && l.length) && ((f = (p = this.payload) == null ? void 0 : p.employee) != null && f.name)) {
-      const d = this.employees.findIndex((_) => _.name === this.payload.employee.name);
-      d !== -1 && (this._selectedEmployeeIndex = d);
+    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((r = this.employees) != null && r.length) && ((h = (p = this.payload) == null ? void 0 : p.employee) != null && h.name)) {
+      const c = this.employees.findIndex((f) => f.name === this.payload.employee.name);
+      c !== -1 && (this._selectedEmployeeIndex = c);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -849,7 +849,7 @@ class ee extends B {
       "_groups",
       "_selectedEmployeeIndex",
       "_locks"
-    ].some((_) => e.has(_)) && (this._savedConfirm = !1), this._mode === "one_page" && !e.has("_mode") && !t && !this._isLocked("mode") && [
+    ].some((f) => e.has(f)) && (this._savedConfirm = !1), this._mode === "one_page" && !e.has("_mode") && !t && !this._isLocked("mode") && [
       "_valueDisplay",
       "_taxRatePct",
       "_profitName",
@@ -866,7 +866,7 @@ class ee extends B {
       "_pills",
       "_groups",
       "_selectedEmployeeIndex"
-    ].some((_) => e.has(_)) && (this._mode = "full", this._preOnePageState = null), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((d) => e.has(d)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    ].some((f) => e.has(f)) && (this._mode = "full", this._preOnePageState = null), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((c) => e.has(c)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
     }, 300)), this._autoPreviewDone && this.apiBaseUrl && !(t || e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
       "_mode",
@@ -886,12 +886,12 @@ class ee extends B {
       "_pills",
       "_groups",
       "_selectedEmployeeIndex"
-    ].some((m) => e.has(m)) && (this._previewStale = !0);
+    ].some((_) => e.has(_)) && (this._previewStale = !0);
     const s = this.shadowRoot;
     if (s)
-      for (const [d, _] of Object.entries(this._groups)) {
-        const m = s.querySelector(`input[data-group="${d}"]`);
-        m && (m.indeterminate = _ === "indeterminate", m.checked = _ === "checked" || _ === "indeterminate");
+      for (const [c, f] of Object.entries(this._groups)) {
+        const _ = s.querySelector(`input[data-group="${c}"]`);
+        _ && (_.indeterminate = f === "indeterminate", _.checked = f === "checked" || f === "indeterminate");
       }
   }
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -899,7 +899,7 @@ class ee extends B {
     return !e && e !== 0 ? "" : "$" + Number(e).toLocaleString();
   }
   _getPayloadData() {
-    return this.payload || Xe();
+    return this.payload || Ke();
   }
   _parseCurrency(e) {
     if (e == null) return null;
@@ -910,11 +910,11 @@ class ee extends B {
    * offer away from the calculated ACV for this scenario — ACV and Cost to
    * Market are derived from that original valuation, so they go stale too. */
   _isScenarioStale(e) {
-    var a, n, l;
+    var o, l, r;
     const t = e === "market_scenarios" ? "market" : e === "selected_scenarios" ? "selected" : null;
     if (!t) return !1;
-    const i = this._getPayloadData(), s = (a = i == null ? void 0 : i.offer) == null ? void 0 : a.amount, o = this._parseCurrency((l = (n = i == null ? void 0 : i.scenarios) == null ? void 0 : n[t]) == null ? void 0 : l.ACV);
-    return s == null || o == null ? !1 : Math.round(s) !== Math.round(o);
+    const i = this._getPayloadData(), s = (o = i == null ? void 0 : i.offer) == null ? void 0 : o.amount, a = this._parseCurrency((r = (l = i == null ? void 0 : i.scenarios) == null ? void 0 : l[t]) == null ? void 0 : r.ACV);
+    return s == null || a == null ? !1 : Math.round(s) !== Math.round(a);
   }
   /** ACV and Cost to Market are the only fields tied to that valuation. */
   _isPillLockedStale(e) {
@@ -922,8 +922,8 @@ class ee extends B {
     return i !== "ACV" && i !== "costMkt" ? !1 : this._isScenarioStale(t);
   }
   _vehicleInfoFromData(e) {
-    const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", a = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
-    return { amount: s, desc: a, vin: t.vin || "" };
+    const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", o = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
+    return { amount: s, desc: o, vin: t.vin || "" };
   }
   _getGroupState(e) {
     return this._groups[e] || "checked";
@@ -932,13 +932,13 @@ class ee extends B {
   _recomputeGroupState(e) {
     const t = { ...this._groups };
     if (e === "valuation") {
-      const i = ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"], s = i.filter((o) => this._pills[o]).length;
+      const i = ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"], s = i.filter((a) => this._pills[a]).length;
       s === 0 ? t.valuation = "unchecked" : s === i.length ? t.valuation = "checked" : t.valuation = "indeterminate";
     } else if (e === "observations") {
-      const i = ["sections.observations_highlights", "sections.observations_comments"], s = i.filter((o) => this._pills[o]).length;
+      const i = ["sections.observations_highlights", "sections.observations_comments"], s = i.filter((a) => this._pills[a]).length;
       s === 0 ? t.observations = "unchecked" : s === i.length ? t.observations = "checked" : t.observations = "indeterminate";
     } else if (e === "market_scenarios" || e === "selected_scenarios") {
-      const i = A.map((o) => `${e}.${o.key}`), s = i.filter((o) => this._pills[o]).length;
+      const i = P.map((a) => `${e}.${a.key}`), s = i.filter((a) => this._pills[a]).length;
       s === 0 ? t[e] = "unchecked" : s === i.length ? t[e] = "checked" : t[e] = "indeterminate";
     }
     this._groups = t;
@@ -949,9 +949,9 @@ class ee extends B {
     i !== -1 && (t.splice(i, 1), t.push(e)), this._sectionOrder = t;
   }
   _restoreLayoutOrder(e) {
-    var a, n;
-    const t = (n = (a = this.sharedDisplay) == null ? void 0 : a.section_order) != null && n.length ? this.sharedDisplay.section_order : D, i = [...this._sectionOrder].filter((l) => l !== e), s = t.indexOf(e), o = i.findIndex((l) => t.indexOf(l) > s);
-    o === -1 ? i.push(e) : i.splice(o, 0, e), this._sectionOrder = i;
+    var o, l;
+    const t = (l = (o = this.sharedDisplay) == null ? void 0 : o.section_order) != null && l.length ? this.sharedDisplay.section_order : k, i = [...this._sectionOrder].filter((r) => r !== e), s = t.indexOf(e), a = i.findIndex((r) => t.indexOf(r) > s);
+    a === -1 ? i.push(e) : i.splice(a, 0, e), this._sectionOrder = i;
   }
   _isOnePage() {
     return this._mode === "one_page";
@@ -1028,8 +1028,8 @@ class ee extends B {
         value_display: this._valueDisplay
       },
       scenarios: {
-        market: Object.fromEntries(A.map((s) => [s.key, this._isPillLockedStale(`market_scenarios.${s.key}`) ? !1 : e[`market_scenarios.${s.key}`]])),
-        selected: Object.fromEntries(A.map((s) => [s.key, this._isPillLockedStale(`selected_scenarios.${s.key}`) ? !1 : e[`selected_scenarios.${s.key}`]]))
+        market: Object.fromEntries(P.map((s) => [s.key, this._isPillLockedStale(`market_scenarios.${s.key}`) ? !1 : e[`market_scenarios.${s.key}`]])),
+        selected: Object.fromEntries(P.map((s) => [s.key, this._isPillLockedStale(`selected_scenarios.${s.key}`) ? !1 : e[`selected_scenarios.${s.key}`]]))
       },
       scenario_layout: this._scenarioLayout,
       // "summary" (default — aggregate count+total row) or "detail" (every
@@ -1049,17 +1049,17 @@ class ee extends B {
         sectionOrder: [...this._sectionOrder]
       };
       const i = { ...this._groups };
-      ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"].forEach((l) => {
-        i[l] = "unchecked";
-      }), ["valuation", "observations", "market"].forEach((l) => {
-        this._isLocked(l) || (i[l] = "checked");
+      ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"].forEach((r) => {
+        i[r] = "unchecked";
+      }), ["valuation", "observations", "market"].forEach((r) => {
+        this._isLocked(r) || (i[r] = "checked");
       }), this._groups = i;
       const s = { ...this._pills };
-      this._isLocked("valuation") || ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"].forEach((l) => {
-        s[l] = !0;
+      this._isLocked("valuation") || ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"].forEach((r) => {
+        s[r] = !0;
       }), this._isLocked("observations") || (s["sections.observations_comments"] = !0, s["sections.observations_highlights"] = !1), this._pills = s, this._marketDisplay = "summary";
-      const o = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], a = this._sectionOrder.filter((l) => !o.includes(l)), n = this._sectionOrder.filter((l) => o.includes(l));
-      this._sectionOrder = [...a, ...n];
+      const a = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], o = this._sectionOrder.filter((r) => !a.includes(r)), l = this._sectionOrder.filter((r) => a.includes(r));
+      this._sectionOrder = [...o, ...l];
     } else if (this._preOnePageState) {
       const i = this._preOnePageState;
       this._groups = { ...i.groups }, this._pills = { ...i.pills }, this._marketDisplay = i.marketDisplay, this._sectionOrder = i.sectionOrder, this._preOnePageState = null;
@@ -1069,17 +1069,17 @@ class ee extends B {
         this._isLocked(s) || (i[s] = "checked");
       }), ["market_scenarios", "selected_scenarios"].forEach((s) => {
         this._isLocked(s) || (i[s] = "unchecked");
-      }), this._groups = i, this._marketDisplay = "full", this._sectionOrder = [...D];
+      }), this._groups = i, this._marketDisplay = "full", this._sectionOrder = [...k];
     }
   }
   _handleGroupChange(e, t) {
     if (this._groups = { ...this._groups, [e]: t ? "checked" : "unchecked" }, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(e)) {
       const s = this._pillKeysForGroup(e);
-      if (s.filter((a) => this._pills[a]).length === 0) {
-        const a = { ...this._pills };
-        s.forEach((n) => {
-          a[n] = !0;
-        }), this._pills = a;
+      if (s.filter((o) => this._pills[o]).length === 0) {
+        const o = { ...this._pills };
+        s.forEach((l) => {
+          o[l] = !0;
+        }), this._pills = o;
       } else
         this._recomputeGroupState(e);
     }
@@ -1094,7 +1094,7 @@ class ee extends B {
   }
   _handleFontSizeStep(e) {
     const t = this._fontSizeIndex + e;
-    t >= 0 && t < j.length && (this._fontSizeIndex = t);
+    t >= 0 && t < N.length && (this._fontSizeIndex = t);
   }
   _handlePhotosPerRowStep(e) {
     const t = this._photosPerRow + e;
@@ -1155,7 +1155,7 @@ class ee extends B {
     var t, i, s;
     this._mode = "full", this._valueDisplay = "offer";
     const e = (s = (i = (t = this.payload) == null ? void 0 : t.valuation) == null ? void 0 : i.tax_savings) == null ? void 0 : s.rate_pct;
-    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...D], this._pills = this._defaultPills(), this._groups = this._defaultGroups();
+    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...k], this._pills = this._defaultPills(), this._groups = this._defaultGroups();
   }
   // ── Drag-and-drop ──────────────────────────────────────────────────────────
   _handleDragStart(e, t) {
@@ -1170,8 +1170,8 @@ class ee extends B {
   }
   _handleDragOver(e, t) {
     if (e.preventDefault(), e.dataTransfer.dropEffect = "move", t === this._dragSrcSection || !this._placeholder) return;
-    const i = e.currentTarget, s = i.getBoundingClientRect(), o = e.clientY > s.top + s.height / 2, a = i.parentNode;
-    o ? a.insertBefore(this._placeholder, i.nextSibling) : a.insertBefore(this._placeholder, i);
+    const i = e.currentTarget, s = i.getBoundingClientRect(), a = e.clientY > s.top + s.height / 2, o = i.parentNode;
+    a ? o.insertBefore(this._placeholder, i.nextSibling) : o.insertBefore(this._placeholder, i);
   }
   _commitDrop() {
     const e = this._dragSrcSection;
@@ -1195,10 +1195,10 @@ class ee extends B {
     e.preventDefault(), this._commitDrop();
   }
   _handleMoveSection(e, t) {
-    const i = [...this._sectionOrder], s = i.indexOf(e), o = s + t;
-    o < 0 || o >= i.length || ([i[s], i[o]] = [i[o], i[s]], this._sectionOrder = i, this.updateComplete.then(() => {
-      const a = this.shadowRoot.querySelector(`.sortable-item[data-section="${e}"]`);
-      a && (a.classList.remove("dropped"), a.offsetWidth, a.classList.add("dropped"), setTimeout(() => a.classList.remove("dropped"), 1e3));
+    const i = [...this._sectionOrder], s = i.indexOf(e), a = s + t;
+    a < 0 || a >= i.length || ([i[s], i[a]] = [i[a], i[s]], this._sectionOrder = i, this.updateComplete.then(() => {
+      const o = this.shadowRoot.querySelector(`.sortable-item[data-section="${e}"]`);
+      o && (o.classList.remove("dropped"), o.offsetWidth, o.classList.add("dropped"), setTimeout(() => o.classList.remove("dropped"), 1e3));
     }));
   }
   _handleDragEnd(e) {
@@ -1240,7 +1240,7 @@ class ee extends B {
     return !1;
   }
   _lk(e) {
-    return h;
+    return u;
   }
   // ── Save Settings ──────────────────────────────────────────────────────────
   _handleSaveSettings() {
@@ -1255,115 +1255,193 @@ class ee extends B {
     }));
   }
   // ── Generate ───────────────────────────────────────────────────────────────
+  /** The exact /printout-offer request body for a given display block —
+   * shared by the main preview and individual-section prints so both apply the
+   * same payload overrides (profit label, disclaimer, employee, tax rate…). */
+  _buildPrintoutRequest(e, t = !1) {
+    var l, r, p, h, c, f, _, y;
+    const i = {
+      mode: this._mode,
+      display: e,
+      preview_logo: !0,
+      preview_photos: !0,
+      font_roboto: !0,
+      font_size_delta: N[this._fontSizeIndex].delta,
+      photos_per_row: this._photosPerRow,
+      section_order: this._sectionOrder,
+      watermark: t
+    }, s = { ...this._getPayloadData() }, a = this._profitName != null ? this._profitName : this.profitLabel;
+    a != null && ((l = s.valuation) != null && l.target_profit) && (s.valuation = {
+      ...s.valuation,
+      target_profit: { ...s.valuation.target_profit, label: a || "Target Profit" }
+    });
+    const o = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
+    if (o !== null) {
+      const m = this._disclaimerPunct ?? ".", E = o ? o.replace(/\.+$/, "") : "";
+      s.disclaimer = E ? m + " " + E : "";
+    }
+    if ((p = (r = s.dealer) == null ? void 0 : r.logo_url) != null && p.startsWith("//") && (s.dealer = { ...s.dealer, logo_url: "https:" + s.dealer.logo_url }), (h = s.employee) != null && h.phone && (s.employee = { ...s.employee, phone: he(s.employee.phone) }), this.employees && this.employees.length > 0) {
+      const m = this.employees[this._selectedEmployeeIndex] || this.employees[0];
+      s.employee = { name: m.name || "", phone: he(m.phone || ""), email: m.email || "" };
+    }
+    if (s.disclosures && (s.disclosures = s.disclosures.filter((m) => m.answer && m.answer.trim() !== "")), (c = s.market) != null && c.comparables) {
+      const m = s.market.comparables.map((g) => ({
+        ...g,
+        days_on_market: g.listing_type === "delisted" && g.delisted_days || g.days_on_market
+      })), E = m.map((g) => g.days_on_market).filter((g) => g != null), we = E.length > 0 ? Math.round(E.reduce((g, $e) => g + $e, 0) / E.length) : (f = s.market.summary) == null ? void 0 : f.avg_days;
+      s.market = {
+        ...s.market,
+        comparables: m,
+        summary: { ...s.market.summary, avg_days: we }
+      };
+    }
+    if (this._taxRatePct !== null && ((_ = s.valuation) != null && _.tax_savings) && ((y = s.offer) == null ? void 0 : y.amount) != null) {
+      const m = Math.round(s.offer.amount * this._taxRatePct / 100);
+      s.valuation = {
+        ...s.valuation,
+        tax_savings: {
+          ...s.valuation.tax_savings,
+          rate_pct: this._taxRatePct,
+          amount: m,
+          gross_value: s.offer.amount + m
+        }
+      };
+    }
+    return { ...i, raw_payload: s };
+  }
+  /** POSTs a printout request and returns the rendered PDF as a Blob, handling
+   * both api modes. `vehicle`/`rawUrl` are only set in url mode. */
+  async _fetchPrintout(e) {
+    const t = { "Content-Type": "application/json", Accept: "application/pdf" };
+    this.authToken && (t.Authorization = `Bearer ${this.authToken}`);
+    const i = await fetch(`${this.apiBaseUrl}/printout-offer`, {
+      method: "POST",
+      headers: t,
+      body: JSON.stringify(e)
+    });
+    if (this.apiMode === "binary") {
+      if (!i.ok) {
+        let r = "Request failed";
+        try {
+          r = (await i.json()).error || r;
+        } catch {
+        }
+        throw new Error(r);
+      }
+      return { blob: await i.blob(), vehicle: null, rawUrl: null };
+    }
+    let s;
+    try {
+      s = await i.json();
+    } catch {
+      throw new Error("Server error — check terminal for traceback");
+    }
+    if (!i.ok) throw new Error(s.error || "Failed");
+    const a = this.apiBaseUrl + s.pdf_url + "?t=" + Date.now(), o = { "ngrok-skip-browser-warning": "true" };
+    return this.authToken && (o.Authorization = `Bearer ${this.authToken}`), { blob: await (await fetch(a, { headers: o })).blob(), vehicle: s.vehicle, rawUrl: a };
+  }
   async _handleGenerate(e = !1) {
-    var t, i, s, o, a, n, l, p, f, d;
+    var t, i;
     this._generating = !0, this._statusMsg = "Generating…", this._statusError = !1;
     try {
-      const _ = this._buildDisplay(), m = {
-        mode: this._mode,
-        display: _,
-        preview_logo: !0,
-        preview_photos: !0,
-        font_roboto: !0,
-        font_size_delta: j[this._fontSizeIndex].delta,
-        photos_per_row: this._photosPerRow,
-        section_order: this._sectionOrder,
-        watermark: e
-      }, u = { ...this._getPayloadData() }, oe = this._profitName != null ? this._profitName : this.profitLabel;
-      oe != null && ((t = u.valuation) != null && t.target_profit) && (u.valuation = {
-        ...u.valuation,
-        target_profit: { ...u.valuation.target_profit, label: oe || "Target Profit" }
-      });
-      const q = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
-      if (q !== null) {
-        const g = this._disclaimerPunct ?? ".", y = q ? q.replace(/\.+$/, "") : "";
-        u.disclaimer = y ? g + " " + y : "";
-      }
-      if ((s = (i = u.dealer) == null ? void 0 : i.logo_url) != null && s.startsWith("//") && (u.dealer = { ...u.dealer, logo_url: "https:" + u.dealer.logo_url }), (o = u.employee) != null && o.phone && (u.employee = { ...u.employee, phone: ye(u.employee.phone) }), this.employees && this.employees.length > 0) {
-        const g = this.employees[this._selectedEmployeeIndex] || this.employees[0];
-        u.employee = { name: g.name || "", phone: ye(g.phone || ""), email: g.email || "" };
-      }
-      if (u.disclosures && (u.disclosures = u.disclosures.filter((g) => g.answer && g.answer.trim() !== "")), (a = u.market) != null && a.comparables) {
-        const g = u.market.comparables.map((b) => ({
-          ...b,
-          days_on_market: b.listing_type === "delisted" && b.delisted_days || b.days_on_market
-        })), y = g.map((b) => b.days_on_market).filter((b) => b != null), v = y.length > 0 ? Math.round(y.reduce((b, x) => b + x, 0) / y.length) : (n = u.market.summary) == null ? void 0 : n.avg_days;
-        u.market = {
-          ...u.market,
-          comparables: g,
-          summary: { ...u.market.summary, avg_days: v }
-        };
-      }
-      if (this._taxRatePct !== null && ((l = u.valuation) != null && l.tax_savings) && ((p = u.offer) == null ? void 0 : p.amount) != null) {
-        const g = Math.round(u.offer.amount * this._taxRatePct / 100);
-        u.valuation = {
-          ...u.valuation,
-          tax_savings: {
-            ...u.valuation.tax_savings,
-            rate_pct: this._taxRatePct,
-            amount: g,
-            gross_value: u.offer.amount + g
-          }
-        };
-      }
-      const ae = { ...m, raw_payload: u };
-      this._lastPrintoutRequest = { ...ae };
-      const re = { "Content-Type": "application/json", Accept: "application/pdf" };
-      this.authToken && (re.Authorization = `Bearer ${this.authToken}`);
-      const R = await fetch(`${this.apiBaseUrl}/printout-offer`, {
-        method: "POST",
-        headers: re,
-        body: JSON.stringify(ae)
-      });
+      const s = this._buildPrintoutRequest(this._buildDisplay(), e), a = s.raw_payload;
+      this._lastPrintoutRequest = { ...s };
+      const { blob: o, vehicle: l, rawUrl: r } = await this._fetchPrintout(s), p = (((t = a.customer) == null ? void 0 : t.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim();
       if (this.apiMode === "binary") {
-        if (!R.ok) {
-          let v = "Request failed";
-          try {
-            v = (await R.json()).error || v;
-          } catch {
-          }
-          throw new Error(v);
-        }
-        const g = await R.blob(), y = await new Promise((v, b) => {
-          const x = new FileReader();
-          x.onload = () => v(x.result), x.onerror = b, x.readAsDataURL(g);
+        const h = await new Promise((c, f) => {
+          const _ = new FileReader();
+          _.onload = () => c(_.result), _.onerror = f, _.readAsDataURL(o);
         });
-        this._pdfUrl = y, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: y, blob: g },
+        this._pdfFilename = `${p}_${((i = a.vehicle) == null ? void 0 : i.vin) || "offer"}.pdf`, this._pdfUrl = h, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
+          detail: { pdfUrl: h, blob: o },
           bubbles: !0,
           composed: !0
         }));
       } else {
-        let g;
-        try {
-          g = await R.json();
-        } catch {
-          throw new Error("Server error — check terminal for traceback");
-        }
-        if (!R.ok) throw new Error(g.error || "Failed");
-        const y = this.apiBaseUrl + g.pdf_url + "?t=" + Date.now();
-        this._pdfVehicle = g.vehicle;
-        const v = { "ngrok-skip-browser-warning": "true" };
-        this.authToken && (v.Authorization = `Bearer ${this.authToken}`);
-        const x = await (await fetch(y, { headers: v })).blob(), De = (((f = u.customer) == null ? void 0 : f.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim(), Ae = ((d = g.vehicle) == null ? void 0 : d.vin) || "offer";
-        this._pdfFilename = `${De}_${Ae}.pdf`;
-        const Ce = new File([x], this._pdfFilename, { type: "application/pdf" });
+        this._pdfVehicle = l;
+        const h = (l == null ? void 0 : l.vin) || "offer";
+        this._pdfFilename = `${p}_${h}.pdf`;
+        const c = new File([o], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
-        const ne = URL.createObjectURL(Ce);
-        this._currentBlobUrl = ne, this._pdfUrl = ne, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: y },
+        const f = URL.createObjectURL(c);
+        this._currentBlobUrl = f, this._pdfUrl = f, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
+          detail: { pdfUrl: r },
           bubbles: !0,
           composed: !0
         }));
       }
-    } catch (_) {
-      this._statusMsg = _.message, this._statusError = !0, this.dispatchEvent(new CustomEvent("offer-error", {
-        detail: { error: _.message },
+    } catch (s) {
+      this._statusMsg = s.message, this._statusError = !0, this.dispatchEvent(new CustomEvent("offer-error", {
+        detail: { error: s.message },
         bubbles: !0,
         composed: !0
       }));
     }
     this._generating = !1;
+  }
+  /** Display block for printing only `sections` on their own: every other
+   * section off, simple header, no footer or signature. Each section's
+   * specifics (pills, market/recon/highlights views, scenario fields, layout)
+   * come straight from the main settings — whether or not that section is
+   * switched on in the main sheet. */
+  _buildIndividualDisplay(e) {
+    const t = (p) => e.includes(p), i = this._buildDisplay(), s = (p) => Object.values(p).every((h) => !h), a = (p) => Object.fromEntries(Object.keys(p).map((h) => [h, !0])), o = s(i.valuation) ? a(i.valuation) : i.valuation, l = Object.fromEntries(Object.entries(i.scenarios).map(([p, h]) => [
+      p,
+      s(h) ? a(h) : h
+    ])), r = !i.sections.observations_highlights && !i.sections.observations_comments;
+    return {
+      ...i,
+      valuation: o,
+      scenarios: l,
+      sections: {
+        ...i.sections,
+        valuation: t("valuation"),
+        disclosures: t("disclosures"),
+        disclosures_signature: !1,
+        observations: t("observations"),
+        observations_highlights: r || i.sections.observations_highlights,
+        observations_comments: r || i.sections.observations_comments,
+        market_summary: t("market") && this._marketDisplay === "summary",
+        market_comparables: t("market") && this._marketDisplay === "full",
+        market_scenarios: t("market_scenarios"),
+        selected_scenarios: t("selected_scenarios"),
+        recon_breakdown: t("recon"),
+        photos: t("photos")
+      },
+      header_footer: "simple"
+    };
+  }
+  _toggleIndividualSection(e, t) {
+    const i = new Set(this._individualSections);
+    t ? i.add(e) : i.delete(e), this._individualSections = k.filter((s) => i.has(s));
+  }
+  _individualFilename(e) {
+    var i, s;
+    return `${(((i = e.customer) == null ? void 0 : i.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim()}_${((s = e.vehicle) == null ? void 0 : s.vin) || "offer"}_sections.pdf`;
+  }
+  async _handleIndividualPrint() {
+    this._individualBusy = !0, this._individualError = "";
+    try {
+      const e = this._buildPrintoutRequest(this._buildIndividualDisplay(this._individualSections)), { blob: t } = await this._fetchPrintout(e), i = URL.createObjectURL(t), s = document.createElement("a");
+      s.href = i, s.download = this._individualFilename(e.raw_payload), s.click(), setTimeout(() => URL.revokeObjectURL(i), 1e4), this._individualOpen = !1;
+    } catch (e) {
+      this._individualError = e.message || "Could not generate the printout";
+    }
+    this._individualBusy = !1;
+  }
+  /** Hands the individual-sections request to the regular email-confirm modal, which
+   * picks the recipient and sends it through the same pdf-send event. */
+  _handleIndividualEmail() {
+    const e = this._buildPrintoutRequest(this._buildIndividualDisplay(this._individualSections)), t = this._sectionOrder.filter((i) => this._individualSections.includes(i)).map((i) => i === "market" && this._marketDisplay === "summary" ? "Market Summary" : W[i]);
+    this._sendPayloadOverride = {
+      ...e,
+      filename: this._individualFilename(e.raw_payload),
+      kind: "sections",
+      sections: t
+    }, this._individualOpen = !1, this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
+  }
+  _closeSendModal() {
+    this._confirmSendEmail = !1, this._sendPayloadOverride = null;
   }
   async _handleApply() {
     this._savedConfirm = !0, this.templateMode ? (await this._handleGenerate(!1), this._dispatchDisplaySave(), this.dispatchEvent(new CustomEvent("template-save", {
@@ -1382,8 +1460,8 @@ class ee extends B {
     try {
       const i = { "ngrok-skip-browser-warning": "true" };
       this.authToken && (i.Authorization = `Bearer ${this.authToken}`);
-      const o = await (await fetch(this._pdfUrl, { headers: i })).blob(), a = URL.createObjectURL(o), n = document.createElement("a");
-      n.href = a, n.download = e, n.click(), setTimeout(() => URL.revokeObjectURL(a), 1e4);
+      const a = await (await fetch(this._pdfUrl, { headers: i })).blob(), o = URL.createObjectURL(a), l = document.createElement("a");
+      l.href = o, l.download = e, l.click(), setTimeout(() => URL.revokeObjectURL(o), 1e4);
     } catch {
       window.open(this._pdfUrl, "_blank");
     }
@@ -1402,20 +1480,22 @@ class ee extends B {
     return this.employees && this.employees.length > 0 ? this.employees[this._selectedEmployeeIndex] || this.employees[0] || null : ((e = this.payload) == null ? void 0 : e.employee) || null;
   }
   _handleSend(e, t, i) {
-    this._splitOpen = !1, this._doneSentVia = e, this._pdfSent = !0;
-    const s = {
+    this._splitOpen = !1;
+    const s = this._sendPayloadOverride;
+    this._sendPayloadOverride = null, s || (this._doneSentVia = e, this._pdfSent = !0);
+    const a = s || {
       ...this._lastPrintoutRequest,
       filename: this._pdfFilename || null
     };
-    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] to_email:", t), console.log("[pdf-send] message_type:", i), console.log("[pdf-send] payload:", s), this.dispatchEvent(new CustomEvent("pdf-send", {
-      detail: { send_via: e, to_email: t, message_type: i, payload: s },
+    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] to_email:", t), console.log("[pdf-send] message_type:", i), console.log("[pdf-send] payload:", a), this.dispatchEvent(new CustomEvent("pdf-send", {
+      detail: { send_via: e, to_email: t, message_type: i, payload: a },
       bubbles: !0,
       composed: !0
     }));
   }
   // ── Render helpers ─────────────────────────────────────────────────────────
   _renderHeader() {
-    return c`
+    return d`
       <div class="component-header">
         <div class="wrap">
           <h1>LXN Offer Sheet Generator</h1>
@@ -1425,7 +1505,7 @@ class ee extends B {
   }
   _renderOfferCard() {
     if (this.templateMode)
-      return c`
+      return d`
         <div class="card">
           <h2>Template</h2>
           <div style="font-size:13px; color:#667085; line-height:1.6;">
@@ -1434,19 +1514,18 @@ class ee extends B {
         </div>
       `;
     const e = this._vehicleInfo;
-    return c`
+    return d`
       <div class="card">
         <div class="offer-header-row">
           <h2>Offer</h2>
-          ${this._renderSendInline()}
         </div>
-        ${e ? c`
+        ${e ? d`
           <div class="vehicle-info">
             <div class="amount">${e.amount}</div>
             <div class="desc">${e.desc}</div>
-            ${e.vin ? c`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : h}
+            ${e.vin ? d`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
           </div>
-        ` : c`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ` : d`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
       </div>
     `;
   }
@@ -1464,8 +1543,8 @@ class ee extends B {
   
     ── end removed ─────────────────────────────────────────────────────────────── */
   _renderCustomizeCard() {
-    const e = this._isOnePage(), t = j[this._fontSizeIndex].label, i = !!(this.templateSharedDisplay || this.templatePdfDisplay), s = i ? "template" : "default", o = i ? "template defaults" : "default configuration", a = D.map((n) => this._renderShowHideGroup(n));
-    return c`
+    const e = this._isOnePage(), t = N[this._fontSizeIndex].label, i = !!(this.templateSharedDisplay || this.templatePdfDisplay), s = i ? "template" : "default", a = i ? "template defaults" : "default configuration", o = k.map((l) => this._renderShowHideGroup(l));
+    return d`
       <div class="card">
         <div>
         <div class="customize-header-row">
@@ -1481,7 +1560,7 @@ class ee extends B {
                 class="seg-btn ${e ? "active" : ""}"
                 ?disabled="${this._isLocked("mode")}"
                 @click="${() => this._handleModeChange("one_page")}"
-                @mouseenter="${(n) => this._showTooltip(n, "Current display is restored when returning to 'Full'")}"
+                @mouseenter="${(l) => this._showTooltip(l, "Current display is restored when returning to 'Full'")}"
                 @mouseleave="${() => this._hideTooltip()}"
               >One-Page</button>
             </div>
@@ -1495,7 +1574,7 @@ class ee extends B {
       this._generalOpen = !this._generalOpen;
     }}">
             <span>General</span>
-            <div class="section-chevron">${Q}</div>
+            <div class="section-chevron">${Y}</div>
           </div>
           <div class="section-body">
             <div class="config-row">
@@ -1549,21 +1628,21 @@ class ee extends B {
                 ${this._lk("profit_label")}
               </div>
             </div>
-            ${!this.templateMode && this.employees && this.employees.length > 0 ? c`
+            ${!this.templateMode && this.employees && this.employees.length > 0 ? d`
               <div class="config-row">
                 <span>Employee</span>
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
-                  @change="${(n) => {
-      this._selectedEmployeeIndex = parseInt(n.target.value);
+                  @change="${(l) => {
+      this._selectedEmployeeIndex = parseInt(l.target.value);
     }}"
                 >
-                  ${this.employees.map((n, l) => c`
-                    <option value="${l}" ?selected="${l === this._selectedEmployeeIndex}">${n.name}</option>
+                  ${this.employees.map((l, r) => d`
+                    <option value="${r}" ?selected="${r === this._selectedEmployeeIndex}">${l.name}</option>
                   `)}
                 </select>
               </div>
-            ` : h}
+            ` : u}
             <div class="config-row">
               <span>Font size</span>
               <div class="ctrl-group ${this._isLocked("font_size") ? "locked" : ""}">
@@ -1571,7 +1650,7 @@ class ee extends B {
                   <button class="step-btn" ?disabled="${this._fontSizeIndex <= 0 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(-1)}">−</button>
                   <span class="stepper-value font-size-display">${t}</span>
-                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= j.length - 1 || this._isLocked("font_size")}"
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= N.length - 1 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(1)}">+</button>
                 </div>
                 ${this._lk("font_size")}
@@ -1670,8 +1749,8 @@ class ee extends B {
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
                   ?disabled="${this._isLocked("disclaimer")}"
-                  @change="${(n) => {
-      this._disclaimerPunct = n.target.value;
+                  @change="${(l) => {
+      this._disclaimerPunct = l.target.value;
     }}"
                 >
                   <option value="," ?selected="${this._disclaimerPunct === ","}">Comma (,)</option>
@@ -1698,7 +1777,7 @@ class ee extends B {
       this._showHideOpen = !this._showHideOpen;
     }}">
             <span>Show / Hide</span>
-            <div class="section-chevron">${Q}</div>
+            <div class="section-chevron">${Y}</div>
           </div>
           <div class="section-body">
             <!-- Header group (no checkbox) -->
@@ -1715,7 +1794,7 @@ class ee extends B {
               </div>
             </div>
             <!-- Section groups in layout order -->
-            ${a}
+            ${o}
             <!-- Signature (always at end of PDF, not draggable) -->
             <div class="toggle-group" data-group="signature">
               <div class="group-row ${this._isLocked("signature") ? "group-row-locked" : ""}">
@@ -1725,7 +1804,7 @@ class ee extends B {
                     data-group="signature"
                     .checked="${this._groups.signature === "checked"}"
                     ?disabled="${this._isLocked("signature")}"
-                    @change="${(n) => this._handleGroupChange("signature", n.target.checked)}"
+                    @change="${(l) => this._handleGroupChange("signature", l.target.checked)}"
                   >
                   Customer Signature
                 </label>
@@ -1745,31 +1824,31 @@ class ee extends B {
             <span>Layout</span>
             <div style="display:flex;align-items:center;gap:6px;">
               ${this._lk("section_order")}
-              <div class="section-chevron">${Q}</div>
+              <div class="section-chevron">${Y}</div>
             </div>
           </div>
           <div class="section-body">
             <div class="sortable-list ${this._isLocked("section_order") ? "disabled" : ""}"
-              @dragover="${(n) => n.preventDefault()}"
-              @drop="${(n) => this._handleListDrop(n)}"
+              @dragover="${(l) => l.preventDefault()}"
+              @drop="${(l) => this._handleListDrop(l)}"
             >
-              ${this._sectionOrder.map((n, l) => {
-      const p = this._isSectionDisabled(n) || this._isLocked("section_order");
-      return c`
+              ${this._sectionOrder.map((l, r) => {
+      const p = this._isSectionDisabled(l) || this._isLocked("section_order");
+      return d`
                   <div
                     class="sortable-item ${p ? "disabled" : ""}"
-                    data-section="${n}"
+                    data-section="${l}"
                     draggable="${p ? "false" : "true"}"
-                    @dragstart="${(f) => this._handleDragStart(f, n)}"
-                    @dragover="${(f) => this._handleDragOver(f, n)}"
-                    @drop="${(f) => this._handleDrop(f)}"
-                    @dragend="${(f) => this._handleDragEnd(f)}"
+                    @dragstart="${(h) => this._handleDragStart(h, l)}"
+                    @dragover="${(h) => this._handleDragOver(h, l)}"
+                    @drop="${(h) => this._handleDrop(h)}"
+                    @dragend="${(h) => this._handleDragEnd(h)}"
                   >
                     <span class="drag-handle">⠿</span>
-                    <span>${et[n]}</span>
+                    <span>${W[l]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${p || l === 0}" @click="${() => this._handleMoveSection(n, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${p || l === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(n, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${p || r === 0}" @click="${() => this._handleMoveSection(l, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${p || r === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(l, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -1782,19 +1861,19 @@ class ee extends B {
 
         <div class="divider"></div>
 
-        ${this._statusError && this._statusMsg ? c`
+        ${this._statusError && this._statusMsg ? d`
           <div class="action-msg error">${this._statusMsg}</div>
-        ` : h}
+        ` : u}
 
-        ${this.templateMode ? c`
+        ${this.templateMode ? d`
           <button
             class="btn btn-green"
             ?disabled="${this._generating || this._finalizing}"
             @click="${() => this._handleApply()}"
           >${this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template"}</button>
-        ` : h}
+        ` : u}
 
-        ${this.templateMode ? h : c`
+        ${this.templateMode ? u : d`
           <div class="action-btns">
             <div class="apply-btn-wrap">
               <button
@@ -1808,9 +1887,9 @@ class ee extends B {
                 @click="${() => this._handleDiscardChanges()}"
               >Discard Changes</button>
             </div>
-            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? c`
+            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? d`
               <div class="confirm-reset">
-                <span class="confirm-reset-msg">Reset all settings to the ${o}?</span>
+                <span class="confirm-reset-msg">Reset all settings to the ${a}?</span>
                 <div class="confirm-reset-btns">
                   <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
                   <button class="confirm-reset-no"  @click="${() => {
@@ -1818,11 +1897,11 @@ class ee extends B {
     }}">Cancel</button>
                 </div>
               </div>
-            ` : c`
+            ` : d`
               <button class="reset-btn" @click="${() => {
       this._confirmReset = !0;
     }}">Reset to ${s}</button>
-            ` : h}
+            ` : u}
           </div>
         `}
       </div>
@@ -1831,79 +1910,79 @@ class ee extends B {
   _renderShowHideGroup(e) {
     if (e === "market_scenarios") return this._renderScenarioGroup("market_scenarios", "Market Scenarios", "Market");
     if (e === "selected_scenarios") return this._renderScenarioGroup("selected_scenarios", "Selected Scenarios", "Selected");
-    const t = this._isLocked(e), i = this._groups[e], o = c`
+    const t = this._isLocked(e), i = this._groups[e], a = d`
       <div class="group-row ${t ? "group-row-locked" : ""}">
         <label class="group-header">
           <input type="checkbox" data-group="${e}"
             .checked="${i === "checked" || i === "indeterminate"}"
             ?disabled="${t}"
-            @change="${(a) => this._handleGroupChange(e, a.target.checked)}"
+            @change="${(o) => this._handleGroupChange(e, o.target.checked)}"
           >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Selected Comparables", recon: "Recon", photos: "Photos" }[e]}
         </label>
         ${this._lk(e)}
       </div>`;
     if (e === "valuation") {
-      const a = !!this._pillsOpen.valuation;
-      return c`
+      const o = !!this._pillsOpen.valuation;
+      return d`
         <div class="toggle-group" data-group="valuation">
-          ${o}
+          ${a}
           <div class="pill-group ${t ? "locked" : ""} ${i === "unchecked" ? "group-off" : ""}">
-            ${a ? c`
+            ${o ? d`
               ${this._renderPill("valuation.retail_value", "Retail Value", "valuation")}
               ${this._renderPill("valuation.recon", "Recon", "valuation")}
               ${this._renderPill("valuation.fixed_overhead", "Fixed Overhead", "valuation")}
               ${this._renderPill("valuation.target_profit", this._profitName || "Target Profit", "valuation")}
               ${this._renderPill("valuation.tax_savings", "Tax Savings", "valuation")}
-            ` : h}
+            ` : u}
             ${this._renderPillsToggle("valuation")}
           </div>
         </div>`;
     }
-    return e === "observations" ? c`
+    return e === "observations" ? d`
         <div class="toggle-group" data-group="observations">
-          ${o}
+          ${a}
           <div class="pill-group ${t ? "locked" : ""} ${i === "unchecked" ? "group-off" : ""}">
             ${this._renderPill("sections.observations_highlights", "Highlights", "observations")}
             ${this._renderPill("sections.observations_comments", "Comments", "observations")}
           </div>
-        </div>` : c`
+        </div>` : d`
       <div class="toggle-group" data-group="${e}">
-        ${o}
+        ${a}
       </div>`;
   }
   /** Pill keys for a toggle-able group — same lists as _recomputeGroupState. */
   _pillKeysForGroup(e) {
-    return e === "valuation" ? ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"] : e === "observations" ? ["sections.observations_highlights", "sections.observations_comments"] : e === "market_scenarios" || e === "selected_scenarios" ? A.map((t) => `${e}.${t.key}`) : [];
+    return e === "valuation" ? ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"] : e === "observations" ? ["sections.observations_highlights", "sections.observations_comments"] : e === "market_scenarios" || e === "selected_scenarios" ? P.map((t) => `${e}.${t.key}`) : [];
   }
   /** Independent toggle — not nested under Selected Comparables, not part of the
    * draggable section order (mirrors how Signature is handled). Each of the 12
    * KPI fields gets its own pill, same idiom as Valuation/Observations. */
   _renderPillsToggle(e) {
-    const t = !!this._pillsOpen[e], i = this._pillKeysForGroup(e), s = i.filter((a) => !this._isPillLockedStale(a) && this._pills[a]).length, o = i.length;
-    return c`
+    const t = !!this._pillsOpen[e], i = this._pillKeysForGroup(e), s = i.filter((o) => !this._isPillLockedStale(o) && this._pills[o]).length, a = i.length;
+    return d`
       <span
         class="pill-toggle"
         title="${t ? "Collapse fields" : "Expand fields"}"
         @click="${() => this._togglePillsOpen(e)}"
-      >${t ? "‹ Collapse" : `Expand (${s}/${o}) ›`}</span>
+      >${t ? "‹ Collapse" : `Expand (${s}/${a}) ›`}</span>
     `;
   }
   _renderScenarioGroup(e, t, i) {
-    const s = this._isLocked(e), o = this._groups[e], a = o === "checked" || o === "indeterminate", n = !!this._pillsOpen[e];
-    return c`
+    const s = this._isLocked(e), a = this._groups[e], o = a === "checked" || a === "indeterminate", l = !!this._pillsOpen[e];
+    return d`
       <div class="toggle-group" data-group="${e}">
         <div class="group-row ${s ? "group-row-locked" : ""}">
           <label class="group-header">
             <input type="checkbox" data-group="${e}"
-              .checked="${a}"
+              .checked="${o}"
               ?disabled="${s}"
-              @change="${(l) => this._handleGroupChange(e, l.target.checked)}"
+              @change="${(r) => this._handleGroupChange(e, r.target.checked)}"
             >${t}
           </label>
           ${this._lk(e)}
         </div>
-        <div class="pill-group ${s ? "locked" : ""} ${o === "unchecked" ? "group-off" : ""}">
-          ${n ? A.map((l) => this._renderPill(`${e}.${l.key}`, l.label.replace("{basis}", i), e)) : h}
+        <div class="pill-group ${s ? "locked" : ""} ${a === "unchecked" ? "group-off" : ""}">
+          ${l ? P.map((r) => this._renderPill(`${e}.${r.key}`, r.label.replace("{basis}", i), e)) : u}
           ${this._renderPillsToggle(e)}
         </div>
       </div>`;
@@ -1964,12 +2043,12 @@ class ee extends B {
     }), t.appendChild(s), e.appendChild(t), document.body.appendChild(e), this._tooltipEl = e, this._tooltipBubble = t, this._tooltipLabel = i, e;
   }
   _showTooltip(e, t) {
-    const i = this._ensureTooltip(), s = this._tooltipBubble, o = this._tooltipLabel, a = e.currentTarget.getBoundingClientRect();
-    s.style.width = "", o.textContent = t;
-    const n = document.createRange();
-    n.selectNodeContents(o);
-    const l = Array.from(n.getClientRects(), (p) => p.width);
-    s.style.width = `${Math.ceil(Math.max(...l))}px`, i.style.top = `${a.top - 10}px`, i.style.left = `${a.left + a.width / 2}px`, s.getAnimations().forEach((p) => p.cancel()), s.animate(
+    const i = this._ensureTooltip(), s = this._tooltipBubble, a = this._tooltipLabel, o = e.currentTarget, r = (o.classList.contains("email-icon-btn") && o.querySelector("svg") || o).getBoundingClientRect();
+    s.style.width = "", a.textContent = t;
+    const p = document.createRange();
+    p.selectNodeContents(a);
+    const h = Array.from(p.getClientRects(), (c) => c.width);
+    s.style.width = `${Math.ceil(Math.max(...h))}px`, i.style.top = `${r.top - 10}px`, i.style.left = `${r.left + r.width / 2}px`, s.getAnimations().forEach((c) => c.cancel()), s.animate(
       [
         { opacity: 0, transform: "translateY(6px)" },
         { opacity: 1, transform: "translateY(0)" }
@@ -1988,12 +2067,12 @@ class ee extends B {
     ));
   }
   _renderPill(e, t, i) {
-    const s = this._isPillLockedStale(e), o = !s && this._pills[e], a = "Not available: Offer has been adjusted manually";
-    return c`
+    const s = this._isPillLockedStale(e), a = !s && this._pills[e], o = "Not available: Offer has been adjusted manually";
+    return d`
       <span
-        class="pill ${o ? "active" : ""} ${s ? "stale" : ""}"
-        @mouseenter="${(n) => {
-      s && this._showTooltip(n, a);
+        class="pill ${a ? "active" : ""} ${s ? "stale" : ""}"
+        @mouseenter="${(l) => {
+      s && this._showTooltip(l, o);
     }}"
         @mouseleave="${() => {
       s && this._hideTooltip();
@@ -2001,35 +2080,32 @@ class ee extends B {
         @click="${() => {
       s || this._handlePillClick(e, i);
     }}"
-      >${s ? c`<span class="pill-stale-icon">${it}</span>` : h}${t}</span>
+      >${s ? d`<span class="pill-stale-icon">${Ye}</span>` : u}${t}</span>
     `;
   }
   _renderSendInline() {
-    var o;
-    const e = this._resolveEmployee(), t = !!((o = this.payload) != null && o.customer) || !!(e != null && e.email), i = !!this._pdfUrl && !this._generating;
-    return t ? c`
+    var a;
+    const e = this._resolveEmployee(), t = !!((a = this.payload) != null && a.customer) || !!(e != null && e.email), i = !!this._pdfUrl && !this._generating;
+    return t ? d`
       <button
         class="email-icon-btn"
         ?disabled="${!i}"
-        @mouseenter="${(a) => this._showTooltip(a, "Email offer printout")}"
+        @mouseenter="${(o) => this._showTooltip(o, "Email offer printout")}"
         @mouseleave="${() => this._hideTooltip()}"
         @click="${() => {
-      this._hideTooltip(), this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
+      this._hideTooltip(), this._sendPayloadOverride = null, this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
     }}"
-      >${tt}</button>
-      ${this._confirmSendEmail ? this._renderSendConfirmModal() : h}
-    ` : h;
+      >${fe}</button>
+    ` : u;
   }
   _renderSendConfirmModal() {
-    var p, f;
-    const e = this._resolveEmployee(), t = ((f = (p = this.payload) == null ? void 0 : p.customer) == null ? void 0 : f.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", o = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), a = o === "customer" && !t, n = o === "employee" ? i : t || this._manualCustomerEmail.trim(), l = !!n;
-    return c`
-      <div class="modal-overlay" @click="${() => {
-      this._confirmSendEmail = !1;
-    }}">
-        <div class="modal-box" @click="${(d) => d.stopPropagation()}">
+    var p, h;
+    const e = this._resolveEmployee(), t = ((h = (p = this.payload) == null ? void 0 : p.customer) == null ? void 0 : h.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", a = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), o = a === "customer" && !t, l = a === "employee" ? i : t || this._manualCustomerEmail.trim(), r = !!l;
+    return d`
+      <div class="modal-overlay" @click="${() => this._closeSendModal()}">
+        <div class="modal-box" @click="${(c) => c.stopPropagation()}">
           <p class="modal-msg">
-            Send this offer as an offer made by <strong>${s}</strong>?
+            ${this._sendPayloadOverride ? d`Send the selected sections?` : d`Send this offer as an offer made by <strong>${s}</strong>?`}
           </p>
 
           <div class="modal-recipient-group">
@@ -2037,49 +2113,92 @@ class ee extends B {
               <input
                 type="radio"
                 name="send-recipient"
-                .checked="${o === "customer"}"
+                .checked="${a === "customer"}"
                 @change="${() => {
       this._sendMessageType = "customer";
     }}"
               />
-              <span>Customer's inbox${t ? c` — ${t}` : h}</span>
+              <span>Customer's inbox${t ? d` — ${t}` : u}</span>
             </label>
-            ${i ? c`
+            ${i ? d`
               <label class="modal-recipient-option">
                 <input
                   type="radio"
                   name="send-recipient"
-                  .checked="${o === "employee"}"
+                  .checked="${a === "employee"}"
                   @change="${() => {
       this._sendMessageType = "employee";
     }}"
                 />
                 <span>Employee's inbox — ${i}</span>
               </label>
-            ` : h}
+            ` : u}
           </div>
 
-          ${a ? c`
+          ${o ? d`
             <input
               type="email"
               class="modal-email-input"
               placeholder="Customer email address"
               .value="${this._manualCustomerEmail}"
-              @input="${(d) => {
-      this._manualCustomerEmail = d.target.value;
+              @input="${(c) => {
+      this._manualCustomerEmail = c.target.value;
     }}"
             />
-          ` : h}
+          ` : u}
 
           <div class="modal-btns">
             <button class="modal-btn-confirm"
-              ?disabled="${!l}"
+              ?disabled="${!r}"
               @click="${() => {
-      this._confirmSendEmail = !1, this._handleSend("email", n, o);
+      this._confirmSendEmail = !1, this._handleSend("email", l, a);
     }}"
             >Yes, send</button>
-            <button class="modal-btn-cancel" @click="${() => {
-      this._confirmSendEmail = !1;
+            <button class="modal-btn-cancel" @click="${() => this._closeSendModal()}">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  _renderIndividualModal() {
+    var a;
+    const e = this._resolveEmployee(), t = !!((a = this.payload) != null && a.customer) || !!(e != null && e.email), i = this._individualSections.length === 0, s = this._individualBusy;
+    return d`
+      <div class="modal-overlay" @click="${() => {
+      s || (this._individualOpen = !1);
+    }}">
+        <div class="modal-box" @click="${(o) => o.stopPropagation()}">
+          <p class="modal-msg modal-title">Download or Email Individual Sections</p>
+
+          <div class="modal-recipient-group">
+            ${this._sectionOrder.map((o) => d`
+              <label class="modal-recipient-option">
+                <input
+                  type="checkbox"
+                  .checked="${this._individualSections.includes(o)}"
+                  ?disabled="${s}"
+                  @change="${(l) => this._toggleIndividualSection(o, l.target.checked)}"
+                />
+                <span>${W[o]}</span>
+              </label>
+            `)}
+          </div>
+
+          ${this._individualError ? d`<div class="action-msg error" style="margin:0 0 12px;">${this._individualError}</div>` : u}
+
+          <div class="modal-btns">
+            <button class="modal-btn-confirm modal-btn-icon"
+              ?disabled="${i || s}"
+              @click="${() => this._handleIndividualPrint()}"
+            >${s ? "Generating…" : d`${_e}Download`}</button>
+            ${t ? d`
+              <button class="modal-btn-confirm modal-btn-icon modal-btn-teal"
+                ?disabled="${i || s}"
+                @click="${() => this._handleIndividualEmail()}"
+              >${fe}Email</button>
+            ` : u}
+            <button class="modal-btn-cancel" ?disabled="${s}" @click="${() => {
+      this._individualOpen = !1;
     }}">Cancel</button>
           </div>
         </div>
@@ -2107,47 +2226,72 @@ class ee extends B {
   
     ── end removed ─────────────────────────────────────────────────────────────── */
   _renderPreviewPane() {
-    const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e && !this._statusError, o = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
-    return c`
+    const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e && !this._statusError, a = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
+    return d`
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
             <div
               class="preview-title-group"
-              @mouseenter="${(a) => this._showTooltip(a, this._previewStale ? "Unapplied changes" : "Up to date")}"
+              @mouseenter="${(o) => this._showTooltip(o, this._previewStale ? "Unapplied changes" : "Up to date")}"
               @mouseleave="${() => this._hideTooltip()}"
             >
-              <h2>${o ? "Preview" : "PDF"}</h2>
+              <h2>${a ? "Preview" : "PDF"}</h2>
               <span class="preview-status-dot ${this._previewStale ? "stale" : ""}"></span>
             </div>
-            ${!this.templateMode && e && !t && o ? c`
-              <em style="font-size:13px;color:#667085;">Download PDF via toolbar below</em>
-            ` : h}
+            ${this.templateMode ? u : d`
+              <div class="preview-icon-btns">
+                ${this._renderSendInline()}
+                ${e && !t && a ? d`
+                  <button
+                    class="email-icon-btn"
+                    type="button"
+                    @mouseenter="${(o) => this._showTooltip(o, "Download printout")}"
+                    @mouseleave="${() => this._hideTooltip()}"
+                    @click="${() => {
+      this._hideTooltip(), this._handleDownloadPdf();
+    }}"
+                  >${_e}</button>
+                ` : u}
+                <button
+                  class="email-icon-btn"
+                  type="button"
+                  ?disabled="${!this.apiBaseUrl}"
+                  @mouseenter="${(o) => this._showTooltip(o, "Download or Email Individual Sections")}"
+                  @mouseleave="${() => this._hideTooltip()}"
+                  @click="${() => {
+      this._hideTooltip(), this._individualError = "", this._individualOpen = !0;
+    }}"
+                >${We}</button>
+              </div>
+              ${this._confirmSendEmail ? this._renderSendConfirmModal() : u}
+              ${this._individualOpen ? this._renderIndividualModal() : u}
+            `}
           </div>
-          ${i ? c`
+          ${i ? d`
             <div class="preview-loading">
               <div class="pulse-dots">
                 <span></span><span></span><span></span>
               </div>
               Generating preview…
             </div>
-          ` : h}
-          ${!i && !e ? c`
+          ` : u}
+          ${!i && !e ? d`
             <div class="empty-preview">${this._statusError && this._statusMsg ? this._statusMsg : "Preview will appear once a payload is loaded"}</div>
-          ` : h}
-          ${e && !t && o ? c`
+          ` : u}
+          ${e && !t && a ? d`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
-          ` : h}
-          ${e && !t && !o ? c`
+          ` : u}
+          ${e && !t && !a ? d`
             <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
-              ${window.natively ? c`
+              ${window.natively ? d`
                 <button
                   class="btn btn-primary"
                   style="width:auto;padding:10px 24px;"
                   @click="${() => window.natively.openPDF({ base64: this._pdfUrl.split(",")[1], fileName: "offer.pdf", download: !0 }, () => {
     })}"
                 >Open PDF</button>
-              ` : c`
+              ` : d`
                 <a
                   href="${this._pdfUrl}"
                   target="_blank"
@@ -2157,14 +2301,14 @@ class ee extends B {
                 >Open PDF</a>
               `}
             </div>
-          ` : h}
+          ` : u}
         </div>
       </div>
     `;
   }
   // ── Main render ────────────────────────────────────────────────────────────
   render() {
-    return c`
+    return d`
       <div class="shell">
         ${this._renderHeader()}
         <main @click="${() => {
@@ -2182,7 +2326,7 @@ class ee extends B {
     `;
   }
 }
-K(ee, "properties", {
+F(J, "properties", {
   // Public attributes
   apiBaseUrl: { type: String, attribute: "api-base-url" },
   apiMode: { type: String, attribute: "api-mode" },
@@ -2254,8 +2398,13 @@ K(ee, "properties", {
   _confirmSendEmail: { type: Boolean, state: !0 },
   _sendMessageType: { type: String, state: !0 },
   _manualCustomerEmail: { type: String, state: !0 },
-  _previewStale: { type: Boolean, state: !0 }
-}), K(ee, "styles", ze`
+  _previewStale: { type: Boolean, state: !0 },
+  // Individual-sections modal — selection lives for the session only, never saved
+  _individualOpen: { type: Boolean, state: !0 },
+  _individualSections: { type: Array, state: !0 },
+  _individualBusy: { type: Boolean, state: !0 },
+  _individualError: { type: String, state: !0 }
+}), F(J, "styles", De`
     /* Kept deliberately simple — a host page can (and here, does) target
        "lexen-offer-sheet" by tag name from outside the shadow DOM, which can
        override :host rules. The actual split-scroll layout lives on .shell
@@ -2466,7 +2615,8 @@ K(ee, "properties", {
       display: flex; align-items: center; gap: 8px;
       font-size: 13px; color: #344054; cursor: pointer; user-select: none;
     }
-    .modal-recipient-option input[type="radio"] { cursor: pointer; }
+    .modal-recipient-option input[type="radio"],
+    .modal-recipient-option input[type="checkbox"] { cursor: pointer; }
     .modal-email-input {
       width: 100%; box-sizing: border-box; padding: 8px 10px; margin: 0 0 14px;
       font-size: 13px; font-family: inherit; color: #222222;
@@ -2481,12 +2631,19 @@ K(ee, "properties", {
     }
     .modal-btn-confirm:hover:not(:disabled) { background: #2a9880; }
     .modal-btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; }
+    .modal-title { font-weight: 700; }
+    /* Print/Email in the individual-sections modal carry their toolbar icons */
+    .modal-btn-icon { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .modal-btn-icon svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .modal-btn-teal { background: #0f8f8f; }
+    .modal-btn-teal:hover:not(:disabled) { background: #0a7777; }
     .modal-btn-cancel {
       flex: 1; padding: 9px; background: transparent; color: #344054;
       border: 1px solid #d0d5dd; border-radius: 6px; font-size: 13px; font-weight: 500;
       cursor: pointer; font-family: inherit; transition: background 0.15s;
     }
-    .modal-btn-cancel:hover { background: #f2f4f7; }
+    .modal-btn-cancel:hover:not(:disabled) { background: #f2f4f7; }
+    .modal-btn-cancel:disabled { opacity: 0.45; cursor: not-allowed; }
 
     /* Toggle groups */
     .toggle-group { margin-bottom: 4px; }
@@ -3124,9 +3281,11 @@ K(ee, "properties", {
 
     /* Matches the unselected/greyed segment look of .seg-btn (Full/One-Page
        etc.) — deliberately not the teal .seg-btn.active treatment. */
+    .preview-icon-btns { display: flex; align-items: center; }
     .email-icon-btn {
       display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-      padding: 0; background: transparent; border: none;
+      box-sizing: border-box; width: 40px; height: 40px; padding: 0;
+      background: transparent; border: none;
       color: #475467; cursor: pointer; user-select: none; line-height: 0;
       transition: color 0.15s;
     }
@@ -3209,7 +3368,7 @@ K(ee, "properties", {
       font-size: 12px; color: #98a2b3; text-align: center; padding: 4px 0;
     }
   `);
-customElements.define("lexen-offer-sheet", ee);
+customElements.define("lexen-offer-sheet", J);
 export {
-  ee as LexenOfferSheet
+  J as LexenOfferSheet
 };
