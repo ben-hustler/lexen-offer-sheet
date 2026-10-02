@@ -327,8 +327,12 @@ _TRAILING_AMOUNT_RE = re.compile(r"\s*\(\$[\d,]+(?:\.\d+)?\)\s*$")
 def _strip_trailing_amount(text):
     """"New tires ($60)" -> "New tires" — some upstream data embeds the
     amount in the description itself, which would otherwise show twice
-    once we append our own "— $amount" alongside it."""
-    return _TRAILING_AMOUNT_RE.sub("", text or "")
+    once we append our own "— $amount" alongside it. If stripping the
+    embedded amount leaves nothing behind (e.g. " ($886)"), or the
+    description was blank to begin with, fall back to a placeholder
+    rather than rendering an empty label before the dash."""
+    stripped = _TRAILING_AMOUNT_RE.sub("", text or "").strip()
+    return stripped or "Unspecified Highlight"
 
 
 def _fmt_scenario_km(value):
