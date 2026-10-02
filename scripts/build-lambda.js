@@ -2,9 +2,10 @@
 // the deployment repo mirrors how lxn-customizers `npm run build` and
 // lexen-offer-link's `bundle:lambdas` land their output there. No compile step;
 // Python Lambdas ship as plain source, so this is a straight file copy.
-import { existsSync, mkdirSync, copyFileSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { copyText } from './copy-text.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.join(__dirname, '..', 'lambda', 'printout-offer');
@@ -18,7 +19,7 @@ if (!existsSync(path.join(__dirname, '..', '..', '..', 'lxn-gh', 'lexen-bubble-w
 mkdirSync(destDir, { recursive: true });
 
 for (const file of ['index.py', 'render.py', 'requirements.txt']) {
-  copyFileSync(path.join(srcDir, file), path.join(destDir, file));
+  copyText(path.join(srcDir, file), path.join(destDir, file));
 }
 
 console.log('copied printout-offer lambda to lexen-bubble-web-comp');

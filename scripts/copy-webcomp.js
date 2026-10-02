@@ -1,9 +1,10 @@
 // Copies the built lexen-offer-sheet web component bundle into
 // lexen-bubble-web-comp, alongside the other webcomp bundles it hosts, the same
 // way build-lambda.js lands the printout-offer Lambda source there.
-import { existsSync, mkdirSync, copyFileSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { copyText } from './copy-text.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoDir = path.join(__dirname, '..', '..', '..', 'lxn-gh', 'lexen-bubble-web-comp');
@@ -16,6 +17,6 @@ if (!existsSync(repoDir)) {
 }
 
 mkdirSync(destDir, { recursive: true });
-copyFileSync(src, path.join(destDir, 'lexen-offer-sheet.js'));
+copyText(src, path.join(destDir, 'lexen-offer-sheet.js'));
 
 console.log('copied lexen-offer-sheet.js to lexen-bubble-web-comp');
