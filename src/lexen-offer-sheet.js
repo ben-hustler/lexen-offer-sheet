@@ -830,6 +830,14 @@ export class LexenOfferSheet extends LitElement {
     .settings-locked { position: relative; }
     .settings-locked::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.55); pointer-events: all; z-index: 1; }
     .settings-locked .section-header { position: relative; z-index: 2; cursor: pointer; }
+    .locked-notice {
+      position: relative; z-index: 2; /* above the .settings-locked dimming */
+      display: flex; align-items: flex-start; gap: 8px;
+      margin: 10px 0 4px; padding: 8px 10px;
+      background: #fff8e6; border: 1px solid #f5d48a; border-radius: 6px;
+      font-size: 12px; line-height: 1.4; color: #7a4b00;
+    }
+    .locked-notice svg { flex-shrink: 0; margin-top: 2px; }
     .segmented-control.disabled { opacity: 0.35; pointer-events: none; }
     .pill.disabled { opacity: 0.35; pointer-events: none; }
     .toggle-group.disabled { opacity: 0.35; pointer-events: none; }
@@ -1540,9 +1548,11 @@ export class LexenOfferSheet extends LitElement {
       }
     }
 
-    // Sync locked prop → _finalized state
+    // Sync locked prop → _finalized state. Locking (offer accepted/declined)
+    // also drops any unapplied edits, so the preview matches what was saved.
     if (changedProps.has('locked')) {
       this._finalized = !!this.locked;
+      if (this._sheetLocked() && this._previewStale) this._handleDiscardChanges();
     }
 
     // Auto-preview once on initial load: debounce off the last external prop arrival
@@ -1967,6 +1977,7 @@ export class LexenOfferSheet extends LitElement {
   }
 
   async _handleReset() {
+    if (this._sheetLocked()) return;
     this._confirmReset = false;
     this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
     // Reset goes back to the template's own baseline, not whatever's currently
@@ -2209,6 +2220,11 @@ export class LexenOfferSheet extends LitElement {
   //   return nothing;
   // }
   _effectiveLock(key) { return false; }
+  /** True when Bubble has locked this offer's sheet (`locked` — set once the
+   * offer is accepted or declined). Everything that changes the sheet is
+   * disabled; download, email and individual sections stay available.
+   * Never applies in templateMode, which has no offer to lock. */
+  _sheetLocked() { return !!this.locked && !this.templateMode; }
   _isLocked(key) { return false; }
   _lk(key) { return nothing; }
 
@@ -2220,6 +2236,7 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _dispatchDisplaySave() {
+    if (this._sheetLocked()) return;
     const employee = this.employees && this.employees.length > 0
       ? this.employees[this._selectedEmployeeIndex] || this.employees[0]
       : null;
@@ -2519,6 +2536,7 @@ export class LexenOfferSheet extends LitElement {
   }
 
   async _handleApply() {
+    if (this._sheetLocked()) return;
     this._savedConfirm = true;
     if (this.templateMode) {
       await this._handleGenerate(false);
@@ -2672,13 +2690,17 @@ export class LexenOfferSheet extends LitElement {
 
     // Show/hide groups always in default order
     const sectionGroups = DEFAULT_LAYOUT_ORDER.map(sec => this._renderShowHideGroup(sec));
+    // Offer accepted/declined: dim + block every setting (.settings-locked
+    // overlay), and `inert` the controls themselves so keyboard can't reach
+    // them either. Section headers stay clickable to read the settings.
+    const sheetLocked = this._sheetLocked();
 
     return html`
       <div class="card">
-        <div>
+        <div class="${sheetLocked ? 'settings-locked' : ''}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="ctrl-group ${this._isLocked('mode') ? 'locked' : ''}">
+          <div class="ctrl-group ${this._isLocked('mode') ? 'locked' : ''}" ?inert="${sheetLocked}">
             <div class="segmented-control" style="width:auto;">
               <button
                 class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
@@ -2697,13 +2719,20 @@ export class LexenOfferSheet extends LitElement {
           </div>
         </div>
 
+        ${sheetLocked ? html`
+          <div class="locked-notice">
+            ${lockClosedSvg}
+            <span>This offer has been accepted or declined, so its offer sheet can no longer be edited. You can still download or email it.</span>
+          </div>
+        ` : nothing}
+
         <!-- General -->
         <div class="collapsible-section ${this._generalOpen ? '' : 'collapsed'}">
           <div class="section-header" @click="${() => { this._generalOpen = !this._generalOpen; }}">
             <span>General</span>
             <div class="section-chevron">${chevronSvg}</div>
           </div>
-          <div class="section-body">
+          <div class="section-body" ?inert="${sheetLocked}">
             <div class="config-row">
               <span>$ Amount (header)</span>
               <div class="ctrl-group ${this._isLocked('value_display') ? 'locked' : ''}">
@@ -2900,7 +2929,7 @@ export class LexenOfferSheet extends LitElement {
             <span>Show / Hide</span>
             <div class="section-chevron">${chevronSvg}</div>
           </div>
-          <div class="section-body">
+          <div class="section-body" ?inert="${sheetLocked}">
             <!-- Header group (no checkbox) -->
             <div class="toggle-group">
               <div class="group-row">
@@ -2946,7 +2975,7 @@ export class LexenOfferSheet extends LitElement {
               <div class="section-chevron">${chevronSvg}</div>
             </div>
           </div>
-          <div class="section-body">
+          <div class="section-body" ?inert="${sheetLocked}">
             <div class="sortable-list ${this._isLocked('section_order') ? 'disabled' : ''}"
               @dragover="${(e) => e.preventDefault()}"
               @drop="${(e) => this._handleListDrop(e)}"
@@ -2992,7 +3021,7 @@ export class LexenOfferSheet extends LitElement {
           >${this._generating ? 'Saving…' : this._savedConfirm ? 'Saved ✓' : 'Save Template'}</button>
         ` : nothing}
 
-        ${!this.templateMode ? html`
+        ${!this.templateMode && !sheetLocked ? html`
           <div class="action-btns">
             <div class="apply-btn-wrap">
               <button

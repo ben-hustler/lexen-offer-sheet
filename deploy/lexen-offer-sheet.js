@@ -289,7 +289,7 @@ D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[L("elementProper
  */
 const R = globalThis, ae = (n) => n, V = R.trustedTypes, re = V ? V.createPolicy("lit-html", { createHTML: (n) => n }) : void 0, ve = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, ye = "?" + b, Be = `<${ye}>`, S = document, T = () => S.createComment(""), M = (n) => n === null || typeof n != "object" && typeof n != "function", ee = Array.isArray, Ie = (n) => ee(n) || typeof (n == null ? void 0 : n[Symbol.iterator]) == "function", G = `[ 	
 \f\r]`, A = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ne = /-->/g, le = />/g, x = RegExp(`>|${G}(?:([^\\s"'>=/]+)(${G}*=${G}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), de = /'/g, ce = /"/g, xe = /^(?:script|style|textarea|title)$/i, Ne = (n) => (e, ...t) => ({ _$litType$: n, strings: e, values: t }), d = Ne(1), O = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), pe = /* @__PURE__ */ new WeakMap(), w = S.createTreeWalker(S, 129);
+\f\r"'\`<>=]|("|')|))|$)`, "g"), de = /'/g, ce = /"/g, xe = /^(?:script|style|textarea|title)$/i, Ne = (n) => (e, ...t) => ({ _$litType$: n, strings: e, values: t }), c = Ne(1), O = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), pe = /* @__PURE__ */ new WeakMap(), w = S.createTreeWalker(S, 129);
 function ke(n, e) {
   if (!ee(n) || !n.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return re !== void 0 ? re.createHTML(e) : e;
@@ -299,10 +299,10 @@ const Ue = (n, e) => {
   let s, a = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", o = A;
   for (let l = 0; l < t; l++) {
     const r = n[l];
-    let p, h, c = -1, f = 0;
-    for (; f < r.length && (o.lastIndex = f, h = o.exec(r), h !== null); ) f = o.lastIndex, o === A ? h[1] === "!--" ? o = ne : h[1] !== void 0 ? o = le : h[2] !== void 0 ? (xe.test(h[2]) && (s = RegExp("</" + h[2], "g")), o = x) : h[3] !== void 0 && (o = x) : o === x ? h[0] === ">" ? (o = s ?? A, c = -1) : h[1] === void 0 ? c = -2 : (c = o.lastIndex - h[2].length, p = h[1], o = h[3] === void 0 ? x : h[3] === '"' ? ce : de) : o === ce || o === de ? o = x : o === ne || o === le ? o = A : (o = x, s = void 0);
+    let p, h, d = -1, f = 0;
+    for (; f < r.length && (o.lastIndex = f, h = o.exec(r), h !== null); ) f = o.lastIndex, o === A ? h[1] === "!--" ? o = ne : h[1] !== void 0 ? o = le : h[2] !== void 0 ? (xe.test(h[2]) && (s = RegExp("</" + h[2], "g")), o = x) : h[3] !== void 0 && (o = x) : o === x ? h[0] === ">" ? (o = s ?? A, d = -1) : h[1] === void 0 ? d = -2 : (d = o.lastIndex - h[2].length, p = h[1], o = h[3] === void 0 ? x : h[3] === '"' ? ce : de) : o === ce || o === de ? o = x : o === ne || o === le ? o = A : (o = x, s = void 0);
     const _ = o === x && n[l + 1].startsWith("/>") ? " " : "";
-    a += o === A ? r + Be : c >= 0 ? (i.push(p), r.slice(0, c) + ve + r.slice(c) + b + _) : r + b + (c === -2 ? l : _);
+    a += o === A ? r + Be : d >= 0 ? (i.push(p), r.slice(0, d) + ve + r.slice(d) + b + _) : r + b + (d === -2 ? l : _);
   }
   return [ke(n, a + (n[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
@@ -313,27 +313,27 @@ class B {
     let a = 0, o = 0;
     const l = e.length - 1, r = this.parts, [p, h] = Ue(e, t);
     if (this.el = B.createElement(p, i), w.currentNode = this.el.content, t === 2 || t === 3) {
-      const c = this.el.content.firstChild;
-      c.replaceWith(...c.childNodes);
+      const d = this.el.content.firstChild;
+      d.replaceWith(...d.childNodes);
     }
     for (; (s = w.nextNode()) !== null && r.length < l; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith(ve)) {
-          const f = h[o++], _ = s.getAttribute(c).split(b), y = /([.?@])?(.*)/.exec(f);
-          r.push({ type: 1, index: a, name: y[2], strings: _, ctor: y[1] === "." ? je : y[1] === "?" ? Fe : y[1] === "@" ? He : j }), s.removeAttribute(c);
-        } else c.startsWith(b) && (r.push({ type: 6, index: a }), s.removeAttribute(c));
+        if (s.hasAttributes()) for (const d of s.getAttributeNames()) if (d.endsWith(ve)) {
+          const f = h[o++], _ = s.getAttribute(d).split(b), y = /([.?@])?(.*)/.exec(f);
+          r.push({ type: 1, index: a, name: y[2], strings: _, ctor: y[1] === "." ? je : y[1] === "?" ? Fe : y[1] === "@" ? He : j }), s.removeAttribute(d);
+        } else d.startsWith(b) && (r.push({ type: 6, index: a }), s.removeAttribute(d));
         if (xe.test(s.tagName)) {
-          const c = s.textContent.split(b), f = c.length - 1;
+          const d = s.textContent.split(b), f = d.length - 1;
           if (f > 0) {
             s.textContent = V ? V.emptyScript : "";
-            for (let _ = 0; _ < f; _++) s.append(c[_], T()), w.nextNode(), r.push({ type: 2, index: ++a });
-            s.append(c[f], T());
+            for (let _ = 0; _ < f; _++) s.append(d[_], T()), w.nextNode(), r.push({ type: 2, index: ++a });
+            s.append(d[f], T());
           }
         }
       } else if (s.nodeType === 8) if (s.data === ye) r.push({ type: 2, index: a });
       else {
-        let c = -1;
-        for (; (c = s.data.indexOf(b, c + 1)) !== -1; ) r.push({ type: 7, index: a }), c += b.length - 1;
+        let d = -1;
+        for (; (d = s.data.indexOf(b, d + 1)) !== -1; ) r.push({ type: 7, index: a }), d += b.length - 1;
       }
       a++;
     }
@@ -712,10 +712,9 @@ const N = [
   { key: "perception", label: "Perception" },
   { key: "retail", label: "Retail" },
   { key: "ACV", label: "Actual Cash Value" }
-], ue = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), Y = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const fe = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, _e = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, We = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, Ye = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
+], ue = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), Y = c`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, We = c`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+c`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const fe = c`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, _e = c`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, Ye = c`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, Ze = c`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 class J extends z {
   constructor() {
     super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...k], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !0, market_scenarios: !0, selected_scenarios: !0 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._individualOpen = !1, this._individualSections = [], this._individualBusy = !1, this._individualError = "", this._sendPayloadOverride = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._confirmReset = !1, this._locks = {
@@ -823,12 +822,12 @@ class J extends z {
     if (e.has("sharedDisplay") || e.has("pdfDisplay") ? this._pendingDataLoad = !0 : this._pendingDataLoad && (this._pendingDataLoad = !1), e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const c = (l = (o = (a = this.payload) == null ? void 0 : a.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : l.rate_pct;
-      this._taxRatePct = c != null ? parseFloat(parseFloat(c).toFixed(2)) : 0;
+      const d = (l = (o = (a = this.payload) == null ? void 0 : a.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : l.rate_pct;
+      this._taxRatePct = d != null ? parseFloat(parseFloat(d).toFixed(2)) : 0;
     }
     if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((r = this.employees) != null && r.length) && ((h = (p = this.payload) == null ? void 0 : p.employee) != null && h.name)) {
-      const c = this.employees.findIndex((f) => f.name === this.payload.employee.name);
-      c !== -1 && (this._selectedEmployeeIndex = c);
+      const d = this.employees.findIndex((f) => f.name === this.payload.employee.name);
+      d !== -1 && (this._selectedEmployeeIndex = d);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -866,7 +865,7 @@ class J extends z {
       "_pills",
       "_groups",
       "_selectedEmployeeIndex"
-    ].some((f) => e.has(f)) && (this._mode = "full", this._preOnePageState = null), e.has("locked") && (this._finalized = !!this.locked), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((c) => e.has(c)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    ].some((f) => e.has(f)) && (this._mode = "full", this._preOnePageState = null), e.has("locked") && (this._finalized = !!this.locked, this._sheetLocked() && this._previewStale && this._handleDiscardChanges()), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((d) => e.has(d)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
     }, 300)), this._autoPreviewDone && this.apiBaseUrl && !(t || e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
       "_mode",
@@ -889,8 +888,8 @@ class J extends z {
     ].some((_) => e.has(_)) && (this._previewStale = !0);
     const s = this.shadowRoot;
     if (s)
-      for (const [c, f] of Object.entries(this._groups)) {
-        const _ = s.querySelector(`input[data-group="${c}"]`);
+      for (const [d, f] of Object.entries(this._groups)) {
+        const _ = s.querySelector(`input[data-group="${d}"]`);
         _ && (_.indeterminate = f === "indeterminate", _.checked = f === "checked" || f === "indeterminate");
       }
   }
@@ -1114,11 +1113,11 @@ class J extends z {
     this._disclaimerText = e.target.value;
   }
   async _handleReset() {
-    this._confirmReset = !1, this._pendingDataLoad = !0, this.templateSharedDisplay || this.templatePdfDisplay ? (this.templateSharedDisplay && this._applySharedDisplay(this.templateSharedDisplay), this.templatePdfDisplay && this._applyPdfDisplay(this.templatePdfDisplay)) : this._resetToggles(), this._previewStale = !0, this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this.dispatchEvent(new CustomEvent("display-save", {
+    this._sheetLocked() || (this._confirmReset = !1, this._pendingDataLoad = !0, this.templateSharedDisplay || this.templatePdfDisplay ? (this.templateSharedDisplay && this._applySharedDisplay(this.templateSharedDisplay), this.templatePdfDisplay && this._applyPdfDisplay(this.templatePdfDisplay)) : this._resetToggles(), this._previewStale = !0, this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this.dispatchEvent(new CustomEvent("display-save", {
       detail: { shared: null, pdf: null, employee: null, payload: null },
       bubbles: !0,
       composed: !0
-    }));
+    })));
   }
   /** Captures the current customize-panel state as the "last applied" baseline,
    * called whenever a generate succeeds (initial auto-preview, Apply, Reopen). */
@@ -1236,6 +1235,13 @@ class J extends z {
   _effectiveLock(e) {
     return !1;
   }
+  /** True when Bubble has locked this offer's sheet (`locked` — set once the
+   * offer is accepted or declined). Everything that changes the sheet is
+   * disabled; download, email and individual sections stay available.
+   * Never applies in templateMode, which has no offer to lock. */
+  _sheetLocked() {
+    return !!this.locked && !this.templateMode;
+  }
   _isLocked(e) {
     return !1;
   }
@@ -1247,6 +1253,7 @@ class J extends z {
     this._dispatchDisplaySave(), this._savedConfirm = !0;
   }
   _dispatchDisplaySave() {
+    if (this._sheetLocked()) return;
     const e = this.employees && this.employees.length > 0 ? this.employees[this._selectedEmployeeIndex] || this.employees[0] : null;
     this.dispatchEvent(new CustomEvent("display-save", {
       detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee: e, payload: this._lastPrintoutRequest },
@@ -1259,7 +1266,7 @@ class J extends z {
    * shared by the main preview and individual-section prints so both apply the
    * same payload overrides (profit label, disclaimer, employee, tax rate…). */
   _buildPrintoutRequest(e, t = !1) {
-    var l, r, p, h, c, f, _, y;
+    var l, r, p, h, d, f, _, y;
     const i = {
       mode: this._mode,
       display: e,
@@ -1284,7 +1291,7 @@ class J extends z {
       const m = this.employees[this._selectedEmployeeIndex] || this.employees[0];
       s.employee = { name: m.name || "", phone: he(m.phone || ""), email: m.email || "" };
     }
-    if (s.disclosures && (s.disclosures = s.disclosures.filter((m) => m.answer && m.answer.trim() !== "")), (c = s.market) != null && c.comparables) {
+    if (s.disclosures && (s.disclosures = s.disclosures.filter((m) => m.answer && m.answer.trim() !== "")), (d = s.market) != null && d.comparables) {
       const m = s.market.comparables.map((g) => ({
         ...g,
         days_on_market: g.listing_type === "delisted" && g.delisted_days || g.days_on_market
@@ -1348,9 +1355,9 @@ class J extends z {
       this._lastPrintoutRequest = { ...s };
       const { blob: o, vehicle: l, rawUrl: r } = await this._fetchPrintout(s), p = (((t = a.customer) == null ? void 0 : t.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim();
       if (this.apiMode === "binary") {
-        const h = await new Promise((c, f) => {
+        const h = await new Promise((d, f) => {
           const _ = new FileReader();
-          _.onload = () => c(_.result), _.onerror = f, _.readAsDataURL(o);
+          _.onload = () => d(_.result), _.onerror = f, _.readAsDataURL(o);
         });
         this._pdfFilename = `${p}_${((i = a.vehicle) == null ? void 0 : i.vin) || "offer"}.pdf`, this._pdfUrl = h, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
           detail: { pdfUrl: h, blob: o },
@@ -1361,9 +1368,9 @@ class J extends z {
         this._pdfVehicle = l;
         const h = (l == null ? void 0 : l.vin) || "offer";
         this._pdfFilename = `${p}_${h}.pdf`;
-        const c = new File([o], this._pdfFilename, { type: "application/pdf" });
+        const d = new File([o], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
-        const f = URL.createObjectURL(c);
+        const f = URL.createObjectURL(d);
         this._currentBlobUrl = f, this._pdfUrl = f, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
           detail: { pdfUrl: r },
           bubbles: !0,
@@ -1444,11 +1451,11 @@ class J extends z {
     this._confirmSendEmail = !1, this._sendPayloadOverride = null;
   }
   async _handleApply() {
-    this._savedConfirm = !0, this.templateMode ? (await this._handleGenerate(!1), this._dispatchDisplaySave(), this.dispatchEvent(new CustomEvent("template-save", {
+    this._sheetLocked() || (this._savedConfirm = !0, this.templateMode ? (await this._handleGenerate(!1), this._dispatchDisplaySave(), this.dispatchEvent(new CustomEvent("template-save", {
       detail: { shared: this._buildSharedState(), pdf: this._buildPdfState() },
       bubbles: !0,
       composed: !0
-    }))) : (this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this._dispatchDisplaySave());
+    }))) : (this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this._dispatchDisplaySave()));
   }
   async _handleReopen() {
     this._finalized = !1, await this._handleGenerate();
@@ -1495,7 +1502,7 @@ class J extends z {
   }
   // ── Render helpers ─────────────────────────────────────────────────────────
   _renderHeader() {
-    return d`
+    return c`
       <div class="component-header">
         <div class="wrap">
           <h1>LXN Offer Sheet Generator</h1>
@@ -1505,7 +1512,7 @@ class J extends z {
   }
   _renderOfferCard() {
     if (this.templateMode)
-      return d`
+      return c`
         <div class="card">
           <h2>Template</h2>
           <div style="font-size:13px; color:#667085; line-height:1.6;">
@@ -1514,18 +1521,18 @@ class J extends z {
         </div>
       `;
     const e = this._vehicleInfo;
-    return d`
+    return c`
       <div class="card">
         <div class="offer-header-row">
           <h2>Offer</h2>
         </div>
-        ${e ? d`
+        ${e ? c`
           <div class="vehicle-info">
             <div class="amount">${e.amount}</div>
             <div class="desc">${e.desc}</div>
-            ${e.vin ? d`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
+            ${e.vin ? c`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
           </div>
-        ` : d`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ` : c`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
       </div>
     `;
   }
@@ -1543,13 +1550,13 @@ class J extends z {
   
     ── end removed ─────────────────────────────────────────────────────────────── */
   _renderCustomizeCard() {
-    const e = this._isOnePage(), t = N[this._fontSizeIndex].label, i = !!(this.templateSharedDisplay || this.templatePdfDisplay), s = i ? "template" : "default", a = i ? "template defaults" : "default configuration", o = k.map((l) => this._renderShowHideGroup(l));
-    return d`
+    const e = this._isOnePage(), t = N[this._fontSizeIndex].label, i = !!(this.templateSharedDisplay || this.templatePdfDisplay), s = i ? "template" : "default", a = i ? "template defaults" : "default configuration", o = k.map((r) => this._renderShowHideGroup(r)), l = this._sheetLocked();
+    return c`
       <div class="card">
-        <div>
+        <div class="${l ? "settings-locked" : ""}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="ctrl-group ${this._isLocked("mode") ? "locked" : ""}">
+          <div class="ctrl-group ${this._isLocked("mode") ? "locked" : ""}" ?inert="${l}">
             <div class="segmented-control" style="width:auto;">
               <button
                 class="seg-btn ${this._mode === "full" ? "active" : ""}"
@@ -1560,13 +1567,20 @@ class J extends z {
                 class="seg-btn ${e ? "active" : ""}"
                 ?disabled="${this._isLocked("mode")}"
                 @click="${() => this._handleModeChange("one_page")}"
-                @mouseenter="${(l) => this._showTooltip(l, "Current display is restored when returning to 'Full'")}"
+                @mouseenter="${(r) => this._showTooltip(r, "Current display is restored when returning to 'Full'")}"
                 @mouseleave="${() => this._hideTooltip()}"
               >One-Page</button>
             </div>
             ${this._lk("mode")}
           </div>
         </div>
+
+        ${l ? c`
+          <div class="locked-notice">
+            ${We}
+            <span>This offer has been accepted or declined, so its offer sheet can no longer be edited. You can still download or email it.</span>
+          </div>
+        ` : u}
 
         <!-- General -->
         <div class="collapsible-section ${this._generalOpen ? "" : "collapsed"}">
@@ -1576,7 +1590,7 @@ class J extends z {
             <span>General</span>
             <div class="section-chevron">${Y}</div>
           </div>
-          <div class="section-body">
+          <div class="section-body" ?inert="${l}">
             <div class="config-row">
               <span>$ Amount (header)</span>
               <div class="ctrl-group ${this._isLocked("value_display") ? "locked" : ""}">
@@ -1628,17 +1642,17 @@ class J extends z {
                 ${this._lk("profit_label")}
               </div>
             </div>
-            ${!this.templateMode && this.employees && this.employees.length > 0 ? d`
+            ${!this.templateMode && this.employees && this.employees.length > 0 ? c`
               <div class="config-row">
                 <span>Employee</span>
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
-                  @change="${(l) => {
-      this._selectedEmployeeIndex = parseInt(l.target.value);
+                  @change="${(r) => {
+      this._selectedEmployeeIndex = parseInt(r.target.value);
     }}"
                 >
-                  ${this.employees.map((l, r) => d`
-                    <option value="${r}" ?selected="${r === this._selectedEmployeeIndex}">${l.name}</option>
+                  ${this.employees.map((r, p) => c`
+                    <option value="${p}" ?selected="${p === this._selectedEmployeeIndex}">${r.name}</option>
                   `)}
                 </select>
               </div>
@@ -1749,8 +1763,8 @@ class J extends z {
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
                   ?disabled="${this._isLocked("disclaimer")}"
-                  @change="${(l) => {
-      this._disclaimerPunct = l.target.value;
+                  @change="${(r) => {
+      this._disclaimerPunct = r.target.value;
     }}"
                 >
                   <option value="," ?selected="${this._disclaimerPunct === ","}">Comma (,)</option>
@@ -1779,7 +1793,7 @@ class J extends z {
             <span>Show / Hide</span>
             <div class="section-chevron">${Y}</div>
           </div>
-          <div class="section-body">
+          <div class="section-body" ?inert="${l}">
             <!-- Header group (no checkbox) -->
             <div class="toggle-group">
               <div class="group-row">
@@ -1804,7 +1818,7 @@ class J extends z {
                     data-group="signature"
                     .checked="${this._groups.signature === "checked"}"
                     ?disabled="${this._isLocked("signature")}"
-                    @change="${(l) => this._handleGroupChange("signature", l.target.checked)}"
+                    @change="${(r) => this._handleGroupChange("signature", r.target.checked)}"
                   >
                   Customer Signature
                 </label>
@@ -1827,28 +1841,28 @@ class J extends z {
               <div class="section-chevron">${Y}</div>
             </div>
           </div>
-          <div class="section-body">
+          <div class="section-body" ?inert="${l}">
             <div class="sortable-list ${this._isLocked("section_order") ? "disabled" : ""}"
-              @dragover="${(l) => l.preventDefault()}"
-              @drop="${(l) => this._handleListDrop(l)}"
+              @dragover="${(r) => r.preventDefault()}"
+              @drop="${(r) => this._handleListDrop(r)}"
             >
-              ${this._sectionOrder.map((l, r) => {
-      const p = this._isSectionDisabled(l) || this._isLocked("section_order");
-      return d`
+              ${this._sectionOrder.map((r, p) => {
+      const h = this._isSectionDisabled(r) || this._isLocked("section_order");
+      return c`
                   <div
-                    class="sortable-item ${p ? "disabled" : ""}"
-                    data-section="${l}"
-                    draggable="${p ? "false" : "true"}"
-                    @dragstart="${(h) => this._handleDragStart(h, l)}"
-                    @dragover="${(h) => this._handleDragOver(h, l)}"
-                    @drop="${(h) => this._handleDrop(h)}"
-                    @dragend="${(h) => this._handleDragEnd(h)}"
+                    class="sortable-item ${h ? "disabled" : ""}"
+                    data-section="${r}"
+                    draggable="${h ? "false" : "true"}"
+                    @dragstart="${(d) => this._handleDragStart(d, r)}"
+                    @dragover="${(d) => this._handleDragOver(d, r)}"
+                    @drop="${(d) => this._handleDrop(d)}"
+                    @dragend="${(d) => this._handleDragEnd(d)}"
                   >
                     <span class="drag-handle">⠿</span>
-                    <span>${W[l]}</span>
+                    <span>${W[r]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${p || r === 0}" @click="${() => this._handleMoveSection(l, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${p || r === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(l, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${h || p === 0}" @click="${() => this._handleMoveSection(r, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${h || p === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(r, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -1861,11 +1875,11 @@ class J extends z {
 
         <div class="divider"></div>
 
-        ${this._statusError && this._statusMsg ? d`
+        ${this._statusError && this._statusMsg ? c`
           <div class="action-msg error">${this._statusMsg}</div>
         ` : u}
 
-        ${this.templateMode ? d`
+        ${this.templateMode ? c`
           <button
             class="btn btn-green"
             ?disabled="${this._generating || this._finalizing}"
@@ -1873,7 +1887,7 @@ class J extends z {
           >${this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template"}</button>
         ` : u}
 
-        ${this.templateMode ? u : d`
+        ${!this.templateMode && !l ? c`
           <div class="action-btns">
             <div class="apply-btn-wrap">
               <button
@@ -1887,7 +1901,7 @@ class J extends z {
                 @click="${() => this._handleDiscardChanges()}"
               >Discard Changes</button>
             </div>
-            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? d`
+            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? c`
               <div class="confirm-reset">
                 <span class="confirm-reset-msg">Reset all settings to the ${a}?</span>
                 <div class="confirm-reset-btns">
@@ -1897,20 +1911,20 @@ class J extends z {
     }}">Cancel</button>
                 </div>
               </div>
-            ` : d`
+            ` : c`
               <button class="reset-btn" @click="${() => {
       this._confirmReset = !0;
     }}">Reset to ${s}</button>
             ` : u}
           </div>
-        `}
+        ` : u}
       </div>
     `;
   }
   _renderShowHideGroup(e) {
     if (e === "market_scenarios") return this._renderScenarioGroup("market_scenarios", "Market Scenarios", "Market");
     if (e === "selected_scenarios") return this._renderScenarioGroup("selected_scenarios", "Selected Scenarios", "Selected");
-    const t = this._isLocked(e), i = this._groups[e], a = d`
+    const t = this._isLocked(e), i = this._groups[e], a = c`
       <div class="group-row ${t ? "group-row-locked" : ""}">
         <label class="group-header">
           <input type="checkbox" data-group="${e}"
@@ -1923,11 +1937,11 @@ class J extends z {
       </div>`;
     if (e === "valuation") {
       const o = !!this._pillsOpen.valuation;
-      return d`
+      return c`
         <div class="toggle-group" data-group="valuation">
           ${a}
           <div class="pill-group ${t ? "locked" : ""} ${i === "unchecked" ? "group-off" : ""}">
-            ${o ? d`
+            ${o ? c`
               ${this._renderPill("valuation.retail_value", "Retail Value", "valuation")}
               ${this._renderPill("valuation.recon", "Recon", "valuation")}
               ${this._renderPill("valuation.fixed_overhead", "Fixed Overhead", "valuation")}
@@ -1938,14 +1952,14 @@ class J extends z {
           </div>
         </div>`;
     }
-    return e === "observations" ? d`
+    return e === "observations" ? c`
         <div class="toggle-group" data-group="observations">
           ${a}
           <div class="pill-group ${t ? "locked" : ""} ${i === "unchecked" ? "group-off" : ""}">
             ${this._renderPill("sections.observations_highlights", "Highlights", "observations")}
             ${this._renderPill("sections.observations_comments", "Comments", "observations")}
           </div>
-        </div>` : d`
+        </div>` : c`
       <div class="toggle-group" data-group="${e}">
         ${a}
       </div>`;
@@ -1959,7 +1973,7 @@ class J extends z {
    * KPI fields gets its own pill, same idiom as Valuation/Observations. */
   _renderPillsToggle(e) {
     const t = !!this._pillsOpen[e], i = this._pillKeysForGroup(e), s = i.filter((o) => !this._isPillLockedStale(o) && this._pills[o]).length, a = i.length;
-    return d`
+    return c`
       <span
         class="pill-toggle"
         title="${t ? "Collapse fields" : "Expand fields"}"
@@ -1969,7 +1983,7 @@ class J extends z {
   }
   _renderScenarioGroup(e, t, i) {
     const s = this._isLocked(e), a = this._groups[e], o = a === "checked" || a === "indeterminate", l = !!this._pillsOpen[e];
-    return d`
+    return c`
       <div class="toggle-group" data-group="${e}">
         <div class="group-row ${s ? "group-row-locked" : ""}">
           <label class="group-header">
@@ -2047,8 +2061,8 @@ class J extends z {
     s.style.width = "", a.textContent = t;
     const p = document.createRange();
     p.selectNodeContents(a);
-    const h = Array.from(p.getClientRects(), (c) => c.width);
-    s.style.width = `${Math.ceil(Math.max(...h))}px`, i.style.top = `${r.top - 10}px`, i.style.left = `${r.left + r.width / 2}px`, s.getAnimations().forEach((c) => c.cancel()), s.animate(
+    const h = Array.from(p.getClientRects(), (d) => d.width);
+    s.style.width = `${Math.ceil(Math.max(...h))}px`, i.style.top = `${r.top - 10}px`, i.style.left = `${r.left + r.width / 2}px`, s.getAnimations().forEach((d) => d.cancel()), s.animate(
       [
         { opacity: 0, transform: "translateY(6px)" },
         { opacity: 1, transform: "translateY(0)" }
@@ -2068,7 +2082,7 @@ class J extends z {
   }
   _renderPill(e, t, i) {
     const s = this._isPillLockedStale(e), a = !s && this._pills[e], o = "Not available: Offer has been adjusted manually";
-    return d`
+    return c`
       <span
         class="pill ${a ? "active" : ""} ${s ? "stale" : ""}"
         @mouseenter="${(l) => {
@@ -2080,13 +2094,13 @@ class J extends z {
         @click="${() => {
       s || this._handlePillClick(e, i);
     }}"
-      >${s ? d`<span class="pill-stale-icon">${Ye}</span>` : u}${t}</span>
+      >${s ? c`<span class="pill-stale-icon">${Ze}</span>` : u}${t}</span>
     `;
   }
   _renderSendInline() {
     var a;
     const e = this._resolveEmployee(), t = !!((a = this.payload) != null && a.customer) || !!(e != null && e.email), i = !!this._pdfUrl && !this._generating;
-    return t ? d`
+    return t ? c`
       <button
         class="email-icon-btn"
         ?disabled="${!i}"
@@ -2101,11 +2115,11 @@ class J extends z {
   _renderSendConfirmModal() {
     var p, h;
     const e = this._resolveEmployee(), t = ((h = (p = this.payload) == null ? void 0 : p.customer) == null ? void 0 : h.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", a = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), o = a === "customer" && !t, l = a === "employee" ? i : t || this._manualCustomerEmail.trim(), r = !!l;
-    return d`
+    return c`
       <div class="modal-overlay" @click="${() => this._closeSendModal()}">
-        <div class="modal-box" @click="${(c) => c.stopPropagation()}">
+        <div class="modal-box" @click="${(d) => d.stopPropagation()}">
           <p class="modal-msg">
-            ${this._sendPayloadOverride ? d`Send the selected sections?` : d`Send this offer as an offer made by <strong>${s}</strong>?`}
+            ${this._sendPayloadOverride ? c`Send the selected sections?` : c`Send this offer as an offer made by <strong>${s}</strong>?`}
           </p>
 
           <div class="modal-recipient-group">
@@ -2118,9 +2132,9 @@ class J extends z {
       this._sendMessageType = "customer";
     }}"
               />
-              <span>Customer's inbox${t ? d` — ${t}` : u}</span>
+              <span>Customer's inbox${t ? c` — ${t}` : u}</span>
             </label>
-            ${i ? d`
+            ${i ? c`
               <label class="modal-recipient-option">
                 <input
                   type="radio"
@@ -2135,14 +2149,14 @@ class J extends z {
             ` : u}
           </div>
 
-          ${o ? d`
+          ${o ? c`
             <input
               type="email"
               class="modal-email-input"
               placeholder="Customer email address"
               .value="${this._manualCustomerEmail}"
-              @input="${(c) => {
-      this._manualCustomerEmail = c.target.value;
+              @input="${(d) => {
+      this._manualCustomerEmail = d.target.value;
     }}"
             />
           ` : u}
@@ -2163,7 +2177,7 @@ class J extends z {
   _renderIndividualModal() {
     var a;
     const e = this._resolveEmployee(), t = !!((a = this.payload) != null && a.customer) || !!(e != null && e.email), i = this._individualSections.length === 0, s = this._individualBusy;
-    return d`
+    return c`
       <div class="modal-overlay" @click="${() => {
       s || (this._individualOpen = !1);
     }}">
@@ -2171,7 +2185,7 @@ class J extends z {
           <p class="modal-msg modal-title">Download or Email Individual Sections</p>
 
           <div class="modal-recipient-group">
-            ${this._sectionOrder.map((o) => d`
+            ${this._sectionOrder.map((o) => c`
               <label class="modal-recipient-option">
                 <input
                   type="checkbox"
@@ -2184,14 +2198,14 @@ class J extends z {
             `)}
           </div>
 
-          ${this._individualError ? d`<div class="action-msg error" style="margin:0 0 12px;">${this._individualError}</div>` : u}
+          ${this._individualError ? c`<div class="action-msg error" style="margin:0 0 12px;">${this._individualError}</div>` : u}
 
           <div class="modal-btns">
             <button class="modal-btn-confirm modal-btn-icon"
               ?disabled="${i || s}"
               @click="${() => this._handleIndividualPrint()}"
-            >${s ? "Generating…" : d`${_e}Download`}</button>
-            ${t ? d`
+            >${s ? "Generating…" : c`${_e}Download`}</button>
+            ${t ? c`
               <button class="modal-btn-confirm modal-btn-icon modal-btn-teal"
                 ?disabled="${i || s}"
                 @click="${() => this._handleIndividualEmail()}"
@@ -2227,7 +2241,7 @@ class J extends z {
     ── end removed ─────────────────────────────────────────────────────────────── */
   _renderPreviewPane() {
     const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e && !this._statusError, a = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
-    return d`
+    return c`
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
@@ -2239,10 +2253,10 @@ class J extends z {
               <h2>${a ? "Preview" : "PDF"}</h2>
               <span class="preview-status-dot ${this._previewStale ? "stale" : ""}"></span>
             </div>
-            ${this.templateMode ? u : d`
+            ${this.templateMode ? u : c`
               <div class="preview-icon-btns">
                 ${this._renderSendInline()}
-                ${e && !t && a ? d`
+                ${e && !t && a ? c`
                   <button
                     class="email-icon-btn"
                     type="button"
@@ -2262,13 +2276,13 @@ class J extends z {
                   @click="${() => {
       this._hideTooltip(), this._individualError = "", this._individualOpen = !0;
     }}"
-                >${We}</button>
+                >${Ye}</button>
               </div>
               ${this._confirmSendEmail ? this._renderSendConfirmModal() : u}
               ${this._individualOpen ? this._renderIndividualModal() : u}
             `}
           </div>
-          ${i ? d`
+          ${i ? c`
             <div class="preview-loading">
               <div class="pulse-dots">
                 <span></span><span></span><span></span>
@@ -2276,22 +2290,22 @@ class J extends z {
               Generating preview…
             </div>
           ` : u}
-          ${!i && !e ? d`
+          ${!i && !e ? c`
             <div class="empty-preview">${this._statusError && this._statusMsg ? this._statusMsg : "Preview will appear once a payload is loaded"}</div>
           ` : u}
-          ${e && !t && a ? d`
+          ${e && !t && a ? c`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
           ` : u}
-          ${e && !t && !a ? d`
+          ${e && !t && !a ? c`
             <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
-              ${window.natively ? d`
+              ${window.natively ? c`
                 <button
                   class="btn btn-primary"
                   style="width:auto;padding:10px 24px;"
                   @click="${() => window.natively.openPDF({ base64: this._pdfUrl.split(",")[1], fileName: "offer.pdf", download: !0 }, () => {
     })}"
                 >Open PDF</button>
-              ` : d`
+              ` : c`
                 <a
                   href="${this._pdfUrl}"
                   target="_blank"
@@ -2308,7 +2322,7 @@ class J extends z {
   }
   // ── Main render ────────────────────────────────────────────────────────────
   render() {
-    return d`
+    return c`
       <div class="shell">
         ${this._renderHeader()}
         <main @click="${() => {
@@ -2993,6 +3007,14 @@ F(J, "properties", {
     .settings-locked { position: relative; }
     .settings-locked::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.55); pointer-events: all; z-index: 1; }
     .settings-locked .section-header { position: relative; z-index: 2; cursor: pointer; }
+    .locked-notice {
+      position: relative; z-index: 2; /* above the .settings-locked dimming */
+      display: flex; align-items: flex-start; gap: 8px;
+      margin: 10px 0 4px; padding: 8px 10px;
+      background: #fff8e6; border: 1px solid #f5d48a; border-radius: 6px;
+      font-size: 12px; line-height: 1.4; color: #7a4b00;
+    }
+    .locked-notice svg { flex-shrink: 0; margin-top: 2px; }
     .segmented-control.disabled { opacity: 0.35; pointer-events: none; }
     .pill.disabled { opacity: 0.35; pointer-events: none; }
     .toggle-group.disabled { opacity: 0.35; pointer-events: none; }
