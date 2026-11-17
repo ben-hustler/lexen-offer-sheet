@@ -424,6 +424,8 @@ export class LexenOfferSheet extends LitElement {
     _lockOverridden:    { type: Boolean, state: true },
     // Undo/redo: previously applied versions of the settings (see _captureSettings).
     _undoStack:         { type: Array,   state: true },
+    // Which Load configuration button is briefly showing "Loaded" ('one_page' | 'location' | null)
+    _loadedPreset:      { type: String,  state: true },
     _redoStack:         { type: Array,   state: true },
     _locks:             { type: Object,  state: true },
 
@@ -1386,6 +1388,11 @@ export class LexenOfferSheet extends LitElement {
     .load-btn:hover { background: #effcff; border-color: #7fb8c3; color: #006073; }
     .load-btn:hover svg { color: #006073; }
     .load-btn:active { background: #e0f6fb; }
+    /* Label ⇄ "Loaded" swap fades in — only on the clicked button, so the
+       buttons don't fade on first render. */
+    .load-btn-content { display: inline-flex; align-items: center; gap: 6px; }
+    .load-fade { animation: load-fade 0.25s ease-out; }
+    @keyframes load-fade { from { opacity: 0; } to { opacity: 1; } }
     .load-btn:focus-visible { outline: 2px solid #7fb8c3; outline-offset: 1px; }
 
     /* ── Send card ─────────────────────────────────────────────────────────── */
@@ -1516,6 +1523,7 @@ export class LexenOfferSheet extends LitElement {
     this._savedConfirm  = false;
     this._lockOverridden = false;
     this._undoStack = [];
+    this._loadedPreset = null;
     this._redoStack = [];
     this._locks = {
       mode:           false,
@@ -2221,6 +2229,16 @@ export class LexenOfferSheet extends LitElement {
     this._previewStale = false;
   }
 
+  /** Fades a Load configuration button's label to "Loaded" for a moment. */
+  _flashLoaded(which) {
+    // Only the clicked button fades back — adding the class to the other
+    // button's existing label would start its animation too.
+    this._lastFlashed = which;
+    this._loadedPreset = which;
+    clearTimeout(this._loadedTimer);
+    this._loadedTimer = setTimeout(() => { this._loadedPreset = null; }, 1500);
+  }
+
   // ── Undo / redo ────────────────────────────────────────────────────────────
   // Steps through applied versions only (one step per Apply), and applies
   // immediately: regenerate + save, same as clicking Apply. Unapplied edits
@@ -2906,19 +2924,23 @@ export class LexenOfferSheet extends LitElement {
           </div>
         </div>
         <div class="load-panel" ?inert="${sheetLocked}">
-          <span class="load-label">Load preset</span>
+          <span class="load-label">Load configuration</span>
           <div class="load-btns">
             <button class="load-btn" type="button"
-              @click="${() => this._handleLoadOnePage()}"
+              @click="${() => { this._handleLoadOnePage(); this._flashLoaded('one_page'); }}"
               @mouseenter="${(e) => this._showTooltip(e, 'Trims the sheet to fit one page.')}"
               @mouseleave="${() => this._hideTooltip()}"
-            >${pageSvg}<span>One-page</span></button>
+            >${this._loadedPreset === 'one_page'
+              ? html`<span class="load-btn-content load-fade">Loaded</span>`
+              : html`<span class="load-btn-content ${this._lastFlashed === 'one_page' ? 'load-fade' : ''}">${pageSvg}<span>One-page</span></span>`}</button>
             ${!this.templateMode ? html`
               <button class="load-btn" type="button"
-                @click="${() => this._handleLoadLocationDefault()}"
+                @click="${() => { this._handleLoadLocationDefault(); this._flashLoaded('location'); }}"
                 @mouseenter="${(e) => this._showTooltip(e, "Restores this location's default configuration.")}"
                 @mouseleave="${() => this._hideTooltip()}"
-              >${locationSvg}<span>Location default</span></button>
+              >${this._loadedPreset === 'location'
+                ? html`<span class="load-btn-content load-fade">Loaded</span>`
+                : html`<span class="load-btn-content ${this._lastFlashed === 'location' ? 'load-fade' : ''}">${locationSvg}<span>Location default</span></span>`}</button>
             ` : nothing}
           </div>
         </div>
