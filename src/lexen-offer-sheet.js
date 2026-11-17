@@ -161,6 +161,11 @@ const moreSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill=
 // Material Icons `description` (one-page) + `location_on` (location default) — load-preset buttons.
 const pageSvg     = html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
 const locationSvg = html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+// Material Icons `undo` / `redo` — undo/redo buttons in the Customize header.
+const undoSvg = html`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`;
+const redoSvg = html`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`;
+// Undo/redo keeps this many applied versions.
+const HISTORY_LIMIT = 5;
 const alertCircleSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -417,6 +422,9 @@ export class LexenOfferSheet extends LitElement {
     // Locked offer (accepted/declined): "Edit anyway" lets the dealer edit
     // regardless — _lockOverridden lasts until `locked` changes again.
     _lockOverridden:    { type: Boolean, state: true },
+    // Undo/redo: previously applied versions of the settings (see _captureSettings).
+    _undoStack:         { type: Array,   state: true },
+    _redoStack:         { type: Array,   state: true },
     _locks:             { type: Object,  state: true },
 
     // Send UI
@@ -1345,6 +1353,17 @@ export class LexenOfferSheet extends LitElement {
     }
 
     .customize-header-row h2 { margin-bottom: 0; }
+    .history-btns { display: flex; gap: 2px; }
+    .history-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; padding: 0;
+      background: transparent; color: #667085;
+      border: 1px solid transparent; border-radius: 7px; cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .history-btn:hover:not(:disabled) { background: #effcff; border-color: #7fb8c3; color: #006073; }
+    .history-btn:disabled { opacity: 0.35; cursor: default; }
+    .history-btn:focus-visible { outline: 2px solid #7fb8c3; outline-offset: 1px; }
     .load-panel {
       display: flex; flex-direction: column; gap: 8px;
       margin-bottom: 16px; padding: 10px 12px;
@@ -1496,6 +1515,8 @@ export class LexenOfferSheet extends LitElement {
     this._lastPrintoutRequest = null; // stored after each successful generate, fired in pdf-send
     this._savedConfirm  = false;
     this._lockOverridden = false;
+    this._undoStack = [];
+    this._redoStack = [];
     this._locks = {
       mode:           false,
       condition:      false,
@@ -2142,10 +2163,10 @@ export class LexenOfferSheet extends LitElement {
     this._disclaimerText = e.target.value;
   }
 
-  /** Captures the current customize-panel state as the "last applied" baseline,
-   * called whenever a generate succeeds (initial auto-preview, Apply, Reopen). */
-  _snapshotAppliedState() {
-    this._appliedSnapshot = {
+  /** The customize-panel settings as a plain object — used for the
+   * last-applied baseline (Discard) and the undo/redo stacks. */
+  _captureSettings() {
+    return {
       mode: this._mode,
       valueDisplay: this._valueDisplay,
       taxRatePct: this._taxRatePct,
@@ -2166,12 +2187,7 @@ export class LexenOfferSheet extends LitElement {
     };
   }
 
-  /** Reverts unapplied edits back to the last-applied snapshot — distinct from
-   * "Reset to template", which goes back to the template defaults instead. */
-  _handleDiscardChanges() {
-    if (!this._appliedSnapshot) return;
-    this._pendingDataLoad = true; // suppress re-marking stale during this cascade
-    const s = this._appliedSnapshot;
+  _restoreSettings(s) {
     this._mode                  = s.mode;
     this._valueDisplay          = s.valueDisplay;
     this._taxRatePct            = s.taxRatePct;
@@ -2189,7 +2205,42 @@ export class LexenOfferSheet extends LitElement {
     this._pills                 = { ...s.pills };
     this._groups                = { ...s.groups };
     this._selectedEmployeeIndex = s.selectedEmployeeIndex;
+  }
+
+  /** Captures the current customize-panel state as the "last applied" baseline,
+   * called whenever a generate succeeds (initial auto-preview, Apply, Reopen). */
+  _snapshotAppliedState() {
+    this._appliedSnapshot = this._captureSettings();
+  }
+
+  /** Reverts unapplied edits back to the last-applied snapshot. */
+  _handleDiscardChanges() {
+    if (!this._appliedSnapshot) return;
+    this._pendingDataLoad = true; // suppress re-marking stale during this cascade
+    this._restoreSettings(this._appliedSnapshot);
     this._previewStale = false;
+  }
+
+  // ── Undo / redo ────────────────────────────────────────────────────────────
+  // Steps through applied versions only (one step per Apply), and applies
+  // immediately: regenerate + save, same as clicking Apply. Unapplied edits
+  // are dropped when you undo/redo.
+
+  _handleUndo() { return this._stepHistory('_undoStack', '_redoStack'); }
+  _handleRedo() { return this._stepHistory('_redoStack', '_undoStack'); }
+
+  async _stepHistory(fromKey, toKey) {
+    if (this._sheetLocked() || this._generating || this._finalizing || !this[fromKey].length) return;
+    const target  = this[fromKey][this[fromKey].length - 1];
+    const current = this._appliedSnapshot;
+    this[fromKey] = this[fromKey].slice(0, -1);
+    this._restoreSettings(target);
+    const applied = await this._handleApply({ fromHistory: true });
+    if (applied) {
+      if (current) this[toKey] = [...this[toKey], current].slice(-HISTORY_LIMIT);
+    } else {
+      this[fromKey] = [...this[fromKey], target]; // generate failed — keep the step
+    }
   }
 
   _resetToggles() {
@@ -2671,8 +2722,12 @@ export class LexenOfferSheet extends LitElement {
     this._sendPayloadOverride = null;
   }
 
-  async _handleApply() {
-    if (this._sheetLocked()) return;
+  /** Generates + saves the current settings. Records the previously applied
+   * version as an undo step (unless this apply IS an undo/redo). Returns true
+   * when the generate succeeded. */
+  async _handleApply({ fromHistory = false } = {}) {
+    if (this._sheetLocked()) return false;
+    const before = this._appliedSnapshot;
     this._savedConfirm = true;
     if (this.templateMode) {
       await this._handleGenerate(false);
@@ -2688,6 +2743,13 @@ export class LexenOfferSheet extends LitElement {
       this._finalized = true;
       this._dispatchDisplaySave();
     }
+    const after = this._appliedSnapshot;
+    const applied = after !== before;
+    if (applied && !fromHistory && before && JSON.stringify(after) !== JSON.stringify(before)) {
+      this._undoStack = [...this._undoStack, before].slice(-HISTORY_LIMIT);
+      this._redoStack = [];
+    }
+    return applied;
   }
 
   async _handleReopen() {
@@ -2828,6 +2890,20 @@ export class LexenOfferSheet extends LitElement {
         <div class="${sheetLocked ? 'settings-locked' : ''}">
         <div class="customize-header-row">
           <h2>Customize</h2>
+          <div class="history-btns" ?inert="${sheetLocked}">
+            <button class="history-btn" type="button" aria-label="Undo"
+              ?disabled="${!this._undoStack.length || this._generating || this._finalizing}"
+              @click="${() => { this._hideTooltip(); this._handleUndo(); }}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Undo last apply')}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >${undoSvg}</button>
+            <button class="history-btn" type="button" aria-label="Redo"
+              ?disabled="${!this._redoStack.length || this._generating || this._finalizing}"
+              @click="${() => { this._hideTooltip(); this._handleRedo(); }}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Redo apply')}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >${redoSvg}</button>
+          </div>
         </div>
         <div class="load-panel" ?inert="${sheetLocked}">
           <span class="load-label">Load preset</span>
