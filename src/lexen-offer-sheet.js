@@ -2832,13 +2832,13 @@ export class LexenOfferSheet extends LitElement {
           <div class="load-btns">
             <button class="load-btn" type="button"
               @click="${() => this._handleLoadOnePage()}"
-              @mouseenter="${(e) => this._showTooltip(e, 'Trims the sheet to fit one page.')}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Loads a trimmed version of the offer sheet.')}"
               @mouseleave="${() => this._hideTooltip()}"
             >${pageSvg}<span>One-page</span></button>
             ${!this.templateMode ? html`
               <button class="load-btn" type="button"
                 @click="${() => this._handleLoadLocationDefault()}"
-                @mouseenter="${(e) => this._showTooltip(e, "Restores this location's default settings.")}"
+                @mouseenter="${(e) => this._showTooltip(e, "Restores this location's default configuration.")}"
                 @mouseleave="${() => this._hideTooltip()}"
               >${locationSvg}<span>Location default</span></button>
             ` : nothing}
