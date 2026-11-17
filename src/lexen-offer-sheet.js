@@ -2018,12 +2018,14 @@ export class LexenOfferSheet extends LitElement {
     if (this.templatePdfDisplay)    this._applyPdfDisplay(this.templatePdfDisplay);
   }
 
-  /** "Load one-page": the location default trimmed down to fit one page.
-   * Same result every click. Only loads — nothing is saved until Apply. */
+  /** "Load one-page": trims the current configuration to fit one page.
+   * Fixes which content shows (+ font size); General choices like the header
+   * $ amount, tax rate and profit label stay as they are. Only loads —
+   * nothing is saved until Apply. */
   _handleLoadOnePage() {
     if (this._sheetLocked()) return;
-    this._handleLoadLocationDefault();
     this._mode = 'full';
+    this._fontSizeIndex = 2; // default size — larger fonts can spill onto a second page
 
     const newGroups = { ...this._groups };
     // One-page's format can't fit these.
@@ -2832,7 +2834,7 @@ export class LexenOfferSheet extends LitElement {
           <div class="load-btns">
             <button class="load-btn" type="button"
               @click="${() => this._handleLoadOnePage()}"
-              @mouseenter="${(e) => this._showTooltip(e, 'Loads a trimmed version of the offer sheet.')}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Trims the sheet to fit one page.')}"
               @mouseleave="${() => this._hideTooltip()}"
             >${pageSvg}<span>One-page</span></button>
             ${!this.templateMode ? html`
