@@ -158,9 +158,201 @@ const mailSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill=
 const printSvg      = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`;
 // Material Icons `more_horiz` — opens the individual-sections print/email modal.
 const moreSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+// Material Icons `description` (one-page) + `location_on` (location default) — load-preset buttons.
+const pageSvg     = html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+const locationSvg = html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
 const alertCircleSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
+// ── Tooltip ──────────────────────────────────────────────────────────────────
+// Copied from lxn-ui's TooltipController (src/components/tooltip/tooltip-core.ts,
+// v1.33.0), ported to plain JS — this component doesn't depend on lxn-ui, so
+// keep the two in sync by hand. One instance, reused for every show()/hide().
+//  - portals into the nearest ancestor <dialog> (else document.body), outside
+//    this component's shadow root so position:fixed can't be clipped.
+//  - flips below the anchor when there's no room above; slides left/right to
+//    stay clear of the viewport edge, arrow still pointing at the anchor.
+//  - repositions on resize, dismisses on scroll.
+//  - shrinks to the widest wrapped line; text-wrap: balance evens the lines.
+const TOOLTIP_EDGE_MARGIN = 8;
+const TOOLTIP_ANCHOR_GAP = 10;
+const TOOLTIP_ARROW_HALF_WIDTH = 8;
+
+// Snap to whole device pixels (not just CSS pixels) so the bubble isn't
+// blurred at 125%/150% scaling.
+function snapToDevicePixel(px) {
+  const dpr = window.devicePixelRatio || 1;
+  return Math.round(px * dpr) / dpr;
+}
+
+class TooltipController {
+  constructor() {
+    this.outer = null;
+    this.bubble = null;
+    this.label = null;
+    this.arrow = null;
+    this.anchor = null;
+    this.visible = false;
+    this.reposition = () => this.updatePosition();
+    this.dismissOnScroll = () => this.hide();
+  }
+
+  ensure() {
+    if (this.outer) return;
+
+    const outer = document.createElement('div');
+    Object.assign(outer.style, {
+      position: 'fixed',
+      top: '0px',
+      left: '0px',
+      zIndex: '2147483647',
+      pointerEvents: 'none',
+    });
+
+    const bubble = document.createElement('div');
+    Object.assign(bubble.style, {
+      position: 'relative',
+      boxSizing: 'content-box',
+      background: '#333',
+      color: '#fff',
+      borderRadius: '4px',
+      fontSize: '14px',
+      lineHeight: '1.4',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      whiteSpace: 'normal',
+      textAlign: 'center',
+      padding: '8px',
+      maxWidth: '240px',
+      opacity: '0',
+      textWrap: 'balance',
+    });
+
+    const label = document.createElement('span');
+    bubble.appendChild(label);
+
+    const arrow = document.createElement('div');
+    Object.assign(arrow.style, {
+      position: 'absolute',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '0',
+      height: '0',
+      borderStyle: 'solid',
+    });
+    this.setArrowOrientation(arrow, 'above');
+    bubble.appendChild(arrow);
+
+    outer.appendChild(bubble);
+
+    this.outer = outer;
+    this.bubble = bubble;
+    this.label = label;
+    this.arrow = arrow;
+  }
+
+  // 'above'/'below' = where the bubble sits relative to the anchor. 1px
+  // overlap, not flush — avoids a hairline seam while animating.
+  setArrowOrientation(arrow, placement) {
+    Object.assign(
+      arrow.style,
+      placement === 'above'
+        ? { top: 'calc(100% - 1px)', bottom: '', borderWidth: '8px 8px 0', borderColor: '#333 transparent transparent transparent' }
+        : { top: '', bottom: 'calc(100% - 1px)', borderWidth: '0 8px 8px', borderColor: 'transparent transparent #333 transparent' },
+    );
+  }
+
+  show(anchor, text) {
+    // Guards against a double show() (e.g. mouseenter + focus from one tap)
+    // restarting the fade-in mid-flight.
+    if (this.visible && this.anchor === anchor) return;
+    this.visible = true;
+
+    this.ensure();
+    const { outer, bubble, label } = this;
+    this.anchor = anchor;
+
+    const target = anchor.closest('dialog') ?? document.body;
+    if (outer.parentElement !== target) target.appendChild(outer);
+
+    // No CSS sizing keyword shrinks a box to its post-wrap line width, so
+    // let it wrap at max-width, read the widest line via Range rects, and
+    // set that as the explicit width.
+    bubble.style.width = '';
+    label.textContent = text;
+    const range = document.createRange();
+    range.selectNodeContents(label);
+    const lineWidths = Array.from(range.getClientRects(), r => r.width);
+    bubble.style.width = `${Math.ceil(Math.max(...lineWidths))}px`;
+
+    this.updatePosition();
+
+    window.addEventListener('scroll', this.dismissOnScroll, true);
+    window.addEventListener('resize', this.reposition);
+
+    bubble.getAnimations().forEach(a => a.cancel());
+    bubble.animate(
+      [
+        { opacity: 0, transform: 'translateY(6px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      { duration: 160, easing: 'ease-out', fill: 'forwards' },
+    );
+  }
+
+  hide() {
+    this.visible = false;
+    window.removeEventListener('scroll', this.dismissOnScroll, true);
+    window.removeEventListener('resize', this.reposition);
+
+    const bubble = this.bubble;
+    if (!bubble) return;
+    bubble.getAnimations().forEach(a => a.cancel());
+    bubble.animate(
+      [
+        { opacity: 1, transform: 'translateY(0)' },
+        { opacity: 0, transform: 'translateY(6px)' },
+      ],
+      { duration: 120, easing: 'ease-in', fill: 'forwards' },
+    );
+  }
+
+  destroy() {
+    this.hide();
+    this.outer?.remove();
+    this.outer = null;
+    this.bubble = null;
+    this.label = null;
+    this.arrow = null;
+    this.anchor = null;
+  }
+
+  updatePosition() {
+    if (!this.anchor || !this.outer || !this.arrow) return;
+    const outer = this.outer;
+    const rect = this.anchor.getBoundingClientRect();
+    const anchorCenterX = rect.left + rect.width / 2;
+
+    // Above by default; flip below only when there isn't room above.
+    const fitsAbove = rect.top - TOOLTIP_ANCHOR_GAP - outer.offsetHeight >= TOOLTIP_EDGE_MARGIN;
+    this.setArrowOrientation(this.arrow, fitsAbove ? 'above' : 'below');
+    const top = fitsAbove
+      ? rect.top - TOOLTIP_ANCHOR_GAP - outer.offsetHeight
+      : rect.bottom + TOOLTIP_ANCHOR_GAP;
+
+    // Slide to stay clear of the viewport edge; arrow keeps pointing at the anchor.
+    const maxLeft = Math.max(TOOLTIP_EDGE_MARGIN, window.innerWidth - TOOLTIP_EDGE_MARGIN - outer.offsetWidth);
+    const left = Math.min(Math.max(anchorCenterX - outer.offsetWidth / 2, TOOLTIP_EDGE_MARGIN), maxLeft);
+    const arrowX = Math.min(
+      Math.max(anchorCenterX - left, TOOLTIP_ARROW_HALF_WIDTH),
+      outer.offsetWidth - TOOLTIP_ARROW_HALF_WIDTH,
+    );
+    this.arrow.style.left = `${snapToDevicePixel(arrowX)}px`;
+
+    // Pre-rounded translate3d instead of translate(-50%) — avoids sub-pixel offsets.
+    outer.style.transform = `translate3d(${snapToDevicePixel(left)}px, ${snapToDevicePixel(top)}px, 0)`;
+  }
+}
+
 export class LexenOfferSheet extends LitElement {
 
   static properties = {
@@ -222,7 +414,6 @@ export class LexenOfferSheet extends LitElement {
     _pdfUrl:            { type: String,  state: true },
     _pdfVehicle:        { type: Object,  state: true },
     _savedConfirm:      { type: Boolean, state: true },
-    _confirmReset:      { type: Boolean, state: true },
     // Locked offer (accepted/declined): "Edit anyway" lets the dealer edit
     // regardless — _lockOverridden lasts until `locked` changes again.
     _lockOverridden:    { type: Boolean, state: true },
@@ -605,7 +796,7 @@ export class LexenOfferSheet extends LitElement {
     /* The tooltip itself is NOT styled here — :host sets overflow:hidden
        (see below), which clips anything painted anywhere in this shadow
        root, position:fixed included. It's a real DOM node built and styled
-       inline in _ensureTooltip(), appended straight to document.body so it
+       inline in TooltipController, appended straight to document.body so it
        can float above everything unclipped — same as how Tippy.js itself
        works by default. */
 
@@ -1095,35 +1286,8 @@ export class LexenOfferSheet extends LitElement {
        re-checking the box shows exactly what was selected before. */
     .pill-group.group-off { opacity: 0.45; pointer-events: none; }
 
-    .reset-btn {
-      width: 100%; padding: 9px 20px; background: transparent; color: #667085;
-      border: 1px solid #d0d5dd; border-radius: 8px; font-size: 13px; font-weight: 500;
-      cursor: pointer; font-family: inherit;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-    }
-    .reset-btn:hover { background: #f9fafb; color: #344054; border-color: #b0b8c4; }
-
     .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 
-    .confirm-reset {
-      margin-top: 8px; padding: 10px 12px;
-      background: #fff8e1; border: 1px solid #f59f00; border-radius: 8px;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .confirm-reset-msg { font-size: 12px; color: #344054; font-weight: 500; }
-    .confirm-reset-btns { display: flex; gap: 6px; }
-    .confirm-reset-yes {
-      flex: 1; padding: 6px; background: #d92d20; color: #fff;
-      border: none; border-radius: 6px; font-size: 12px; font-weight: 600;
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
-    }
-    .confirm-reset-yes:hover { background: #b42318; }
-    .confirm-reset-no {
-      flex: 1; padding: 6px; background: transparent; color: #344054;
-      border: 1px solid #d0d5dd; border-radius: 6px; font-size: 12px; font-weight: 500;
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
-    }
-    .confirm-reset-no:hover { background: #f2f4f7; }
 
     .offer-header-row {
       display: flex;
@@ -1177,10 +1341,33 @@ export class LexenOfferSheet extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
     .customize-header-row h2 { margin-bottom: 0; }
+    .load-panel {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 16px; padding: 10px 12px;
+      background: #f9fafb; border: 1px solid #eaecf0; border-radius: 9px;
+    }
+    .load-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; color: #667085;
+    }
+    .load-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .load-btn {
+      flex: 1 1 0; min-width: max-content;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 6px 10px; background: #fff; color: #344054; white-space: nowrap;
+      border: 1px solid #d0d5dd; border-radius: 7px; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: inherit; box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .load-btn svg { flex-shrink: 0; color: #667085; transition: color 0.15s; }
+    .load-btn:hover { background: #effcff; border-color: #7fb8c3; color: #006073; }
+    .load-btn:hover svg { color: #006073; }
+    .load-btn:active { background: #e0f6fb; }
+    .load-btn:focus-visible { outline: 2px solid #7fb8c3; outline-offset: 1px; }
 
     /* ── Send card ─────────────────────────────────────────────────────────── */
     .send-card { display: flex; flex-direction: column; gap: 10px; }
@@ -1308,7 +1495,6 @@ export class LexenOfferSheet extends LitElement {
     this._pdfVehicle = null;
     this._lastPrintoutRequest = null; // stored after each successful generate, fired in pdf-send
     this._savedConfirm  = false;
-    this._confirmReset  = false;
     this._lockOverridden = false;
     this._locks = {
       mode:           false,
@@ -1349,10 +1535,8 @@ export class LexenOfferSheet extends LitElement {
     // so nothing painted anywhere inside this shadow root can ever escape
     // clipping via position:fixed — the tooltip has to live outside the
     // shadow root entirely, same as how Tippy.js itself appends to
-    // document.body by default (see _ensureTooltip below).
-    this._tooltipEl = null;
-    this._tooltipBubble = null;
-    this._tooltipLabel = null;
+    // document.body by default (see TooltipController above).
+    this._tooltip = new TooltipController();
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
@@ -1460,12 +1644,7 @@ export class LexenOfferSheet extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    if (this._tooltipEl) {
-      this._tooltipEl.remove();
-      this._tooltipEl = null;
-      this._tooltipBubble = null;
-      this._tooltipLabel = null;
-    }
+    this._tooltip.destroy();
   }
 
   firstUpdated() {
@@ -1555,7 +1734,6 @@ export class LexenOfferSheet extends LitElement {
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex'];
       if (editKeys.some(k => changedProps.has(k))) {
         this._mode = 'full';
-        this._preOnePageState = null;
       }
     }
 
@@ -1830,70 +2008,44 @@ export class LexenOfferSheet extends LitElement {
 
   // ── Event handlers ─────────────────────────────────────────────────────────
 
-  _handleModeChange(value) {
-    this._mode = value;
-    const isOnePage = value === 'one_page';
+  /** "Load location default": puts every setting back to the location's
+   * template (or the built-in defaults when there's no template). Only loads —
+   * the preview goes stale and nothing is saved until Apply. */
+  _handleLoadLocationDefault() {
+    if (this._sheetLocked()) return;
+    this._resetToggles();
+    if (this.templateSharedDisplay) this._applySharedDisplay(this.templateSharedDisplay);
+    if (this.templatePdfDisplay)    this._applyPdfDisplay(this.templatePdfDisplay);
+  }
 
-    if (isOnePage) {
-      // Snapshot the true prior state (including pills) so exiting without any
-      // further edit restores exactly what Full had — the additive re-check
-      // below only touches the live one-page view, not this cache.
-      this._preOnePageState = {
-        groups: { ...this._groups },
-        pills: { ...this._pills },
-        marketDisplay: this._marketDisplay,
-        sectionOrder: [...this._sectionOrder],
-      };
+  /** "Load one-page": the location default trimmed down to fit one page.
+   * Same result every click. Only loads — nothing is saved until Apply. */
+  _handleLoadOnePage() {
+    if (this._sheetLocked()) return;
+    this._handleLoadLocationDefault();
+    this._mode = 'full';
 
-      const newGroups = { ...this._groups };
-      // One-page's format can't fit these — categorically excluded regardless of prior state.
-      ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'].forEach(g => { newGroups[g] = 'unchecked'; });
-      // Additive for everything one-page CAN fit: re-check anything the user had
-      // hidden, so a trimmed-down Full config doesn't produce a sparser-than-
-      // necessary one-pager just because it's not adaptively looking for more
-      // content to fill the page. Skip any group a template locked — a lock
-      // means "hands off", so a locked-off section stays omitted instead of
-      // being silently re-enabled by the mode switch.
-      ['valuation', 'observations', 'market'].forEach(g => { if (!this._isLocked(g)) newGroups[g] = 'checked'; });
-      this._groups = newGroups;
+    const newGroups = { ...this._groups };
+    // One-page's format can't fit these.
+    ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'].forEach(g => { newGroups[g] = 'unchecked'; });
+    ['valuation', 'observations', 'market'].forEach(g => { newGroups[g] = 'checked'; });
+    this._groups = newGroups;
 
-      const newPills = { ...this._pills };
-      if (!this._isLocked('valuation')) {
-        ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'].forEach(k => { newPills[k] = true; });
-      }
-      if (!this._isLocked('observations')) {
-        newPills['sections.observations_comments'] = true;
-        // Trim, not additive: one-page needs the space back (real-world logo
-        // height in Bubble eats into the budget too), and highlights is the
-        // easiest thing to drop without losing anything essential.
-        newPills['sections.observations_highlights'] = false;
-      }
-      this._pills = newPills;
+    const newPills = { ...this._pills };
+    ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'].forEach(k => { newPills[k] = true; });
+    newPills['sections.observations_comments'] = true;
+    // Trim, not additive: one-page needs the space back (real-world logo
+    // height in Bubble eats into the budget too), and highlights is the
+    // easiest thing to drop without losing anything essential.
+    newPills['sections.observations_highlights'] = false;
+    this._pills = newPills;
 
-      this._marketDisplay = 'summary';
+    this._marketDisplay = 'summary';
 
-      const disabled = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
-      const enabled = this._sectionOrder.filter(s => !disabled.includes(s));
-      const disabledOrdered = this._sectionOrder.filter(s => disabled.includes(s));
-      this._sectionOrder = [...enabled, ...disabledOrdered];
-    } else {
-      if (this._preOnePageState) {
-        const saved = this._preOnePageState;
-        this._groups = { ...saved.groups };
-        this._pills = { ...saved.pills };
-        this._marketDisplay = saved.marketDisplay;
-        this._sectionOrder = saved.sectionOrder;
-        this._preOnePageState = null;
-      } else {
-        const newGroups = { ...this._groups };
-        // Same rule as switching into one-page: never override a locked group's state.
-        ['disclosures', 'recon', 'photos', 'valuation', 'observations', 'market'].forEach(g => { if (!this._isLocked(g)) newGroups[g] = 'checked'; });
-        ['market_scenarios', 'selected_scenarios'].forEach(g => { if (!this._isLocked(g)) newGroups[g] = 'unchecked'; });
-        this._groups = newGroups;
-        this._marketDisplay = 'full';
-        this._sectionOrder = [...DEFAULT_LAYOUT_ORDER];
-      }
-    }
+    const disabled = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
+    const enabled = this._sectionOrder.filter(s => !disabled.includes(s));
+    const disabledOrdered = this._sectionOrder.filter(s => disabled.includes(s));
+    this._sectionOrder = [...enabled, ...disabledOrdered];
   }
 
   _handleGroupChange(group, checked) {
@@ -1986,37 +2138,6 @@ export class LexenOfferSheet extends LitElement {
 
   _handleDisclaimerInput(e) {
     this._disclaimerText = e.target.value;
-  }
-
-  async _handleReset() {
-    if (this._sheetLocked()) return;
-    this._confirmReset = false;
-    this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
-    // Reset goes back to the template's own baseline, not whatever's currently
-    // loaded in sharedDisplay/pdfDisplay (that may already be an instance override).
-    if (this.templateSharedDisplay || this.templatePdfDisplay) {
-      if (this.templateSharedDisplay) this._applySharedDisplay(this.templateSharedDisplay);
-      if (this.templatePdfDisplay)    this._applyPdfDisplay(this.templatePdfDisplay);
-    } else {
-      this._resetToggles();
-    }
-    this._previewStale = true;
-
-    // Regenerate right away instead of leaving the preview stale until a
-    // separate manual Apply click — mirrors _handleApply's own generate step.
-    this._finalizing = true;
-    await this._handleGenerate(false);
-    this._finalizing = false;
-    this._finalized = true;
-
-    // Null values signal Bubble to clear instance-level overrides. This is
-    // the authoritative save for a reset, so it's the only display-save
-    // dispatched here — not _handleApply's own (non-null) one, which would
-    // immediately re-create an instance override and undo the clear.
-    this.dispatchEvent(new CustomEvent('display-save', {
-      detail: { shared: null, pdf: null, employee: null, payload: null },
-      bubbles: true, composed: true,
-    }));
   }
 
   /** Captures the current customize-panel state as the "last applied" baseline,
@@ -2692,15 +2813,7 @@ export class LexenOfferSheet extends LitElement {
   ── end removed ─────────────────────────────────────────────────────────────── */
 
   _renderCustomizeCard() {
-    const onePage = this._isOnePage();
     const fontLabel = FONT_SIZE_OPTIONS[this._fontSizeIndex].label;
-    // No template display to fall back to — _handleReset() itself already
-    // falls back to _resetToggles()'s hardcoded generator defaults in this
-    // case, so just label the button for what it actually does.
-    const hasTemplateDisplay = !!(this.templateSharedDisplay || this.templatePdfDisplay);
-    const resetTargetLabel = hasTemplateDisplay ? 'template' : 'default';
-    const resetConfirmPhrase = hasTemplateDisplay ? 'template defaults' : 'default configuration';
-
     // Show/hide groups always in default order
     const sectionGroups = DEFAULT_LAYOUT_ORDER.map(sec => this._renderShowHideGroup(sec));
     // Offer accepted/declined: dim + block every setting (.settings-locked
@@ -2713,22 +2826,22 @@ export class LexenOfferSheet extends LitElement {
         <div class="${sheetLocked ? 'settings-locked' : ''}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="ctrl-group ${this._isLocked('mode') ? 'locked' : ''}" ?inert="${sheetLocked}">
-            <div class="segmented-control" style="width:auto;">
-              <button
-                class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
-                ?disabled="${this._isLocked('mode')}"
-                @click="${() => this._handleModeChange('full')}"
-              >Full</button>
-              <button
-                class="seg-btn ${onePage ? 'active' : ''}"
-                ?disabled="${this._isLocked('mode')}"
-                @click="${() => this._handleModeChange('one_page')}"
-                @mouseenter="${(e) => this._showTooltip(e, "Current display is restored when returning to 'Full'")}"
+        </div>
+        <div class="load-panel" ?inert="${sheetLocked}">
+          <span class="load-label">Load preset</span>
+          <div class="load-btns">
+            <button class="load-btn" type="button"
+              @click="${() => this._handleLoadOnePage()}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Trims the sheet to fit one page.')}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >${pageSvg}<span>One-page</span></button>
+            ${!this.templateMode ? html`
+              <button class="load-btn" type="button"
+                @click="${() => this._handleLoadLocationDefault()}"
+                @mouseenter="${(e) => this._showTooltip(e, "Restores this location's default settings.")}"
                 @mouseleave="${() => this._hideTooltip()}"
-              >One-Page</button>
-            </div>
-            ${this._lk('mode')}
+              >${locationSvg}<span>Location default</span></button>
+            ` : nothing}
           </div>
         </div>
 
@@ -3049,17 +3162,6 @@ export class LexenOfferSheet extends LitElement {
                 @click="${() => this._handleDiscardChanges()}"
               >Discard Changes</button>
             </div>
-            ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
-              <div class="confirm-reset">
-                <span class="confirm-reset-msg">Reset all settings to the ${resetConfirmPhrase}?</span>
-                <div class="confirm-reset-btns">
-                  <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
-                  <button class="confirm-reset-no"  @click="${() => { this._confirmReset = false; }}">Cancel</button>
-                </div>
-              </div>
-            ` : html`
-              <button class="reset-btn" @click="${() => { this._confirmReset = true; }}">Reset to ${resetTargetLabel}</button>
-            `) : nothing}
           </div>
         ` : nothing}
       </div>
@@ -3175,122 +3277,18 @@ export class LexenOfferSheet extends LitElement {
       </div>`;
   }
 
-  /** Lazily builds the shared tooltip node — see the constructor comment for
-   * why this lives in document.body instead of a Lit template. Visuals match
-   * Bubble's Tippy.js output (.tippy-box/.tippy-content/.tippy-arrow)
-   * pixel-for-pixel; positioning + the rise-in animation are done by hand
-   * here since Tippy itself drives those via Popper + its own JS, not CSS.
-   * One reused node for every tooltip in this component (stale pills, the
-   * preview status dot, ...) — text and position update per show() call. */
-  _ensureTooltip() {
-    if (this._tooltipEl) return this._tooltipEl;
-
-    const outer = document.createElement('div');
-    Object.assign(outer.style, {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      transform: 'translate(-50%, -100%)',
-      zIndex: '2147483647',
-      pointerEvents: 'none',
-    });
-
-    const bubble = document.createElement('div');
-    Object.assign(bubble.style, {
-      position: 'relative',
-      boxSizing: 'content-box',
-      background: '#333',
-      color: '#fff',
-      borderRadius: '4px',
-      fontSize: '14px',
-      lineHeight: '1.4',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      whiteSpace: 'normal',
-      textAlign: 'center',
-      padding: '8px',
-      maxWidth: '240px',
-      opacity: '0',
-    });
-
-    const label = document.createElement('span');
-    bubble.appendChild(label);
-
-    const arrow = document.createElement('div');
-    Object.assign(arrow.style, {
-      position: 'absolute',
-      // Overlaps the bubble by 1px instead of sitting flush at 100% —
-      // two adjacent elements meeting at an exact sub-pixel boundary can
-      // render with a hairline gap between them once the bubble is
-      // animating (transform/opacity commonly promotes it to its own
-      // compositor layer), so nudge the arrow up into the body to
-      // guarantee no seam regardless of sub-pixel rounding.
-      top: 'calc(100% - 1px)',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '0',
-      height: '0',
-      borderStyle: 'solid',
-      borderWidth: '8px 8px 0',
-      borderColor: '#333 transparent transparent transparent',
-    });
-    bubble.appendChild(arrow);
-
-    outer.appendChild(bubble);
-    document.body.appendChild(outer);
-
-    this._tooltipEl = outer;
-    this._tooltipBubble = bubble;
-    this._tooltipLabel = label;
-    return outer;
-  }
-
+  /** Shows the shared tooltip (TooltipController, copied from lxn-ui) over
+   * the hovered element. */
   _showTooltip(e, text) {
-    const outer  = this._ensureTooltip();
-    const bubble = this._tooltipBubble;
-    const label  = this._tooltipLabel;
     // Icon buttons are 40px boxes around a 24px glyph — anchor to the glyph
     // so the bubble sits right above the icon, not the button's empty edge.
     const target = e.currentTarget;
     const anchor = target.classList.contains('email-icon-btn') ? (target.querySelector('svg') || target) : target;
-    const rect   = anchor.getBoundingClientRect();
-
-    // No CSS sizing keyword (width:max-content, display:table/inline-block)
-    // actually shrinks a box to its post-wrap line width — they all just
-    // clamp to max-width the instant the text needs more than one line,
-    // ignoring how narrow the wrapped lines end up. So measure it for real:
-    // let it wrap at max-width, read the widest rendered line via Range
-    // rects, then set that as the explicit width.
-    bubble.style.width = '';
-    label.textContent = text;
-    const range = document.createRange();
-    range.selectNodeContents(label);
-    const lineWidths = Array.from(range.getClientRects(), r => r.width);
-    bubble.style.width = `${Math.ceil(Math.max(...lineWidths))}px`;
-
-    outer.style.top  = `${rect.top - 10}px`;
-    outer.style.left = `${rect.left + rect.width / 2}px`;
-
-    bubble.getAnimations().forEach(a => a.cancel());
-    bubble.animate(
-      [
-        { opacity: 0, transform: 'translateY(6px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ],
-      { duration: 160, easing: 'ease-out', fill: 'forwards' },
-    );
+    this._tooltip.show(anchor, text);
   }
 
   _hideTooltip() {
-    const bubble = this._tooltipBubble;
-    if (!bubble) return;
-    bubble.getAnimations().forEach(a => a.cancel());
-    bubble.animate(
-      [
-        { opacity: 1, transform: 'translateY(0)' },
-        { opacity: 0, transform: 'translateY(6px)' },
-      ],
-      { duration: 160, easing: 'ease-in', fill: 'forwards' },
-    );
+    this._tooltip.hide();
   }
 
   _renderPill(path, label, group) {
