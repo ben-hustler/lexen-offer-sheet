@@ -223,6 +223,9 @@ export class LexenOfferSheet extends LitElement {
     _pdfVehicle:        { type: Object,  state: true },
     _savedConfirm:      { type: Boolean, state: true },
     _confirmReset:      { type: Boolean, state: true },
+    // Locked offer (accepted/declined): "Edit anyway" lets the dealer edit
+    // regardless — _lockOverridden lasts until `locked` changes again.
+    _lockOverridden:    { type: Boolean, state: true },
     _locks:             { type: Object,  state: true },
 
     // Send UI
@@ -833,11 +836,18 @@ export class LexenOfferSheet extends LitElement {
     .locked-notice {
       position: relative; z-index: 2; /* above the .settings-locked dimming */
       display: flex; align-items: flex-start; gap: 8px;
-      margin: 10px 0 4px; padding: 8px 10px;
+      margin: 14px 0 10px; padding: 12px 12px;
       background: #fff8e6; border: 1px solid #f5d48a; border-radius: 6px;
       font-size: 12px; line-height: 1.4; color: #7a4b00;
     }
     .locked-notice svg { flex-shrink: 0; margin-top: 2px; }
+    .locked-notice span { flex: 1; }
+    .locked-notice-edit {
+      flex-shrink: 0; align-self: center; padding: 4px 10px;
+      background: #fff; border: 1px solid #f5d48a; border-radius: 5px;
+      font-size: 12px; font-weight: 600; color: #7a4b00; cursor: pointer;
+    }
+    .locked-notice-edit:hover { background: #fff3d1; }
     .segmented-control.disabled { opacity: 0.35; pointer-events: none; }
     .pill.disabled { opacity: 0.35; pointer-events: none; }
     .toggle-group.disabled { opacity: 0.35; pointer-events: none; }
@@ -1299,6 +1309,7 @@ export class LexenOfferSheet extends LitElement {
     this._lastPrintoutRequest = null; // stored after each successful generate, fired in pdf-send
     this._savedConfirm  = false;
     this._confirmReset  = false;
+    this._lockOverridden = false;
     this._locks = {
       mode:           false,
       condition:      false,
@@ -1552,6 +1563,7 @@ export class LexenOfferSheet extends LitElement {
     // also drops any unapplied edits, so the preview matches what was saved.
     if (changedProps.has('locked')) {
       this._finalized = !!this.locked;
+      this._lockOverridden = false;
       if (this._sheetLocked() && this._previewStale) this._handleDiscardChanges();
     }
 
@@ -2221,10 +2233,11 @@ export class LexenOfferSheet extends LitElement {
   // }
   _effectiveLock(key) { return false; }
   /** True when Bubble has locked this offer's sheet (`locked` — set once the
-   * offer is accepted or declined). Everything that changes the sheet is
-   * disabled; download, email and individual sections stay available.
+   * offer is accepted or declined) and the dealer hasn't confirmed they want
+   * to edit anyway. Everything that changes the sheet is disabled; download,
+   * email and individual sections stay available.
    * Never applies in templateMode, which has no offer to lock. */
-  _sheetLocked() { return !!this.locked && !this.templateMode; }
+  _sheetLocked() { return !!this.locked && !this.templateMode && !this._lockOverridden; }
   _isLocked(key) { return false; }
   _lk(key) { return nothing; }
 
@@ -2722,7 +2735,8 @@ export class LexenOfferSheet extends LitElement {
         ${sheetLocked ? html`
           <div class="locked-notice">
             ${lockClosedSvg}
-            <span>This offer has been accepted or declined, so its offer sheet can no longer be edited. You can still download or email it.</span>
+            <span>This offer has been accepted or declined. Editing will change its offer sheet from the version the customer saw.</span>
+            <button class="locked-notice-edit" type="button" @click="${() => { this._lockOverridden = true; }}">Edit anyway</button>
           </div>
         ` : nothing}
 
