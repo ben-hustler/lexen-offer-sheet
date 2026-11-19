@@ -452,6 +452,9 @@ def _get_display(p):
         # Same summary/detail concept as recon_view, but independent — lets
         # Highlights (Observations) and damages (Recon) be toggled separately.
         "highlights_view": display.get("highlights_view", "summary"),
+        # One-Page sheet: long free text (Comments, legacy freeform highlights)
+        # is clamped to ONE_PAGE_TEXT_MAX_LINES so it can't spill onto page 2.
+        "one_page": bool(display.get("one_page", False)),
         # "detailed" (full offer header + thank-you footer, default), "simple"
         # (plain title/vehicle header, no footer text) or "hide" (content only —
         # no header, footer or page numbers).
@@ -464,6 +467,48 @@ def _get_display(p):
 # ---------------------------------------------------------------------------
 # Custom flowables
 # ---------------------------------------------------------------------------
+
+# One-Page: max wrapped lines for a free-text block before it's cut with "…".
+ONE_PAGE_TEXT_MAX_LINES = 6
+
+
+class ClampedParagraph(Flowable):
+    """A Paragraph cut to at most `max_lines` wrapped lines (at word
+    boundaries, ending in "…"). Line count depends on the frame width, so the
+    cut is worked out at wrap time."""
+
+    def __init__(self, text, style, max_lines):
+        super().__init__()
+        self.text = text
+        self.style = style
+        self.max_lines = max_lines
+        self._para = None
+
+    def _fit(self, text, width):
+        para = Paragraph(text, self.style)
+        para.wrap(width, 1e9)
+        return para, len(para.blPara.lines)
+
+    def wrap(self, availWidth, availHeight):
+        para, n = self._fit(self.text, availWidth)
+        if n > self.max_lines:
+            words = self.text.split()
+            lo, hi, best = 0, len(words), None
+            # Most words that still fit (with the ellipsis) in max_lines.
+            while lo < hi:
+                mid = (lo + hi + 1) // 2
+                cand, m = self._fit(" ".join(words[:mid]).rstrip(" ,.;:-") + "…", availWidth)
+                if m <= self.max_lines:
+                    lo, best = mid, cand
+                else:
+                    hi = mid - 1
+            para = best or self._fit("…", availWidth)[0]
+        self._para = para
+        return para.wrap(availWidth, availHeight)
+
+    def draw(self):
+        self._para.drawOn(self.canv, 0, 0)
+
 
 class PhotoPlaceholder(Flowable):
     """Grey rectangle placeholder for unavailable photos."""
@@ -904,6 +949,11 @@ def _build_observations(p):
     _lbl = _adj_style(STYLE_LABEL, _d)
     _val = _adj_style(STYLE_VALUE, _d)
 
+    def _text(t):
+        if display["one_page"]:
+            return ClampedParagraph(t, _val, ONE_PAGE_TEXT_MAX_LINES)
+        return Paragraph(t, _val)
+
     elements = [Paragraph("Observations", STYLE_SECTION_HEADER)]
 
     if show_highlights:
@@ -921,7 +971,7 @@ def _build_observations(p):
                     f"Highlights ({len(highlights)}) — {_fmt_price(total)}", _val,
                 ))
         elif legacy_highlights_text:
-            elements.append(Paragraph(legacy_highlights_text, _val))
+            elements.append(_text(legacy_highlights_text))
         else:
             elements.append(Paragraph("No highlights", _val))
         if show_comments:
@@ -930,7 +980,7 @@ def _build_observations(p):
     if show_comments:
         comments_text = obs.get("comments") or "No comments"
         elements.append(Paragraph("<b>Comments</b>", _lbl))
-        elements.append(Paragraph(comments_text, _val))
+        elements.append(_text(comments_text))
 
     return [KeepTogether(elements)]
 
