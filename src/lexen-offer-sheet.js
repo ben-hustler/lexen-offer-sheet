@@ -158,14 +158,9 @@ const mailSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill=
 const printSvg      = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`;
 // Material Icons `more_horiz` — opens the individual-sections print/email modal.
 const moreSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
-// Material Icons `description` (one-page) + `location_on` (location default) — load-preset buttons.
-const pageSvg     = html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
-const locationSvg = html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
-// Material Icons `undo` / `redo` — undo/redo buttons in the Customize header.
-const undoSvg = html`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`;
-const redoSvg = html`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`;
-// Undo/redo keeps this many applied versions.
-const HISTORY_LIMIT = 5;
+// Sections One-Page leaves out (its format can't fit them). Mirrored in
+// _buildDisplay and scripts/assemble-print-payload.bubble.js.
+const ONE_PAGE_EXCLUDED = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
 const alertCircleSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -422,11 +417,8 @@ export class LexenOfferSheet extends LitElement {
     // Locked offer (accepted/declined): "Edit anyway" lets the dealer edit
     // regardless — _lockOverridden lasts until `locked` changes again.
     _lockOverridden:    { type: Boolean, state: true },
-    // Undo/redo: previously applied versions of the settings (see _captureSettings).
-    _undoStack:         { type: Array,   state: true },
-    // Which Load configuration button is briefly showing "Loaded" ('one_page' | 'location' | null)
-    _loadedPreset:      { type: String,  state: true },
-    _redoStack:         { type: Array,   state: true },
+    // "Reset to location default" is showing its inline Yes/Cancel confirm
+    _confirmReset:      { type: Boolean, state: true },
     _locks:             { type: Object,  state: true },
 
     // Send UI
@@ -1355,45 +1347,38 @@ export class LexenOfferSheet extends LitElement {
     }
 
     .customize-header-row h2 { margin-bottom: 0; }
-    .history-btns { display: flex; gap: 2px; }
-    .history-btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 30px; height: 30px; padding: 0;
-      background: transparent; color: #667085;
-      border: 1px solid transparent; border-radius: 7px; cursor: pointer;
+    .customize-header-ctrls { display: flex; align-items: center; gap: 8px; }
+
+
+    /* Reset to location default — quiet outline button under Apply/Discard,
+       swaps to an inline Yes/Cancel confirm when clicked. */
+    .reset-btn {
+      width: 100%; padding: 9px 20px; background: transparent; color: #98a2b3;
+      border: 1px solid #eaecf0; border-radius: 8px; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .history-btn:hover:not(:disabled) { background: #effcff; border-color: #7fb8c3; color: #006073; }
-    .history-btn:disabled { opacity: 0.35; cursor: default; }
-    .history-btn:focus-visible { outline: 2px solid #7fb8c3; outline-offset: 1px; }
-    .load-panel {
+    .reset-btn:hover:not(:disabled) { background: #f9fafb; color: #667085; border-color: #d0d5dd; }
+    .reset-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .confirm-reset {
+      padding: 10px 12px;
+      background: #fff8e1; border: 1px solid #f59f00; border-radius: 8px;
       display: flex; flex-direction: column; gap: 8px;
-      margin-bottom: 16px; padding: 10px 12px;
-      background: #f9fafb; border: 1px solid #eaecf0; border-radius: 9px;
     }
-    .load-label {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
-      text-transform: uppercase; color: #667085;
+    .confirm-reset-msg { font-size: 12px; color: #667085; font-weight: 500; }
+    .confirm-reset-btns { display: flex; gap: 6px; }
+    .confirm-reset-yes {
+      flex: 1; padding: 6px; background: #d92d20; color: #fff;
+      border: none; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
     }
-    .load-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-    .load-btn {
-      flex: 1 1 0; min-width: max-content;
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 6px 10px; background: #fff; color: #344054; white-space: nowrap;
-      border: 1px solid #d0d5dd; border-radius: 7px; font-size: 12px; font-weight: 500;
-      cursor: pointer; font-family: inherit; box-shadow: 0 1px 2px rgba(16,24,40,0.04);
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    .confirm-reset-yes:hover { background: #b42318; }
+    .confirm-reset-no {
+      flex: 1; padding: 6px; background: transparent; color: #667085;
+      border: 1px solid #eaecf0; border-radius: 8px; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
     }
-    .load-btn svg { flex-shrink: 0; color: #667085; transition: color 0.15s; }
-    .load-btn:hover { background: #effcff; border-color: #7fb8c3; color: #006073; }
-    .load-btn:hover svg { color: #006073; }
-    .load-btn:active { background: #e0f6fb; }
-    /* Label ⇄ "Loaded" swap fades in — only on the clicked button, so the
-       buttons don't fade on first render. */
-    .load-btn-content { display: inline-flex; align-items: center; gap: 6px; }
-    .load-fade { animation: load-fade 0.25s ease-out; }
-    @keyframes load-fade { from { opacity: 0; } to { opacity: 1; } }
-    .load-btn:focus-visible { outline: 2px solid #7fb8c3; outline-offset: 1px; }
+    .confirm-reset-no:hover { background: #f9fafb; }
 
     /* ── Send card ─────────────────────────────────────────────────────────── */
     .send-card { display: flex; flex-direction: column; gap: 10px; }
@@ -1522,9 +1507,8 @@ export class LexenOfferSheet extends LitElement {
     this._lastPrintoutRequest = null; // stored after each successful generate, fired in pdf-send
     this._savedConfirm  = false;
     this._lockOverridden = false;
-    this._undoStack = [];
-    this._loadedPreset = null;
-    this._redoStack = [];
+    this._confirmReset = false;
+    this._onePageRestore = null; // One-Page sections that were on before entering One-Page
     this._locks = {
       mode:           false,
       condition:      false,
@@ -1657,7 +1641,7 @@ export class LexenOfferSheet extends LitElement {
 
   _applyPdfDisplay(d) {
     if (!d) return;
-    if (d.mode != null)             this._mode                  = d.mode;
+    if (d.mode != null)             { this._mode = d.mode; this._onePageRestore = null; }
     if (d.font_size_index != null)  this._fontSizeIndex         = d.font_size_index;
     if (d.photos_per_row != null)   this._photosPerRow          = d.photos_per_row;
     if (d.disc_layout != null)      this._discLayout            = d.disc_layout;
@@ -1746,23 +1730,6 @@ export class LexenOfferSheet extends LitElement {
         '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex', '_locks'];
       if (settingKeys.some(k => changedProps.has(k))) {
         this._savedConfirm = false;
-      }
-    }
-
-    // Editing anything while in One-Page mode "bakes" the current (trimmed) state
-    // into Full and drops the tab back to Full — One-Page stops being a separate
-    // cached configuration the moment you touch something, rather than reverting
-    // to whatever Full was before you entered One-Page.
-    // !changedProps.has('_mode') excludes the mode-switch's own update (which sets
-    // _mode alongside its own group-forcing) — only a change on a LATER cycle,
-    // while already sitting in One-Page, should trigger this. !wasDataLoad excludes
-    // sharedDisplay/pdfDisplay data-load cascades (same guard used below).
-    if (this._mode === 'one_page' && !changedProps.has('_mode') && !wasDataLoad && !this._isLocked('mode')) {
-      const editKeys = ['_valueDisplay', '_taxRatePct', '_profitName', '_disclaimerText', '_disclaimerPunct',
-        '_fontSizeIndex', '_photosPerRow', '_discLayout', '_marketDisplay', '_scenarioLayout', '_reconView', '_highlightsView',
-        '_sectionOrder', '_pills', '_groups', '_selectedEmployeeIndex'];
-      if (editKeys.some(k => changedProps.has(k))) {
-        this._mode = 'full';
       }
     }
 
@@ -1913,30 +1880,19 @@ export class LexenOfferSheet extends LitElement {
     this._groups = newGroups;
   }
 
-  /** When a section is hidden, push it to the bottom of layout order. */
-  _syncLayoutOrder(hiddenSection) {
-    const order = [...this._sectionOrder];
-    const idx = order.indexOf(hiddenSection);
-    if (idx !== -1) {
-      order.splice(idx, 1);
-      order.push(hiddenSection);
-    }
-    this._sectionOrder = order;
+  /** Layout list as shown: active sections first, inactive ones after —
+   * each in their real order. Purely visual: _sectionOrder keeps inactive
+   * sections where they were, so turning one back on puts it back in place. */
+  _displayOrder() {
+    const order = this._sectionOrder;
+    return [...order.filter(x => !this._isSectionDisabled(x)), ...order.filter(x => this._isSectionDisabled(x))];
   }
 
-  _restoreLayoutOrder(section) {
-    const refOrder = this.sharedDisplay?.section_order?.length
-      ? this.sharedDisplay.section_order
-      : DEFAULT_LAYOUT_ORDER;
-    const order = [...this._sectionOrder].filter(s => s !== section);
-    const refIdx = refOrder.indexOf(section);
-    const insertBefore = order.findIndex(s => refOrder.indexOf(s) > refIdx);
-    if (insertBefore === -1) {
-      order.push(section);
-    } else {
-      order.splice(insertBefore, 0, section);
-    }
-    this._sectionOrder = order;
+  /** Writes a new sequence of the active sections back into _sectionOrder,
+   * filling the slots active sections occupy so inactive ones don't move. */
+  _setActiveOrder(active) {
+    const queue = [...active];
+    this._sectionOrder = this._sectionOrder.map(x => this._isSectionDisabled(x) ? x : queue.shift());
   }
 
   _isOnePage() {
@@ -2002,18 +1958,18 @@ export class LexenOfferSheet extends LitElement {
       },
       sections: {
         valuation: g.valuation === 'checked' || g.valuation === 'indeterminate',
-        disclosures: this._isOnePage() ? false : (g.disclosures === 'checked'),
+        disclosures: g.disclosures === 'checked',
         disclosures_horizontal: this._discLayout === 'horizontal',
         disclosures_signature: g.signature === 'checked',
         observations: g.observations === 'checked' || g.observations === 'indeterminate',
         observations_highlights: p['sections.observations_highlights'],
         observations_comments: p['sections.observations_comments'],
-        market_summary: (g.market === 'checked') && (this._isOnePage() || this._marketDisplay === 'summary'),
-        market_comparables: (g.market === 'checked') && !this._isOnePage() && this._marketDisplay === 'full',
-        market_scenarios: this._isOnePage() ? false : (g.market_scenarios === 'checked' || g.market_scenarios === 'indeterminate'),
-        selected_scenarios: this._isOnePage() ? false : (g.selected_scenarios === 'checked' || g.selected_scenarios === 'indeterminate'),
-        recon_breakdown: this._isOnePage() ? false : (g.recon === 'checked'),
-        photos: this._isOnePage() ? false : (g.photos === 'checked'),
+        market_summary: (g.market === 'checked') && this._marketDisplay === 'summary',
+        market_comparables: (g.market === 'checked') && this._marketDisplay === 'full',
+        market_scenarios: g.market_scenarios === 'checked' || g.market_scenarios === 'indeterminate',
+        selected_scenarios: g.selected_scenarios === 'checked' || g.selected_scenarios === 'indeterminate',
+        recon_breakdown: g.recon === 'checked',
+        photos: g.photos === 'checked',
       },
       general: {
         offer_label: false,
@@ -2030,6 +1986,8 @@ export class LexenOfferSheet extends LitElement {
       recon_view: this._reconView,
       // Same summary/detail concept, independent toggle for Observations' Highlights.
       highlights_view: this._highlightsView,
+      // Tells the renderer to clamp long free text (Comments) to fit one page.
+      one_page: this._isOnePage(),
     };
 
     return display;
@@ -2037,46 +1995,87 @@ export class LexenOfferSheet extends LitElement {
 
   // ── Event handlers ─────────────────────────────────────────────────────────
 
-  /** "Load location default": puts every setting back to the location's
-   * template (or the built-in defaults when there's no template). Only loads —
-   * the preview goes stale and nothing is saved until Apply. */
-  _handleLoadLocationDefault() {
+  /** "Reset to location default": goes back to the location template's own
+   * baseline (or the built-in defaults when there's no template), regenerates
+   * right away, and tells Bubble to clear this sheet's instance overrides. */
+  async _handleReset() {
     if (this._sheetLocked()) return;
-    this._resetToggles();
-    if (this.templateSharedDisplay) this._applySharedDisplay(this.templateSharedDisplay);
-    if (this.templatePdfDisplay)    this._applyPdfDisplay(this.templatePdfDisplay);
+    this._confirmReset = false;
+    this._onePageRestore = null;
+    this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
+    // Not whatever's loaded in sharedDisplay/pdfDisplay — that may already be
+    // an instance override.
+    if (this.templateSharedDisplay || this.templatePdfDisplay) {
+      if (this.templateSharedDisplay) this._applySharedDisplay(this.templateSharedDisplay);
+      if (this.templatePdfDisplay)    this._applyPdfDisplay(this.templatePdfDisplay);
+    } else {
+      this._resetToggles();
+    }
+    this._previewStale = true;
+
+    // Regenerate right away instead of leaving the preview stale until a
+    // separate manual Apply click — mirrors _handleApply's own generate step.
+    this._finalizing = true;
+    await this._handleGenerate(false);
+    this._finalizing = false;
+    this._finalized = true;
+
+    // Null values signal Bubble to clear instance-level overrides. This is
+    // the authoritative save for a reset, so it's the only display-save
+    // dispatched here — not _handleApply's own (non-null) one, which would
+    // immediately re-create an instance override and undo the clear.
+    this.dispatchEvent(new CustomEvent('display-save', {
+      detail: { shared: null, pdf: null, employee: null, payload: null },
+      bubbles: true, composed: true,
+    }));
   }
 
-  /** "Load one-page": trims the current configuration to fit one page.
-   * Fixes which content shows (+ font size); General choices like the header
-   * $ amount, tax rate and profit label stay as they are. Only loads —
-   * nothing is saved until Apply. */
-  _handleLoadOnePage() {
-    if (this._sheetLocked()) return;
-    this._mode = 'full';
-    this._fontSizeIndex = 2; // default size — larger fonts can spill onto a second page
+  /** Settings after switching to `value` (pure — works on a _captureSettings
+   * object). It's a preset, not a display rule — everything stays editable
+   * afterwards and prints as shown. One-Page turns off its fixed group of
+   * sections and sets Market + Highlights to Summary. Full turns back on the
+   * sections One-Page turned off (`restore`; when unknown, e.g. the sheet was
+   * saved in One-Page, whichever of them the location default shows), sets
+   * Market to Full and puts Highlights back. Neither touches the order. */
+  _withMode(s, value, restore) {
+    const groups = { ...s.groups };
+    const pills = { ...s.pills };
+    if (value === 'one_page') {
+      ONE_PAGE_EXCLUDED.forEach(g => { groups[g] = 'unchecked'; });
+      return { ...s, mode: value, groups, marketDisplay: 'summary', highlightsView: 'summary' };
+    }
+    const turnOn = restore?.sections || this._fullDefaultSections();
+    turnOn.forEach(g => {
+      const keys = this._pillKeysForGroup(g);
+      if (!keys.length) { groups[g] = 'checked'; return; }
+      // Same rule as checking the box by hand: keep a partial field selection,
+      // or turn every field on if none were left.
+      const active = keys.filter(k => pills[k]).length;
+      if (active === 0) keys.forEach(k => { pills[k] = true; });
+      groups[g] = active === 0 || active === keys.length ? 'checked' : 'indeterminate';
+    });
+    return { ...s, mode: value, groups, pills, marketDisplay: 'full', highlightsView: restore?.highlightsView || s.highlightsView };
+  }
 
-    const newGroups = { ...this._groups };
-    // One-page's format can't fit these.
-    ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'].forEach(g => { newGroups[g] = 'unchecked'; });
-    ['valuation', 'observations', 'market'].forEach(g => { newGroups[g] = 'checked'; });
-    this._groups = newGroups;
+  /** One-Page sections Full turns on when we don't know what was on before
+   * One-Page: the location default's choice, or all of them without one. */
+  _fullDefaultSections() {
+    const t = this.templateSharedDisplay?.sections;
+    return t ? ONE_PAGE_EXCLUDED.filter(g => t[g] !== false) : [...ONE_PAGE_EXCLUDED];
+  }
 
-    const newPills = { ...this._pills };
-    ['valuation.retail_value', 'valuation.recon', 'valuation.fixed_overhead', 'valuation.target_profit', 'valuation.tax_savings'].forEach(k => { newPills[k] = true; });
-    newPills['sections.observations_comments'] = true;
-    // Trim, not additive: one-page needs the space back (real-world logo
-    // height in Bubble eats into the budget too), and highlights is the
-    // easiest thing to drop without losing anything essential.
-    newPills['sections.observations_highlights'] = false;
-    this._pills = newPills;
-
-    this._marketDisplay = 'summary';
-
-    const disabled = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
-    const enabled = this._sectionOrder.filter(s => !disabled.includes(s));
-    const disabledOrdered = this._sectionOrder.filter(s => disabled.includes(s));
-    this._sectionOrder = [...enabled, ...disabledOrdered];
+  /** Full / One-Page toggle — see _withMode for what each side sets. It
+   * changes real settings, so it's an ordinary edit: Apply to save, Discard
+   * to undo. */
+  _handleModeChange(value) {
+    if (this._sheetLocked() || value === this._mode) return;
+    const restore = this._onePageRestore;
+    // Entering One-Page: remember which of its sections were on, so Full only
+    // turns those back on.
+    this._onePageRestore = value === 'one_page'
+      ? { sections: ONE_PAGE_EXCLUDED.filter(g => this._groups[g] !== 'unchecked'), highlightsView: this._highlightsView }
+      : null;
+    this._restoreSettings(this._withMode(this._captureSettings(), value, restore));
   }
 
   _handleGroupChange(group, checked) {
@@ -2107,13 +2106,6 @@ export class LexenOfferSheet extends LitElement {
       }
     }
 
-    if (group !== 'signature') {
-      if (!checked) {
-        this._syncLayoutOrder(group);
-      } else {
-        this._restoreLayoutOrder(group);
-      }
-    }
   }
 
   _handlePillClick(path, group) {
@@ -2123,11 +2115,6 @@ export class LexenOfferSheet extends LitElement {
 
     if (group && ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'].includes(group)) {
       this._recomputeGroupState(group);
-
-      // If group is now fully unchecked, push section to bottom
-      if (this._groups[group] === 'unchecked') {
-        this._syncLayoutOrder(group);
-      }
     }
   }
 
@@ -2172,7 +2159,7 @@ export class LexenOfferSheet extends LitElement {
   }
 
   /** The customize-panel settings as a plain object — used for the
-   * last-applied baseline (Discard) and the undo/redo stacks. */
+   * last-applied baseline (Discard). */
   _captureSettings() {
     return {
       mode: this._mode,
@@ -2196,6 +2183,7 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _restoreSettings(s) {
+    if (s.mode !== 'one_page') this._onePageRestore = null;
     this._mode                  = s.mode;
     this._valueDisplay          = s.valueDisplay;
     this._taxRatePct            = s.taxRatePct;
@@ -2227,38 +2215,6 @@ export class LexenOfferSheet extends LitElement {
     this._pendingDataLoad = true; // suppress re-marking stale during this cascade
     this._restoreSettings(this._appliedSnapshot);
     this._previewStale = false;
-  }
-
-  /** Fades a Load configuration button's label to "Loaded" for a moment. */
-  _flashLoaded(which) {
-    // Only the clicked button fades back — adding the class to the other
-    // button's existing label would start its animation too.
-    this._lastFlashed = which;
-    this._loadedPreset = which;
-    clearTimeout(this._loadedTimer);
-    this._loadedTimer = setTimeout(() => { this._loadedPreset = null; }, 1500);
-  }
-
-  // ── Undo / redo ────────────────────────────────────────────────────────────
-  // Steps through applied versions only (one step per Apply), and applies
-  // immediately: regenerate + save, same as clicking Apply. Unapplied edits
-  // are dropped when you undo/redo.
-
-  _handleUndo() { return this._stepHistory('_undoStack', '_redoStack'); }
-  _handleRedo() { return this._stepHistory('_redoStack', '_undoStack'); }
-
-  async _stepHistory(fromKey, toKey) {
-    if (this._sheetLocked() || this._generating || this._finalizing || !this[fromKey].length) return;
-    const target  = this[fromKey][this[fromKey].length - 1];
-    const current = this._appliedSnapshot;
-    this[fromKey] = this[fromKey].slice(0, -1);
-    this._restoreSettings(target);
-    const applied = await this._handleApply({ fromHistory: true });
-    if (applied) {
-      if (current) this[toKey] = [...this[toKey], current].slice(-HISTORY_LIMIT);
-    } else {
-      this[fromKey] = [...this[fromKey], target]; // generate failed — keep the step
-    }
   }
 
   _resetToggles() {
@@ -2325,15 +2281,15 @@ export class LexenOfferSheet extends LitElement {
 
     const list = this.shadowRoot.querySelector('.sortable-list');
     if (list && this._placeholder && this._placeholder.parentNode === list) {
-      const newOrder = [];
+      const active = [];
       for (const child of Array.from(list.children)) {
         if (child === this._placeholder) {
-          newOrder.push(src);
-        } else if (child.dataset.section && child.dataset.section !== src) {
-          newOrder.push(child.dataset.section);
+          active.push(src);
+        } else if (child.dataset.section && child.dataset.section !== src && !this._isSectionDisabled(child.dataset.section)) {
+          active.push(child.dataset.section);
         }
       }
-      this._sectionOrder = newOrder;
+      this._setActiveOrder(active);
     }
 
     if (this._placeholder && this._placeholder.parentNode) {
@@ -2366,12 +2322,12 @@ export class LexenOfferSheet extends LitElement {
   }
 
   _handleMoveSection(section, direction) {
-    const order = [...this._sectionOrder];
-    const idx = order.indexOf(section);
+    const active = this._sectionOrder.filter(x => !this._isSectionDisabled(x));
+    const idx = active.indexOf(section);
     const target = idx + direction;
-    if (target < 0 || target >= order.length) return;
-    [order[idx], order[target]] = [order[target], order[idx]];
-    this._sectionOrder = order;
+    if (idx === -1 || target < 0 || target >= active.length) return;
+    [active[idx], active[target]] = [active[target], active[idx]];
+    this._setActiveOrder(active);
     this.updateComplete.then(() => {
       const el = this.shadowRoot.querySelector(`.sortable-item[data-section="${section}"]`);
       if (el) {
@@ -2681,6 +2637,8 @@ export class LexenOfferSheet extends LitElement {
         recon_breakdown:         on('recon'),
         photos:                  on('photos'),
       },
+      // Individual-section prints aren't one-page sheets — no clamping.
+      one_page: false,
       header_footer: 'simple',
     };
   }
@@ -2740,10 +2698,9 @@ export class LexenOfferSheet extends LitElement {
     this._sendPayloadOverride = null;
   }
 
-  /** Generates + saves the current settings. Records the previously applied
-   * version as an undo step (unless this apply IS an undo/redo). Returns true
-   * when the generate succeeded. */
-  async _handleApply({ fromHistory = false } = {}) {
+  /** Generates + saves the current settings. Returns true when the generate
+   * succeeded. */
+  async _handleApply() {
     if (this._sheetLocked()) return false;
     const before = this._appliedSnapshot;
     this._savedConfirm = true;
@@ -2762,12 +2719,7 @@ export class LexenOfferSheet extends LitElement {
       this._dispatchDisplaySave();
     }
     const after = this._appliedSnapshot;
-    const applied = after !== before;
-    if (applied && !fromHistory && before && JSON.stringify(after) !== JSON.stringify(before)) {
-      this._undoStack = [...this._undoStack, before].slice(-HISTORY_LIMIT);
-      this._redoStack = [];
-    }
-    return applied;
+    return after !== before;
   }
 
   async _handleReopen() {
@@ -2902,46 +2854,35 @@ export class LexenOfferSheet extends LitElement {
     // overlay), and `inert` the controls themselves so keyboard can't reach
     // them either. Section headers stay clickable to read the settings.
     const sheetLocked = this._sheetLocked();
+    // No template display to fall back to — _handleReset() falls back to
+    // _resetToggles()'s built-in defaults, so label the button for that.
+    const hasTemplateDisplay = !!(this.templateSharedDisplay || this.templatePdfDisplay);
+    const resetTargetLabel   = hasTemplateDisplay ? 'location default' : 'default';
+    const resetConfirmPhrase = hasTemplateDisplay ? 'location defaults' : 'default configuration';
 
     return html`
       <div class="card">
         <div class="${sheetLocked ? 'settings-locked' : ''}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="history-btns" ?inert="${sheetLocked}">
-            <button class="history-btn" type="button" aria-label="Undo"
-              ?disabled="${!this._undoStack.length || this._generating || this._finalizing}"
-              @click="${() => { this._hideTooltip(); this._handleUndo(); }}"
-              @mouseenter="${(e) => this._showTooltip(e, 'Undo last apply')}"
-              @mouseleave="${() => this._hideTooltip()}"
-            >${undoSvg}</button>
-            <button class="history-btn" type="button" aria-label="Redo"
-              ?disabled="${!this._redoStack.length || this._generating || this._finalizing}"
-              @click="${() => { this._hideTooltip(); this._handleRedo(); }}"
-              @mouseenter="${(e) => this._showTooltip(e, 'Redo apply')}"
-              @mouseleave="${() => this._hideTooltip()}"
-            >${redoSvg}</button>
-          </div>
-        </div>
-        <div class="load-panel" ?inert="${sheetLocked}">
-          <span class="load-label">Load configuration</span>
-          <div class="load-btns">
-            <button class="load-btn" type="button"
-              @click="${() => { this._handleLoadOnePage(); this._flashLoaded('one_page'); }}"
-              @mouseenter="${(e) => this._showTooltip(e, 'Trims the sheet to fit one page.')}"
-              @mouseleave="${() => this._hideTooltip()}"
-            >${this._loadedPreset === 'one_page'
-              ? html`<span class="load-btn-content load-fade">Loaded</span>`
-              : html`<span class="load-btn-content ${this._lastFlashed === 'one_page' ? 'load-fade' : ''}">${pageSvg}<span>One-page</span></span>`}</button>
-            ${!this.templateMode ? html`
-              <button class="load-btn" type="button"
-                @click="${() => { this._handleLoadLocationDefault(); this._flashLoaded('location'); }}"
-                @mouseenter="${(e) => this._showTooltip(e, "Restores this location's default configuration.")}"
+          <div class="customize-header-ctrls" ?inert="${sheetLocked}">
+          <div class="ctrl-group ${this._isLocked('mode') ? 'locked' : ''}">
+            <div class="segmented-control" style="width:auto;">
+              <button
+                class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
+                ?disabled="${this._isLocked('mode') || this._generating || this._finalizing}"
+                @click="${() => this._handleModeChange('full')}"
+              >Full</button>
+              <button
+                class="seg-btn ${this._isOnePage() ? 'active' : ''}"
+                ?disabled="${this._isLocked('mode') || this._generating || this._finalizing}"
+                @click="${() => this._handleModeChange('one_page')}"
+                @mouseenter="${(e) => this._showTooltip(e, 'Hides a fixed group of sections to fit content to one page')}"
                 @mouseleave="${() => this._hideTooltip()}"
-              >${this._loadedPreset === 'location'
-                ? html`<span class="load-btn-content load-fade">Loaded</span>`
-                : html`<span class="load-btn-content ${this._lastFlashed === 'location' ? 'load-fade' : ''}">${locationSvg}<span>Location default</span></span>`}</button>
-            ` : nothing}
+              >One-Page</button>
+            </div>
+            ${this._lk('mode')}
+          </div>
           </div>
         </div>
 
@@ -3207,7 +3148,7 @@ export class LexenOfferSheet extends LitElement {
               @dragover="${(e) => e.preventDefault()}"
               @drop="${(e) => this._handleListDrop(e)}"
             >
-              ${this._sectionOrder.map((sec, i) => {
+              ${(() => { const shown = this._displayOrder(); const nActive = shown.filter(x => !this._isSectionDisabled(x)).length; return shown.map((sec, i) => {
                 const disabled = this._isSectionDisabled(sec) || this._isLocked('section_order');
                 return html`
                   <div
@@ -3223,11 +3164,11 @@ export class LexenOfferSheet extends LitElement {
                     <span>${SECTION_LABELS[sec]}</span>
                     <div class="sort-arrows">
                       <button class="sort-arrow" ?disabled="${disabled || i === 0}" @click="${() => this._handleMoveSection(sec, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${disabled || i === this._sectionOrder.length - 1}" @click="${() => this._handleMoveSection(sec, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${disabled || i >= nActive - 1}" @click="${() => this._handleMoveSection(sec, 1)}">▼</button>
                     </div>
                   </div>
                 `;
-              })}
+              }); })()}
             </div>
           </div>
         </div>
@@ -3262,6 +3203,20 @@ export class LexenOfferSheet extends LitElement {
                 @click="${() => this._handleDiscardChanges()}"
               >Discard Changes</button>
             </div>
+            ${(this.sharedDisplay || this.pdfDisplay) ? (this._confirmReset ? html`
+              <div class="confirm-reset">
+                <span class="confirm-reset-msg">Reset all settings to the ${resetConfirmPhrase}?</span>
+                <div class="confirm-reset-btns">
+                  <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
+                  <button class="confirm-reset-no"  @click="${() => { this._confirmReset = false; }}">Cancel</button>
+                </div>
+              </div>
+            ` : html`
+              <button class="reset-btn"
+                ?disabled="${this._generating || this._finalizing}"
+                @click="${() => { this._confirmReset = true; }}"
+              >Reset to ${resetTargetLabel}</button>
+            `) : nothing}
           </div>
         ` : nothing}
       </div>

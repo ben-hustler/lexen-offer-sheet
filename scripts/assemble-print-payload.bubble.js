@@ -213,18 +213,18 @@ var watermark = false; // ← replace `false` with the inserted dynamic value, i
       },
       sections: {
         valuation: g.valuation === 'checked' || g.valuation === 'indeterminate',
-        disclosures: isOnePage ? false : (g.disclosures === 'checked'),
+        disclosures: g.disclosures === 'checked',
         disclosures_horizontal: state.discLayout === 'horizontal',
         disclosures_signature: g.signature === 'checked',
         observations: g.observations === 'checked' || g.observations === 'indeterminate',
         observations_highlights: p['sections.observations_highlights'],
         observations_comments: p['sections.observations_comments'],
-        market_summary: (g.market === 'checked') && (isOnePage || state.marketDisplay === 'summary'),
-        market_comparables: (g.market === 'checked') && !isOnePage && state.marketDisplay === 'full',
-        market_scenarios: isOnePage ? false : (g.market_scenarios === 'checked' || g.market_scenarios === 'indeterminate'),
-        selected_scenarios: isOnePage ? false : (g.selected_scenarios === 'checked' || g.selected_scenarios === 'indeterminate'),
-        recon_breakdown: isOnePage ? false : (g.recon === 'checked'),
-        photos: isOnePage ? false : (g.photos === 'checked'),
+        market_summary: (g.market === 'checked') && state.marketDisplay === 'summary',
+        market_comparables: (g.market === 'checked') && state.marketDisplay === 'full',
+        market_scenarios: g.market_scenarios === 'checked' || g.market_scenarios === 'indeterminate',
+        selected_scenarios: g.selected_scenarios === 'checked' || g.selected_scenarios === 'indeterminate',
+        recon_breakdown: g.recon === 'checked',
+        photos: g.photos === 'checked',
       },
       general: {
         offer_label: false,
@@ -242,6 +242,10 @@ var watermark = false; // ← replace `false` with the inserted dynamic value, i
         })),
       },
       scenario_layout: state.scenarioLayout,
+      // One-Page: one-line highlights summary + renderer clamps long Comments.
+      // (Full mode leaves highlights_view unset → renderer default, "summary".)
+      highlights_view: isOnePage ? 'summary' : undefined,
+      one_page: isOnePage,
     };
   }
 
