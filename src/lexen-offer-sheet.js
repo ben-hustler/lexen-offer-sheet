@@ -2056,17 +2056,29 @@ export class LexenOfferSheet extends LitElement {
   /** Settings after switching to `value` (pure — works on a _captureSettings
    * object). It's a preset, not a display rule — everything stays editable
    * afterwards and prints as shown. One-Page turns off its fixed group of
-   * sections and sets Market + Highlights to Summary. Full turns back on the
+   * sections and Comments, and sets Market + Highlights to Summary. Full turns back on the
    * sections One-Page turned off (`restore`; when unknown, e.g. the sheet was
    * saved in One-Page, whichever of them the location default shows), sets
-   * Market to Full and puts Highlights back. Neither touches the order. */
+   * Market to Full and puts Highlights + Comments back. Neither touches the order. */
   _withMode(s, value, restore) {
     const groups = { ...s.groups };
     const pills = { ...s.pills };
+    // Comments is the one Observations field that can run long, so One-Page
+    // drops it; Full puts it back if it was on before (or per location default).
+    const setComments = (on, groupWasOn) => {
+      pills['sections.observations_comments'] = on;
+      if (groups.observations === 'unchecked' && !groupWasOn) return;
+      const keys = this._pillKeysForGroup('observations');
+      const active = keys.filter(k => pills[k]).length;
+      groups.observations = active === 0 ? 'unchecked' : active === keys.length ? 'checked' : 'indeterminate';
+    };
     if (value === 'one_page') {
       ONE_PAGE_EXCLUDED.forEach(g => { groups[g] = 'unchecked'; });
-      return { ...s, mode: value, groups, marketDisplay: 'summary', highlightsView: 'summary' };
+      setComments(false);
+      return { ...s, mode: value, groups, pills, marketDisplay: 'summary', highlightsView: 'summary' };
     }
+    if (restore) setComments(restore.comments, restore.observationsOn);
+    else setComments(this.templateSharedDisplay?.sections?.observations_comments !== false, false);
     const turnOn = restore?.sections || this._fullDefaultSections();
     turnOn.forEach(g => {
       const keys = this._pillKeysForGroup(g);
@@ -2096,7 +2108,9 @@ export class LexenOfferSheet extends LitElement {
     // Entering One-Page: remember which of its sections were on, so Full only
     // turns those back on.
     this._onePageRestore = value === 'one_page'
-      ? { sections: ONE_PAGE_EXCLUDED.filter(g => this._groups[g] !== 'unchecked'), highlightsView: this._highlightsView }
+      ? { sections: ONE_PAGE_EXCLUDED.filter(g => this._groups[g] !== 'unchecked'), highlightsView: this._highlightsView,
+          comments: !!this._pills['sections.observations_comments'],
+          observationsOn: this._groups.observations !== 'unchecked' }
       : null;
     this._restoreSettings(this._withMode(this._captureSettings(), value, restore));
   }

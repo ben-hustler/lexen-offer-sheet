@@ -745,11 +745,10 @@ def _build_header(p):
 
     right_parts.append(Spacer(1, 4))
 
-    # Employee
-    if employee.get("name"):
-        right_parts.append(Paragraph(employee["name"], _adj_style(STYLE_DEALER_INFO, _d)))
-    if employee.get("phone"):
-        right_parts.append(Paragraph(employee["phone"], _adj_style(STYLE_DEALER_INFO, _d)))
+    # Employee — name and phone share one line to save header height
+    emp_line = " · ".join(x for x in (employee.get("name"), employee.get("phone")) if x)
+    if emp_line:
+        right_parts.append(Paragraph(emp_line, _adj_style(STYLE_DEALER_INFO, _d)))
 
     # Two-column table for header layout
     header_tbl_style = [
