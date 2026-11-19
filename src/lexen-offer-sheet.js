@@ -158,6 +158,11 @@ const mailSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill=
 const printSvg      = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`;
 // Material Icons `more_horiz` — opens the individual-sections print/email modal.
 const moreSvg       = html`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+// Material Icons `undo` / `redo` — undo/redo buttons in the Customize header.
+const undoSvg = html`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`;
+const redoSvg = html`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`;
+// Undo/redo keeps this many applied versions.
+const HISTORY_LIMIT = 5;
 // Sections One-Page leaves out (its format can't fit them). Mirrored in
 // _buildDisplay and scripts/assemble-print-payload.bubble.js.
 const ONE_PAGE_EXCLUDED = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
@@ -419,6 +424,9 @@ export class LexenOfferSheet extends LitElement {
     _lockOverridden:    { type: Boolean, state: true },
     // "Reset to location default" is showing its inline Yes/Cancel confirm
     _confirmReset:      { type: Boolean, state: true },
+    // Undo/redo: previously applied versions of the settings (see _captureSettings).
+    _undoStack:         { type: Array,   state: true },
+    _redoStack:         { type: Array,   state: true },
     _locks:             { type: Object,  state: true },
 
     // Send UI
@@ -1347,6 +1355,17 @@ export class LexenOfferSheet extends LitElement {
     }
 
     .customize-header-row h2 { margin-bottom: 0; }
+    .history-btns { display: flex; gap: 2px; }
+    .history-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; padding: 0;
+      background: transparent; color: #667085;
+      border: 1px solid transparent; border-radius: 7px; cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .history-btn:hover:not(:disabled) { background: #effcff; border-color: #7fb8c3; color: #006073; }
+    .history-btn:disabled { opacity: 0.35; cursor: default; }
+    .history-btn:focus-visible { outline: 2px solid #7fb8c3; outline-offset: 1px; }
     .customize-header-ctrls { display: flex; align-items: center; gap: 8px; }
 
 
@@ -1508,6 +1527,8 @@ export class LexenOfferSheet extends LitElement {
     this._savedConfirm  = false;
     this._lockOverridden = false;
     this._confirmReset = false;
+    this._undoStack = [];
+    this._redoStack = [];
     this._onePageRestore = null; // One-Page sections that were on before entering One-Page
     this._locks = {
       mode:           false,
@@ -2001,6 +2022,7 @@ export class LexenOfferSheet extends LitElement {
   async _handleReset() {
     if (this._sheetLocked()) return;
     this._confirmReset = false;
+    const before = this._appliedSnapshot;
     this._onePageRestore = null;
     this._pendingDataLoad = true; // suppress auto display-save during the reactive cascade
     // Not whatever's loaded in sharedDisplay/pdfDisplay — that may already be
@@ -2019,6 +2041,7 @@ export class LexenOfferSheet extends LitElement {
     await this._handleGenerate(false);
     this._finalizing = false;
     this._finalized = true;
+    this._pushHistory(before);
 
     // Null values signal Bubble to clear instance-level overrides. This is
     // the authoritative save for a reset, so it's the only display-save
@@ -2215,6 +2238,38 @@ export class LexenOfferSheet extends LitElement {
     this._pendingDataLoad = true; // suppress re-marking stale during this cascade
     this._restoreSettings(this._appliedSnapshot);
     this._previewStale = false;
+  }
+
+  // ── Undo / redo ────────────────────────────────────────────────────────────
+  // Steps through applied versions only (one step per Apply / Reset), and
+  // applies immediately: regenerate + save, same as clicking Apply.
+  // Unapplied edits are dropped when you undo/redo.
+
+  /** Records `before` (the previously applied version) as an undo step if
+   * the applied version actually changed. */
+  _pushHistory(before) {
+    const after = this._appliedSnapshot;
+    if (before && after && after !== before && JSON.stringify(after) !== JSON.stringify(before)) {
+      this._undoStack = [...this._undoStack, before].slice(-HISTORY_LIMIT);
+      this._redoStack = [];
+    }
+  }
+
+  _handleUndo() { return this._stepHistory('_undoStack', '_redoStack'); }
+  _handleRedo() { return this._stepHistory('_redoStack', '_undoStack'); }
+
+  async _stepHistory(fromKey, toKey) {
+    if (this._sheetLocked() || this._generating || this._finalizing || !this[fromKey].length) return;
+    const target  = this[fromKey][this[fromKey].length - 1];
+    const current = this._appliedSnapshot;
+    this[fromKey] = this[fromKey].slice(0, -1);
+    this._restoreSettings(target);
+    const applied = await this._handleApply({ fromHistory: true });
+    if (applied) {
+      if (current) this[toKey] = [...this[toKey], current].slice(-HISTORY_LIMIT);
+    } else {
+      this[fromKey] = [...this[fromKey], target]; // generate failed — keep the step
+    }
   }
 
   _resetToggles() {
@@ -2700,7 +2755,7 @@ export class LexenOfferSheet extends LitElement {
 
   /** Generates + saves the current settings. Returns true when the generate
    * succeeded. */
-  async _handleApply() {
+  async _handleApply({ fromHistory = false } = {}) {
     if (this._sheetLocked()) return false;
     const before = this._appliedSnapshot;
     this._savedConfirm = true;
@@ -2718,8 +2773,8 @@ export class LexenOfferSheet extends LitElement {
       this._finalized = true;
       this._dispatchDisplaySave();
     }
-    const after = this._appliedSnapshot;
-    return after !== before;
+    if (!fromHistory) this._pushHistory(before);
+    return this._appliedSnapshot !== before;
   }
 
   async _handleReopen() {
@@ -2866,12 +2921,28 @@ export class LexenOfferSheet extends LitElement {
         <div class="customize-header-row">
           <h2>Customize</h2>
           <div class="customize-header-ctrls" ?inert="${sheetLocked}">
+          <div class="history-btns">
+            <button class="history-btn" type="button" aria-label="Undo"
+              ?disabled="${!this._undoStack.length || this._generating || this._finalizing}"
+              @click="${() => { this._hideTooltip(); this._handleUndo(); }}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Undo last apply')}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >${undoSvg}</button>
+            <button class="history-btn" type="button" aria-label="Redo"
+              ?disabled="${!this._redoStack.length || this._generating || this._finalizing}"
+              @click="${() => { this._hideTooltip(); this._handleRedo(); }}"
+              @mouseenter="${(e) => this._showTooltip(e, 'Redo apply')}"
+              @mouseleave="${() => this._hideTooltip()}"
+            >${redoSvg}</button>
+          </div>
           <div class="ctrl-group ${this._isLocked('mode') ? 'locked' : ''}">
             <div class="segmented-control" style="width:auto;">
               <button
                 class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
                 ?disabled="${this._isLocked('mode') || this._generating || this._finalizing}"
                 @click="${() => this._handleModeChange('full')}"
+                @mouseenter="${(e) => this._showTooltip(e, 'Restores sections hidden by one-page')}"
+                @mouseleave="${() => this._hideTooltip()}"
               >Full</button>
               <button
                 class="seg-btn ${this._isOnePage() ? 'active' : ''}"
