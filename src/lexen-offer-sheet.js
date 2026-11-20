@@ -166,11 +166,13 @@ const HISTORY_LIMIT = 5;
 // Sections One-Page leaves out (its format can't fit them). Mirrored in
 // scripts/assemble-print-payload.bubble.js.
 const ONE_PAGE_EXCLUDED = ['disclosures', 'recon', 'photos', 'market_scenarios', 'selected_scenarios'];
-// Everything One-Page hides: those sections, plus Comments (the one
-// Observations field that can run long) and the Market / Highlights views
-// (shown as Summary). A display rule, not a settings change — Full still
+// Everything One-Page hides: those sections, plus the Market / Highlights
+// views (shown as Summary). Comments stays — the renderer clamps it. A display rule, not a settings change — Full still
 // prints the real settings underneath.
-const ONE_PAGE_LOCKED = [...ONE_PAGE_EXCLUDED, 'sections.observations_comments', 'market_display', 'highlights_display'];
+const ONE_PAGE_LOCKED = [...ONE_PAGE_EXCLUDED, 'market_display', 'highlights_display', 'font_size'];
+// One-Page always prints at Medium — the size its layout (and the renderer's
+// Comments clamp) is tuned for. Mirrored in scripts/assemble-print-payload.bubble.js.
+const ONE_PAGE_FONT_DELTA = 1;
 const alertCircleSvg = html`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`;
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -919,11 +921,11 @@ export class LexenOfferSheet extends LitElement {
     .preview-card-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .preview-card-header h2 { margin: 0; }
     .preview-header-right { display: flex; align-items: center; gap: 6px; min-width: 0; }
-    .segmented-control.mode-toggle { width: auto; flex-shrink: 0; }
+    .segmented-control.mode-toggle { width: auto; flex-shrink: 0; position: relative; z-index: 2; }
     .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
     .preview-actions .btn { width: auto; flex: 1; }
 
-    .preview-title-group { display: flex; align-items: center; gap: 12px; }
+    .preview-title-group { display: flex; align-items: center; gap: 8px; }
     .preview-title-group h2 { line-height: 1; }
 
     /* REMOVED (kept for reference — old clickable inline refresh trigger)
@@ -953,7 +955,7 @@ export class LexenOfferSheet extends LitElement {
       flex-shrink: 0;
     }
     .preview-status-dot.stale { background: #f59f00; }
-    .preview-status-hit { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; margin-right: -8px; }
+    .preview-status-hit { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; margin-left: -8px; }
 
     /* Apply / Discard — both grey out with no pending changes, light up once
        something's been edited. Sit side by side above the reset-to-template
@@ -1292,6 +1294,8 @@ export class LexenOfferSheet extends LitElement {
       display: inline-flex; align-items: center; justify-content: center;
       width: 20px; color: #b0b8c4; flex-shrink: 0; cursor: default;
     }
+    /* General settings for what One-Page hides — nothing to set there. */
+    .config-row.one-page-hidden { display: none; }
     .pill.one-page-locked { opacity: 0.55; cursor: default; }
     /* One-Page hides this — shown in place of a lock icon. */
     .full-only-chip {
@@ -1947,12 +1951,8 @@ export class LexenOfferSheet extends LitElement {
       return { groups: this._groups, pills: this._pills, marketDisplay: this._marketDisplay, highlightsView: this._highlightsView };
     }
     const groups = { ...this._groups };
-    const pills = { ...this._pills, 'sections.observations_comments': false };
     ONE_PAGE_EXCLUDED.forEach(g => { groups[g] = 'unchecked'; });
-    if (groups.observations !== 'unchecked') {
-      groups.observations = pills['sections.observations_highlights'] ? 'indeterminate' : 'unchecked';
-    }
-    return { groups, pills, marketDisplay: 'summary', highlightsView: 'summary' };
+    return { groups, pills: this._pills, marketDisplay: 'summary', highlightsView: 'summary' };
   }
 
   _isSectionDisabled(section) {
@@ -2125,8 +2125,7 @@ export class LexenOfferSheet extends LitElement {
     const pillBearingGroups = ['valuation', 'observations', 'market_scenarios', 'selected_scenarios'];
     if (checked && pillBearingGroups.includes(group)) {
       const pillKeys = this._pillKeysForGroup(group);
-      // One-Page-locked pills (Comments) don't print, so they don't count.
-      const active = pillKeys.filter(k => this._pills[k] && !this._onePageLocked(k)).length;
+      const active = pillKeys.filter(k => this._pills[k]).length;
       if (active === 0) {
         // Every pill was individually clicked off, so there's no partial
         // selection left to restore — re-deriving from the (all-false)
@@ -2496,7 +2495,7 @@ export class LexenOfferSheet extends LitElement {
       preview_logo: true,
       preview_photos: true,
       font_roboto: true,
-      font_size_delta: FONT_SIZE_OPTIONS[this._fontSizeIndex].delta,
+      font_size_delta: display.one_page ? ONE_PAGE_FONT_DELTA : FONT_SIZE_OPTIONS[this._fontSizeIndex].delta,
       photos_per_row: this._photosPerRow,
       section_order: this._sectionOrder,
       watermark,
@@ -2930,7 +2929,8 @@ export class LexenOfferSheet extends LitElement {
     // on-first view, so ticking a box doesn't move its row).
     const showHideOrder = [...this._sectionOrder.filter(sec => DEFAULT_LAYOUT_ORDER.includes(sec)),
       ...DEFAULT_LAYOUT_ORDER.filter(sec => !this._sectionOrder.includes(sec))];
-    const sectionGroups = showHideOrder.map(sec => this._renderShowHideGroup(sec));
+    // One-Page: what it hides isn't listed at all (nothing to edit there).
+    const sectionGroups = showHideOrder.filter(sec => !this._onePageLocked(sec)).map(sec => this._renderShowHideGroup(sec));
     // Offer accepted/declined: dim + block every setting (.settings-locked
     // overlay), and `inert` the controls themselves so keyboard can't reach
     // them either. Section headers stay clickable to read the settings.
@@ -2946,8 +2946,8 @@ export class LexenOfferSheet extends LitElement {
         <div class="${sheetLocked ? 'settings-locked' : ''}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="customize-header-ctrls" ?inert="${sheetLocked}">
-          <div class="history-btns">
+          <div class="customize-header-ctrls">
+          <div class="history-btns" ?inert="${sheetLocked}">
             <button class="history-btn" type="button" aria-label="Undo"
               ?disabled="${!this._undoStack.length || this._generating || this._finalizing}"
               @click="${() => { this._hideTooltip(); this._handleUndo(); }}"
@@ -2961,6 +2961,7 @@ export class LexenOfferSheet extends LitElement {
               @mouseleave="${() => this._hideTooltip()}"
             >${redoSvg}</button>
           </div>
+          ${this._renderModeToggle()}
           </div>
         </div>
 
@@ -3043,7 +3044,7 @@ export class LexenOfferSheet extends LitElement {
                 </select>
               </div>
             ` : nothing}
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Font size</span>
               <div class="ctrl-group ${this._isLocked('font_size') ? 'locked' : ''}">
                 <div class="stepper">
@@ -3056,7 +3057,7 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('font_size')}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Photos (per row)</span>
               <div class="ctrl-group ${this._isLocked('photos_per_row') ? 'locked' : ''}">
                 <div class="stepper">
@@ -3069,7 +3070,7 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('photos_per_row')}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Disclosures</span>
               <div class="ctrl-group ${this._isLocked('disc_layout') ? 'locked' : ''}">
                 <div class="segmented-control">
@@ -3083,7 +3084,7 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('disc_layout')}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Market</span>
               <div class="ctrl-group ${this._isLocked('market_display') ? 'locked' : ''}">
                 ${this._lk('market_display')}
@@ -3097,7 +3098,7 @@ export class LexenOfferSheet extends LitElement {
                 </div>
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Scenarios</span>
               <div class="ctrl-group ${this._isLocked('scenario_layout') ? 'locked' : ''}">
                 <div class="segmented-control">
@@ -3111,7 +3112,7 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('scenario_layout')}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Recon</span>
               <div class="ctrl-group ${this._isLocked('recon_display') ? 'locked' : ''}">
                 <div class="segmented-control">
@@ -3125,7 +3126,7 @@ export class LexenOfferSheet extends LitElement {
                 ${this._lk('recon_display')}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? 'one-page-hidden' : ''}">
               <span>Highlights</span>
               <div class="ctrl-group ${this._isLocked('highlights_display') ? 'locked' : ''}">
                 ${this._lk('highlights_display')}
@@ -3226,7 +3227,7 @@ export class LexenOfferSheet extends LitElement {
               @dragover="${(e) => e.preventDefault()}"
               @drop="${(e) => this._handleListDrop(e)}"
             >
-              ${(() => { const shown = this._displayOrder(); const nActive = shown.filter(x => !this._isSectionDisabled(x)).length; return shown.map((sec, i) => {
+              ${(() => { const shown = this._displayOrder().filter(x => !this._onePageLocked(x)); const nActive = shown.filter(x => !this._isSectionDisabled(x)).length; return shown.map((sec, i) => {
                 const disabled = this._isSectionDisabled(sec) || this._isLocked('section_order');
                 return html`
                   <div
@@ -3604,8 +3605,9 @@ export class LexenOfferSheet extends LitElement {
 
   ── end removed ─────────────────────────────────────────────────────────────── */
 
-  /** Full / One-Page — a display setting, so it sits on the preview card
-   * and applies right away (see _handleModeChange). */
+  /** Full / One-Page — a display setting: applies right away (see
+   * _handleModeChange) and stays usable on a locked sheet, so it sits above
+   * the .settings-locked dimming. */
   _renderModeToggle() {
     // Not disabled on a locked sheet — see _handleModeChange.
     const disabled = this._generating || this._finalizing;
@@ -3615,7 +3617,7 @@ export class LexenOfferSheet extends LitElement {
           class="seg-btn ${this._mode === 'full' ? 'active' : ''}"
           ?disabled="${disabled}"
           @click="${() => { this._hideTooltip(); this._handleModeChange('full'); }}"
-          @mouseenter="${(e) => this._showTooltip(e, 'Prints every section you have on')}"
+          @mouseenter="${(e) => this._showTooltip(e, 'Prints every section you have enabled')}"
           @mouseleave="${() => this._hideTooltip()}"
         >Full</button>
         <button
@@ -3644,13 +3646,12 @@ export class LexenOfferSheet extends LitElement {
         <div class="card preview-card">
           <div class="preview-card-header">
             <div class="preview-title-group">
+              <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
               <span
                 class="preview-status-hit"
                 @mouseenter="${(e) => this._showTooltip(e, this._previewStale ? 'Unapplied changes' : 'Up to date')}"
                 @mouseleave="${() => this._hideTooltip()}"
               ><span class="preview-status-dot ${this._previewStale ? 'stale' : ''}"></span></span>
-              <h2>${canInlinePdf ? 'Preview' : 'PDF'}</h2>
-              ${this._renderModeToggle()}
             </div>
             <div class="preview-header-right">
             ${!this.templateMode ? html`

@@ -469,7 +469,9 @@ def _get_display(p):
 # ---------------------------------------------------------------------------
 
 # One-Page: max wrapped lines for a free-text block before it's cut with "…".
-ONE_PAGE_TEXT_MAX_LINES = 6
+# One-Page always prints at Medium; 4 lines of Comments was the most that
+# still fit there (sample payload, logo + 2-line address) — 3 for headroom.
+ONE_PAGE_TEXT_MAX_LINES = 3
 
 
 class ClampedParagraph(Flowable):

@@ -1,6 +1,6 @@
-var Ce = Object.defineProperty;
-var Oe = (r, e, t) => e in r ? Ce(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
-var F = (r, e, t) => Oe(r, typeof e != "symbol" ? e + "" : e, t);
+var Oe = Object.defineProperty;
+var Ce = (r, e, t) => e in r ? Oe(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var F = (r, e, t) => Ce(r, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
@@ -288,7 +288,7 @@ D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[L("elementProper
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const z = globalThis, le = (r) => r, H = z.trustedTypes, de = H ? H.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, we = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + b, He = `<${$e}>`, $ = document, T = () => $.createComment(""), M = (r) => r === null || typeof r != "object" && typeof r != "function", se = Array.isArray, je = (r) => se(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", q = `[ 	
-\f\r]`, O = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ce = /-->/g, he = />/g, x = RegExp(`>|${q}(?:([^\\s"'>=/]+)(${q}*=${q}*(?:[^ 	
+\f\r]`, C = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ce = /-->/g, he = />/g, x = RegExp(`>|${q}(?:([^\\s"'>=/]+)(${q}*=${q}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), pe = /'/g, ue = /"/g, Se = /^(?:script|style|textarea|title)$/i, Fe = (r) => (e, ...t) => ({ _$litType$: r, strings: e, values: t }), d = Fe(1), A = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), fe = /* @__PURE__ */ new WeakMap(), k = $.createTreeWalker($, 129);
 function Ee(r, e) {
   if (!se(r) || !r.hasOwnProperty("raw")) throw Error("invalid template strings array");
@@ -296,13 +296,13 @@ function Ee(r, e) {
 }
 const Ge = (r, e) => {
   const t = r.length - 1, i = [];
-  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", a = O;
+  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", a = C;
   for (let l = 0; l < t; l++) {
     const n = r[l];
-    let c, p, h = -1, f = 0;
-    for (; f < n.length && (a.lastIndex = f, p = a.exec(n), p !== null); ) f = a.lastIndex, a === O ? p[1] === "!--" ? a = ce : p[1] !== void 0 ? a = he : p[2] !== void 0 ? (Se.test(p[2]) && (s = RegExp("</" + p[2], "g")), a = x) : p[3] !== void 0 && (a = x) : a === x ? p[0] === ">" ? (a = s ?? O, h = -1) : p[1] === void 0 ? h = -2 : (h = a.lastIndex - p[2].length, c = p[1], a = p[3] === void 0 ? x : p[3] === '"' ? ue : pe) : a === ue || a === pe ? a = x : a === ce || a === he ? a = O : (a = x, s = void 0);
+    let c, h, p = -1, f = 0;
+    for (; f < n.length && (a.lastIndex = f, h = a.exec(n), h !== null); ) f = a.lastIndex, a === C ? h[1] === "!--" ? a = ce : h[1] !== void 0 ? a = he : h[2] !== void 0 ? (Se.test(h[2]) && (s = RegExp("</" + h[2], "g")), a = x) : h[3] !== void 0 && (a = x) : a === x ? h[0] === ">" ? (a = s ?? C, p = -1) : h[1] === void 0 ? p = -2 : (p = a.lastIndex - h[2].length, c = h[1], a = h[3] === void 0 ? x : h[3] === '"' ? ue : pe) : a === ue || a === pe ? a = x : a === ce || a === he ? a = C : (a = x, s = void 0);
     const _ = a === x && r[l + 1].startsWith("/>") ? " " : "";
-    o += a === O ? n + He : h >= 0 ? (i.push(c), n.slice(0, h) + we + n.slice(h) + b + _) : n + b + (h === -2 ? l : _);
+    o += a === C ? n + He : p >= 0 ? (i.push(c), n.slice(0, p) + we + n.slice(p) + b + _) : n + b + (p === -2 ? l : _);
   }
   return [Ee(r, o + (r[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
@@ -311,29 +311,29 @@ class B {
     let s;
     this.parts = [];
     let o = 0, a = 0;
-    const l = e.length - 1, n = this.parts, [c, p] = Ge(e, t);
+    const l = e.length - 1, n = this.parts, [c, h] = Ge(e, t);
     if (this.el = B.createElement(c, i), k.currentNode = this.el.content, t === 2 || t === 3) {
-      const h = this.el.content.firstChild;
-      h.replaceWith(...h.childNodes);
+      const p = this.el.content.firstChild;
+      p.replaceWith(...p.childNodes);
     }
     for (; (s = k.nextNode()) !== null && n.length < l; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const h of s.getAttributeNames()) if (h.endsWith(we)) {
-          const f = p[a++], _ = s.getAttribute(h).split(b), y = /([.?@])?(.*)/.exec(f);
-          n.push({ type: 1, index: o, name: y[2], strings: _, ctor: y[1] === "." ? We : y[1] === "?" ? Ke : y[1] === "@" ? Ye : j }), s.removeAttribute(h);
-        } else h.startsWith(b) && (n.push({ type: 6, index: o }), s.removeAttribute(h));
+        if (s.hasAttributes()) for (const p of s.getAttributeNames()) if (p.endsWith(we)) {
+          const f = h[a++], _ = s.getAttribute(p).split(b), y = /([.?@])?(.*)/.exec(f);
+          n.push({ type: 1, index: o, name: y[2], strings: _, ctor: y[1] === "." ? We : y[1] === "?" ? Ke : y[1] === "@" ? Ye : j }), s.removeAttribute(p);
+        } else p.startsWith(b) && (n.push({ type: 6, index: o }), s.removeAttribute(p));
         if (Se.test(s.tagName)) {
-          const h = s.textContent.split(b), f = h.length - 1;
+          const p = s.textContent.split(b), f = p.length - 1;
           if (f > 0) {
             s.textContent = H ? H.emptyScript : "";
-            for (let _ = 0; _ < f; _++) s.append(h[_], T()), k.nextNode(), n.push({ type: 2, index: ++o });
-            s.append(h[f], T());
+            for (let _ = 0; _ < f; _++) s.append(p[_], T()), k.nextNode(), n.push({ type: 2, index: ++o });
+            s.append(p[f], T());
           }
         }
       } else if (s.nodeType === 8) if (s.data === $e) n.push({ type: 2, index: o });
       else {
-        let h = -1;
-        for (; (h = s.data.indexOf(b, h + 1)) !== -1; ) n.push({ type: 7, index: o }), h += b.length - 1;
+        let p = -1;
+        for (; (p = s.data.indexOf(b, p + 1)) !== -1; ) n.push({ type: 7, index: o }), p += b.length - 1;
       }
       o++;
     }
@@ -343,12 +343,12 @@ class B {
     return i.innerHTML = e, i;
   }
 }
-function C(r, e, t = r, i) {
+function O(r, e, t = r, i) {
   var a, l;
   if (e === A) return e;
   let s = i !== void 0 ? (a = t._$Co) == null ? void 0 : a[i] : t._$Cl;
   const o = M(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== o && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), o === void 0 ? s = void 0 : (s = new o(r), s._$AT(r, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = C(r, s._$AS(r, e.values), s, i)), e;
+  return (s == null ? void 0 : s.constructor) !== o && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), o === void 0 ? s = void 0 : (s = new o(r), s._$AT(r, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = O(r, s._$AS(r, e.values), s, i)), e;
 }
 class qe {
   constructor(e, t) {
@@ -398,7 +398,7 @@ class N {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = C(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== A && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : je(e) ? this.k(e) : this._(e);
+    e = O(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== A && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : je(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -454,11 +454,11 @@ class j {
   _$AI(e, t = this, i, s) {
     const o = this.strings;
     let a = !1;
-    if (o === void 0) e = C(this, e, t, 0), a = !M(e) || e !== this._$AH && e !== A, a && (this._$AH = e);
+    if (o === void 0) e = O(this, e, t, 0), a = !M(e) || e !== this._$AH && e !== A, a && (this._$AH = e);
     else {
       const l = e;
       let n, c;
-      for (e = o[0], n = 0; n < o.length - 1; n++) c = C(this, l[i + n], t, n), c === A && (c = this._$AH[n]), a || (a = !M(c) || c !== this._$AH[n]), c === u ? e = u : e !== u && (e += (c ?? "") + o[n + 1]), this._$AH[n] = c;
+      for (e = o[0], n = 0; n < o.length - 1; n++) c = O(this, l[i + n], t, n), c === A && (c = this._$AH[n]), a || (a = !M(c) || c !== this._$AH[n]), c === u ? e = u : e !== u && (e += (c ?? "") + o[n + 1]), this._$AH[n] = c;
     }
     a && !s && this.j(e);
   }
@@ -487,7 +487,7 @@ class Ye extends j {
     super(e, t, i, s, o), this.type = 5;
   }
   _$AI(e, t = this) {
-    if ((e = C(this, e, t, 0) ?? u) === A) return;
+    if ((e = O(this, e, t, 0) ?? u) === A) return;
     const i = this._$AH, s = e === u && i !== u || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== u && (i === u || s);
     s && this.element.removeEventListener(this.name, this, i), o && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
@@ -504,7 +504,7 @@ class Ze {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    C(this, e);
+    O(this, e);
   }
 }
 const W = z.litHtmlPolyfillSupport;
@@ -714,12 +714,12 @@ const U = [
   { key: "ACV", label: "Actual Cash Value" }
 ], ge = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), Z = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, Qe = d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const me = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, be = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, et = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, tt = d`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`, it = d`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`, Pe = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], st = [...Pe, "sections.observations_comments", "market_display", "highlights_display"], ot = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`, I = 8, J = 10, ve = 8;
+const me = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, be = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, et = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, tt = d`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`, it = d`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`, Pe = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], st = [...Pe, "market_display", "highlights_display", "font_size"], ot = 1, at = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`, I = 8, J = 10, ve = 8;
 function X(r) {
   const e = window.devicePixelRatio || 1;
   return Math.round(r * e) / e;
 }
-class at {
+class nt {
   constructor() {
     this.outer = null, this.bubble = null, this.label = null, this.arrow = null, this.anchor = null, this.visible = !1, this.reposition = () => this.updatePosition(), this.dismissOnScroll = () => this.hide();
   }
@@ -840,7 +840,7 @@ class ee extends R {
       recon: !1,
       photos: !1,
       signature: !1
-    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1, this._tooltip = new at();
+    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1, this._tooltip = new nt();
   }
   // ── Public API ─────────────────────────────────────────────────────────────
   /** Returns the full current customization state. Save this to restore later. */
@@ -916,17 +916,17 @@ class ee extends R {
     }));
   }
   updated(e) {
-    var o, a, l, n, c, p;
+    var o, a, l, n, c, h;
     const t = this._pendingDataLoad;
     if (e.has("sharedDisplay") || e.has("pdfDisplay") ? this._pendingDataLoad = !0 : this._pendingDataLoad && (this._pendingDataLoad = !1), e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const h = (l = (a = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : a.tax_savings) == null ? void 0 : l.rate_pct;
-      this._taxRatePct = h != null ? parseFloat(parseFloat(h).toFixed(2)) : 0;
+      const p = (l = (a = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : a.tax_savings) == null ? void 0 : l.rate_pct;
+      this._taxRatePct = p != null ? parseFloat(parseFloat(p).toFixed(2)) : 0;
     }
-    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((n = this.employees) != null && n.length) && ((p = (c = this.payload) == null ? void 0 : c.employee) != null && p.name)) {
-      const h = this.employees.findIndex((f) => f.name === this.payload.employee.name);
-      h !== -1 && (this._selectedEmployeeIndex = h);
+    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((n = this.employees) != null && n.length) && ((h = (c = this.payload) == null ? void 0 : c.employee) != null && h.name)) {
+      const p = this.employees.findIndex((f) => f.name === this.payload.employee.name);
+      p !== -1 && (this._selectedEmployeeIndex = p);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -947,7 +947,7 @@ class ee extends R {
       "_groups",
       "_selectedEmployeeIndex",
       "_locks"
-    ].some((f) => e.has(f)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked, this._lockOverridden = !1, this._sheetLocked() && this._previewStale && this._handleDiscardChanges()), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((h) => e.has(h)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    ].some((f) => e.has(f)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked, this._lockOverridden = !1, this._sheetLocked() && this._previewStale && this._handleDiscardChanges()), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((p) => e.has(p)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
     }, 300)), this._autoPreviewDone && this.apiBaseUrl && !(t || e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
       "_mode",
@@ -970,8 +970,8 @@ class ee extends R {
     ].some((_) => e.has(_)) && (this._previewStale = !0);
     const s = this.shadowRoot;
     if (s)
-      for (const [h, f] of Object.entries(this._groups)) {
-        const _ = s.querySelector(`input[data-group="${h}"]`);
+      for (const [p, f] of Object.entries(this._groups)) {
+        const _ = s.querySelector(`input[data-group="${p}"]`);
         _ && (_.indeterminate = f === "indeterminate", _.checked = f === "checked" || f === "indeterminate");
       }
   }
@@ -1049,10 +1049,10 @@ class ee extends R {
   _effectiveSettings() {
     if (!this._isOnePage())
       return { groups: this._groups, pills: this._pills, marketDisplay: this._marketDisplay, highlightsView: this._highlightsView };
-    const e = { ...this._groups }, t = { ...this._pills, "sections.observations_comments": !1 };
-    return Pe.forEach((i) => {
-      e[i] = "unchecked";
-    }), e.observations !== "unchecked" && (e.observations = t["sections.observations_highlights"] ? "indeterminate" : "unchecked"), { groups: e, pills: t, marketDisplay: "summary", highlightsView: "summary" };
+    const e = { ...this._groups };
+    return Pe.forEach((t) => {
+      e[t] = "unchecked";
+    }), { groups: e, pills: this._pills, marketDisplay: "summary", highlightsView: "summary" };
   }
   _isSectionDisabled(e) {
     return this._effectiveSettings().groups[e] === "unchecked";
@@ -1169,7 +1169,7 @@ class ee extends R {
   _handleGroupChange(e, t) {
     if (this._groups = { ...this._groups, [e]: t ? "checked" : "unchecked" }, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(e)) {
       const s = this._pillKeysForGroup(e);
-      if (s.filter((a) => this._pills[a] && !this._onePageLocked(a)).length === 0) {
+      if (s.filter((a) => this._pills[a]).length === 0) {
         const a = { ...this._pills };
         s.forEach((l) => {
           a[l] = !0;
@@ -1381,14 +1381,14 @@ class ee extends R {
    * shared by the main preview and individual-section prints so both apply the
    * same payload overrides (profit label, disclaimer, employee, tax rate…). */
   _buildPrintoutRequest(e, t = !1) {
-    var l, n, c, p, h, f, _, y;
+    var l, n, c, h, p, f, _, y;
     const i = {
       mode: this._mode,
       display: e,
       preview_logo: !0,
       preview_photos: !0,
       font_roboto: !0,
-      font_size_delta: U[this._fontSizeIndex].delta,
+      font_size_delta: e.one_page ? ot : U[this._fontSizeIndex].delta,
       photos_per_row: this._photosPerRow,
       section_order: this._sectionOrder,
       watermark: t
@@ -1402,11 +1402,11 @@ class ee extends R {
       const g = this._disclaimerPunct ?? ".", S = a ? a.replace(/\.+$/, "") : "";
       s.disclaimer = S ? g + " " + S : "";
     }
-    if ((c = (n = s.dealer) == null ? void 0 : n.logo_url) != null && c.startsWith("//") && (s.dealer = { ...s.dealer, logo_url: "https:" + s.dealer.logo_url }), (p = s.employee) != null && p.phone && (s.employee = { ...s.employee, phone: _e(s.employee.phone) }), this.employees && this.employees.length > 0) {
+    if ((c = (n = s.dealer) == null ? void 0 : n.logo_url) != null && c.startsWith("//") && (s.dealer = { ...s.dealer, logo_url: "https:" + s.dealer.logo_url }), (h = s.employee) != null && h.phone && (s.employee = { ...s.employee, phone: _e(s.employee.phone) }), this.employees && this.employees.length > 0) {
       const g = this.employees[this._selectedEmployeeIndex] || this.employees[0];
       s.employee = { name: g.name || "", phone: _e(g.phone || ""), email: g.email || "" };
     }
-    if (s.disclosures && (s.disclosures = s.disclosures.filter((g) => g.answer && g.answer.trim() !== "")), (h = s.market) != null && h.comparables) {
+    if (s.disclosures && (s.disclosures = s.disclosures.filter((g) => g.answer && g.answer.trim() !== "")), (p = s.market) != null && p.comparables) {
       const g = s.market.comparables.map((m) => ({
         ...m,
         days_on_market: m.listing_type === "delisted" && m.delisted_days || m.days_on_market
@@ -1470,22 +1470,22 @@ class ee extends R {
       this._lastPrintoutRequest = { ...s };
       const { blob: a, vehicle: l, rawUrl: n } = await this._fetchPrintout(s), c = (((t = o.customer) == null ? void 0 : t.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim();
       if (this.apiMode === "binary") {
-        const p = await new Promise((h, f) => {
+        const h = await new Promise((p, f) => {
           const _ = new FileReader();
-          _.onload = () => h(_.result), _.onerror = f, _.readAsDataURL(a);
+          _.onload = () => p(_.result), _.onerror = f, _.readAsDataURL(a);
         });
-        this._pdfFilename = `${c}_${((i = o.vehicle) == null ? void 0 : i.vin) || "offer"}.pdf`, this._pdfUrl = p, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: p, blob: a },
+        this._pdfFilename = `${c}_${((i = o.vehicle) == null ? void 0 : i.vin) || "offer"}.pdf`, this._pdfUrl = h, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
+          detail: { pdfUrl: h, blob: a },
           bubbles: !0,
           composed: !0
         }));
       } else {
         this._pdfVehicle = l;
-        const p = (l == null ? void 0 : l.vin) || "offer";
-        this._pdfFilename = `${c}_${p}.pdf`;
-        const h = new File([a], this._pdfFilename, { type: "application/pdf" });
+        const h = (l == null ? void 0 : l.vin) || "offer";
+        this._pdfFilename = `${c}_${h}.pdf`;
+        const p = new File([a], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
-        const f = URL.createObjectURL(h);
+        const f = URL.createObjectURL(p);
         this._currentBlobUrl = f, this._pdfUrl = f, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
           detail: { pdfUrl: n },
           bubbles: !0,
@@ -1507,9 +1507,9 @@ class ee extends R {
    * come straight from the main settings — whether or not that section is
    * switched on in the main sheet. */
   _buildIndividualDisplay(e) {
-    const t = (c) => e.includes(c), i = this._buildDisplay({ groups: this._groups, pills: this._pills, marketDisplay: this._marketDisplay, highlightsView: this._highlightsView }), s = (c) => Object.values(c).every((p) => !p), o = (c) => Object.fromEntries(Object.keys(c).map((p) => [p, !0])), a = s(i.valuation) ? o(i.valuation) : i.valuation, l = Object.fromEntries(Object.entries(i.scenarios).map(([c, p]) => [
+    const t = (c) => e.includes(c), i = this._buildDisplay({ groups: this._groups, pills: this._pills, marketDisplay: this._marketDisplay, highlightsView: this._highlightsView }), s = (c) => Object.values(c).every((h) => !h), o = (c) => Object.fromEntries(Object.keys(c).map((h) => [h, !0])), a = s(i.valuation) ? o(i.valuation) : i.valuation, l = Object.fromEntries(Object.entries(i.scenarios).map(([c, h]) => [
       c,
-      s(p) ? o(p) : p
+      s(h) ? o(h) : h
     ])), n = !i.sections.observations_highlights && !i.sections.observations_comments;
     return {
       ...i,
@@ -1674,14 +1674,14 @@ class ee extends R {
     const e = U[this._fontSizeIndex].label, i = [
       ...this._sectionOrder.filter((n) => E.includes(n)),
       ...E.filter((n) => !this._sectionOrder.includes(n))
-    ].map((n) => this._renderShowHideGroup(n)), s = this._sheetLocked(), o = !!(this.templateSharedDisplay || this.templatePdfDisplay), a = o ? "location default" : "default", l = o ? "location defaults" : "default configuration";
+    ].filter((n) => !this._onePageLocked(n)).map((n) => this._renderShowHideGroup(n)), s = this._sheetLocked(), o = !!(this.templateSharedDisplay || this.templatePdfDisplay), a = o ? "location default" : "default", l = o ? "location defaults" : "default configuration";
     return d`
       <div class="card">
         <div class="${s ? "settings-locked" : ""}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="customize-header-ctrls" ?inert="${s}">
-          <div class="history-btns">
+          <div class="customize-header-ctrls">
+          <div class="history-btns" ?inert="${s}">
             <button class="history-btn" type="button" aria-label="Undo"
               ?disabled="${!this._undoStack.length || this._generating || this._finalizing}"
               @click="${() => {
@@ -1699,6 +1699,7 @@ class ee extends R {
               @mouseleave="${() => this._hideTooltip()}"
             >${it}</button>
           </div>
+          ${this._renderModeToggle()}
           </div>
         </div>
 
@@ -1787,7 +1788,7 @@ class ee extends R {
                 </select>
               </div>
             ` : u}
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Font size</span>
               <div class="ctrl-group ${this._isLocked("font_size") ? "locked" : ""}">
                 <div class="stepper">
@@ -1800,7 +1801,7 @@ class ee extends R {
                 ${this._lk("font_size")}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Photos (per row)</span>
               <div class="ctrl-group ${this._isLocked("photos_per_row") ? "locked" : ""}">
                 <div class="stepper">
@@ -1813,7 +1814,7 @@ class ee extends R {
                 ${this._lk("photos_per_row")}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Disclosures</span>
               <div class="ctrl-group ${this._isLocked("disc_layout") ? "locked" : ""}">
                 <div class="segmented-control">
@@ -1827,7 +1828,7 @@ class ee extends R {
                 ${this._lk("disc_layout")}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Market</span>
               <div class="ctrl-group ${this._isLocked("market_display") ? "locked" : ""}">
                 ${this._lk("market_display")}
@@ -1841,7 +1842,7 @@ class ee extends R {
                 </div>
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Scenarios</span>
               <div class="ctrl-group ${this._isLocked("scenario_layout") ? "locked" : ""}">
                 <div class="segmented-control">
@@ -1855,7 +1856,7 @@ class ee extends R {
                 ${this._lk("scenario_layout")}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Recon</span>
               <div class="ctrl-group ${this._isLocked("recon_display") ? "locked" : ""}">
                 <div class="segmented-control">
@@ -1869,7 +1870,7 @@ class ee extends R {
                 ${this._lk("recon_display")}
               </div>
             </div>
-            <div class="config-row">
+            <div class="config-row ${this._isOnePage() ? "one-page-hidden" : ""}">
               <span>Highlights</span>
               <div class="ctrl-group ${this._isLocked("highlights_display") ? "locked" : ""}">
                 ${this._lk("highlights_display")}
@@ -1977,24 +1978,24 @@ class ee extends R {
               @drop="${(n) => this._handleListDrop(n)}"
             >
               ${(() => {
-      const n = this._displayOrder(), c = n.filter((p) => !this._isSectionDisabled(p)).length;
-      return n.map((p, h) => {
-        const f = this._isSectionDisabled(p) || this._isLocked("section_order");
+      const n = this._displayOrder().filter((h) => !this._onePageLocked(h)), c = n.filter((h) => !this._isSectionDisabled(h)).length;
+      return n.map((h, p) => {
+        const f = this._isSectionDisabled(h) || this._isLocked("section_order");
         return d`
                   <div
                     class="sortable-item ${f ? "disabled" : ""}"
-                    data-section="${p}"
+                    data-section="${h}"
                     draggable="${f ? "false" : "true"}"
-                    @dragstart="${(_) => this._handleDragStart(_, p)}"
-                    @dragover="${(_) => this._handleDragOver(_, p)}"
+                    @dragstart="${(_) => this._handleDragStart(_, h)}"
+                    @dragover="${(_) => this._handleDragOver(_, h)}"
                     @drop="${(_) => this._handleDrop(_)}"
                     @dragend="${(_) => this._handleDragEnd(_)}"
                   >
                     <span class="drag-handle">⠿</span>
-                    <span>${Y[p]}</span>
+                    <span>${Y[h]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${f || h === 0}" @click="${() => this._handleMoveSection(p, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${f || h >= c - 1}" @click="${() => this._handleMoveSection(p, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${f || p === 0}" @click="${() => this._handleMoveSection(h, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${f || p >= c - 1}" @click="${() => this._handleMoveSection(h, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -2160,7 +2161,7 @@ class ee extends R {
         @click="${() => {
       n || this._handlePillClick(e, i);
     }}"
-      >${s ? d`<span class="pill-stale-icon">${ot}</span>` : u}${t}</span>
+      >${s ? d`<span class="pill-stale-icon">${at}</span>` : u}${t}</span>
     `;
   }
   _renderSendInline() {
@@ -2179,11 +2180,11 @@ class ee extends R {
     ` : u;
   }
   _renderSendConfirmModal() {
-    var c, p;
-    const e = this._resolveEmployee(), t = ((p = (c = this.payload) == null ? void 0 : c.customer) == null ? void 0 : p.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", o = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), a = o === "customer" && !t, l = o === "employee" ? i : t || this._manualCustomerEmail.trim(), n = !!l;
+    var c, h;
+    const e = this._resolveEmployee(), t = ((h = (c = this.payload) == null ? void 0 : c.customer) == null ? void 0 : h.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", o = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), a = o === "customer" && !t, l = o === "employee" ? i : t || this._manualCustomerEmail.trim(), n = !!l;
     return d`
       <div class="modal-overlay" @click="${() => this._closeSendModal()}">
-        <div class="modal-box" @click="${(h) => h.stopPropagation()}">
+        <div class="modal-box" @click="${(p) => p.stopPropagation()}">
           <p class="modal-msg">
             ${this._sendPayloadOverride ? d`Send the selected sections?` : d`Send this offer as an offer made by <strong>${s}</strong>?`}
           </p>
@@ -2221,8 +2222,8 @@ class ee extends R {
               class="modal-email-input"
               placeholder="Customer email address"
               .value="${this._manualCustomerEmail}"
-              @input="${(h) => {
-      this._manualCustomerEmail = h.target.value;
+              @input="${(p) => {
+      this._manualCustomerEmail = p.target.value;
     }}"
             />
           ` : u}
@@ -2305,8 +2306,9 @@ class ee extends R {
     </div>
   
     ── end removed ─────────────────────────────────────────────────────────────── */
-  /** Full / One-Page — a display setting, so it sits on the preview card
-   * and applies right away (see _handleModeChange). */
+  /** Full / One-Page — a display setting: applies right away (see
+   * _handleModeChange) and stays usable on a locked sheet, so it sits above
+   * the .settings-locked dimming. */
   _renderModeToggle() {
     const e = this._generating || this._finalizing;
     return d`
@@ -2317,7 +2319,7 @@ class ee extends R {
           @click="${() => {
       this._hideTooltip(), this._handleModeChange("full");
     }}"
-          @mouseenter="${(t) => this._showTooltip(t, "Prints every section you have on")}"
+          @mouseenter="${(t) => this._showTooltip(t, "Prints every section you have enabled")}"
           @mouseleave="${() => this._hideTooltip()}"
         >Full</button>
         <button
@@ -2339,13 +2341,12 @@ class ee extends R {
         <div class="card preview-card">
           <div class="preview-card-header">
             <div class="preview-title-group">
+              <h2>${o ? "Preview" : "PDF"}</h2>
               <span
                 class="preview-status-hit"
                 @mouseenter="${(a) => this._showTooltip(a, this._previewStale ? "Unapplied changes" : "Up to date")}"
                 @mouseleave="${() => this._hideTooltip()}"
               ><span class="preview-status-dot ${this._previewStale ? "stale" : ""}"></span></span>
-              <h2>${o ? "Preview" : "PDF"}</h2>
-              ${this._renderModeToggle()}
             </div>
             <div class="preview-header-right">
             ${this.templateMode ? u : d`
@@ -2990,11 +2991,11 @@ F(ee, "properties", {
     .preview-card-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .preview-card-header h2 { margin: 0; }
     .preview-header-right { display: flex; align-items: center; gap: 6px; min-width: 0; }
-    .segmented-control.mode-toggle { width: auto; flex-shrink: 0; }
+    .segmented-control.mode-toggle { width: auto; flex-shrink: 0; position: relative; z-index: 2; }
     .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
     .preview-actions .btn { width: auto; flex: 1; }
 
-    .preview-title-group { display: flex; align-items: center; gap: 12px; }
+    .preview-title-group { display: flex; align-items: center; gap: 8px; }
     .preview-title-group h2 { line-height: 1; }
 
     /* REMOVED (kept for reference — old clickable inline refresh trigger)
@@ -3024,7 +3025,7 @@ F(ee, "properties", {
       flex-shrink: 0;
     }
     .preview-status-dot.stale { background: #f59f00; }
-    .preview-status-hit { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; margin-right: -8px; }
+    .preview-status-hit { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; margin-left: -8px; }
 
     /* Apply / Discard — both grey out with no pending changes, light up once
        something's been edited. Sit side by side above the reset-to-template
@@ -3363,6 +3364,8 @@ F(ee, "properties", {
       display: inline-flex; align-items: center; justify-content: center;
       width: 20px; color: #b0b8c4; flex-shrink: 0; cursor: default;
     }
+    /* General settings for what One-Page hides — nothing to set there. */
+    .config-row.one-page-hidden { display: none; }
     .pill.one-page-locked { opacity: 0.55; cursor: default; }
     /* One-Page hides this — shown in place of a lock icon. */
     .full-only-chip {

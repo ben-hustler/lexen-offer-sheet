@@ -214,13 +214,13 @@ var watermark = false; // ← replace `false` with the inserted dynamic value, i
       sections: {
         valuation: g.valuation === 'checked' || g.valuation === 'indeterminate',
         // One-Page is a display rule: it drops what can't fit (same list as
-        // the component's ONE_PAGE_LOCKED) over the real settings.
+        // the component's ONE_PAGE_EXCLUDED) over the real settings.
         disclosures: isOnePage ? false : (g.disclosures === 'checked'),
         disclosures_horizontal: state.discLayout === 'horizontal',
         disclosures_signature: g.signature === 'checked',
-        observations: (g.observations === 'checked' || g.observations === 'indeterminate') && (!isOnePage || !!p['sections.observations_highlights']),
+        observations: g.observations === 'checked' || g.observations === 'indeterminate',
         observations_highlights: p['sections.observations_highlights'],
-        observations_comments: isOnePage ? false : p['sections.observations_comments'],
+        observations_comments: p['sections.observations_comments'],
         market_summary: (g.market === 'checked') && (isOnePage || state.marketDisplay === 'summary'),
         market_comparables: (g.market === 'checked') && !isOnePage && state.marketDisplay === 'full',
         market_scenarios: isOnePage ? false : (g.market_scenarios === 'checked' || g.market_scenarios === 'indeterminate'),
@@ -311,7 +311,8 @@ var watermark = false; // ← replace `false` with the inserted dynamic value, i
       preview_logo: true,
       preview_photos: true,
       font_roboto: true,
-      font_size_delta: FONT_SIZE_OPTIONS[state.fontSizeIndex].delta,
+      // One-Page always prints at Medium (component's ONE_PAGE_FONT_DELTA).
+      font_size_delta: state.mode === 'one_page' ? 1 : FONT_SIZE_OPTIONS[state.fontSizeIndex].delta,
       photos_per_row: state.photosPerRow,
       section_order: state.sectionOrder,
       watermark: !!watermarkFlag,
