@@ -2096,7 +2096,9 @@ export class LexenOfferSheet extends LitElement {
    * unapplied edits stay pending: the switch applies on top of the last
    * applied version, then the pending edits come back. */
   async _handleModeChange(value) {
-    if (this._sheetLocked() || value === this._mode || this._generating || this._finalizing) return;
+    // Allowed on a locked (accepted/declined) sheet too — it's how the sheet
+    // is shown, not an edit to the offer's settings.
+    if (value === this._mode || this._generating || this._finalizing) return;
     const pending = this._previewStale && this._appliedSnapshot ? { ...this._captureSettings(), mode: value } : null;
     if (pending) {
       this._pendingDataLoad = true; // swap isn't an edit
@@ -2104,7 +2106,7 @@ export class LexenOfferSheet extends LitElement {
     } else {
       this._mode = value;
     }
-    await this._handleApply();
+    await this._handleApply({ allowLocked: true });
     if (pending) {
       this._pendingDataLoad = true;
       this._restoreSettings(pending);
@@ -2467,8 +2469,8 @@ export class LexenOfferSheet extends LitElement {
     this._savedConfirm = true;
   }
 
-  _dispatchDisplaySave() {
-    if (this._sheetLocked()) return;
+  _dispatchDisplaySave({ allowLocked = false } = {}) {
+    if (this._sheetLocked() && !allowLocked) return;
     const employee = this.employees && this.employees.length > 0
       ? this.employees[this._selectedEmployeeIndex] || this.employees[0]
       : null;
@@ -2772,13 +2774,13 @@ export class LexenOfferSheet extends LitElement {
 
   /** Generates + saves the current settings. Returns true when the generate
    * succeeded. */
-  async _handleApply({ fromHistory = false } = {}) {
-    if (this._sheetLocked()) return false;
+  async _handleApply({ fromHistory = false, allowLocked = false } = {}) {
+    if (this._sheetLocked() && !allowLocked) return false;
     const before = this._appliedSnapshot;
     this._savedConfirm = true;
     if (this.templateMode) {
       await this._handleGenerate(false);
-      this._dispatchDisplaySave();
+      this._dispatchDisplaySave({ allowLocked });
       this.dispatchEvent(new CustomEvent('template-save', {
         detail: { shared: this._buildSharedState(), pdf: this._buildPdfState() },
         bubbles: true, composed: true,
@@ -2788,7 +2790,7 @@ export class LexenOfferSheet extends LitElement {
       await this._handleGenerate(false);
       this._finalizing = false;
       this._finalized = true;
-      this._dispatchDisplaySave();
+      this._dispatchDisplaySave({ allowLocked });
     }
     if (!fromHistory) this._pushHistory(before);
     return this._appliedSnapshot !== before;
@@ -3601,7 +3603,8 @@ export class LexenOfferSheet extends LitElement {
   /** Full / One-Page — a display setting, so it sits on the preview card
    * and applies right away (see _handleModeChange). */
   _renderModeToggle() {
-    const disabled = this._sheetLocked() || this._generating || this._finalizing;
+    // Not disabled on a locked sheet — see _handleModeChange.
+    const disabled = this._generating || this._finalizing;
     return html`
       <div class="segmented-control mode-toggle">
         <button

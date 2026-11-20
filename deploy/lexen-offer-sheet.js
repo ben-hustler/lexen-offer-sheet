@@ -1162,9 +1162,9 @@ class ee extends R {
    * unapplied edits stay pending: the switch applies on top of the last
    * applied version, then the pending edits come back. */
   async _handleModeChange(e) {
-    if (this._sheetLocked() || e === this._mode || this._generating || this._finalizing) return;
+    if (e === this._mode || this._generating || this._finalizing) return;
     const t = this._previewStale && this._appliedSnapshot ? { ...this._captureSettings(), mode: e } : null;
-    t ? (this._pendingDataLoad = !0, this._restoreSettings({ ...this._appliedSnapshot, mode: e })) : this._mode = e, await this._handleApply(), t && (this._pendingDataLoad = !0, this._restoreSettings(t), this._previewStale = !0);
+    t ? (this._pendingDataLoad = !0, this._restoreSettings({ ...this._appliedSnapshot, mode: e })) : this._mode = e, await this._handleApply({ allowLocked: !0 }), t && (this._pendingDataLoad = !0, this._restoreSettings(t), this._previewStale = !0);
   }
   _handleGroupChange(e, t) {
     if (this._groups = { ...this._groups, [e]: t ? "checked" : "unchecked" }, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(e)) {
@@ -1367,11 +1367,11 @@ class ee extends R {
   _handleSaveSettings() {
     this._dispatchDisplaySave(), this._savedConfirm = !0;
   }
-  _dispatchDisplaySave() {
-    if (this._sheetLocked()) return;
-    const e = this.employees && this.employees.length > 0 ? this.employees[this._selectedEmployeeIndex] || this.employees[0] : null;
+  _dispatchDisplaySave({ allowLocked: e = !1 } = {}) {
+    if (this._sheetLocked() && !e) return;
+    const t = this.employees && this.employees.length > 0 ? this.employees[this._selectedEmployeeIndex] || this.employees[0] : null;
     this.dispatchEvent(new CustomEvent("display-save", {
-      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee: e, payload: this._lastPrintoutRequest },
+      detail: { shared: this._buildSharedState(), pdf: this._buildPdfState(), employee: t, payload: this._lastPrintoutRequest },
       bubbles: !0,
       composed: !0
     }));
@@ -1569,14 +1569,14 @@ class ee extends R {
   }
   /** Generates + saves the current settings. Returns true when the generate
    * succeeded. */
-  async _handleApply({ fromHistory: e = !1 } = {}) {
-    if (this._sheetLocked()) return !1;
-    const t = this._appliedSnapshot;
-    return this._savedConfirm = !0, this.templateMode ? (await this._handleGenerate(!1), this._dispatchDisplaySave(), this.dispatchEvent(new CustomEvent("template-save", {
+  async _handleApply({ fromHistory: e = !1, allowLocked: t = !1 } = {}) {
+    if (this._sheetLocked() && !t) return !1;
+    const i = this._appliedSnapshot;
+    return this._savedConfirm = !0, this.templateMode ? (await this._handleGenerate(!1), this._dispatchDisplaySave({ allowLocked: t }), this.dispatchEvent(new CustomEvent("template-save", {
       detail: { shared: this._buildSharedState(), pdf: this._buildPdfState() },
       bubbles: !0,
       composed: !0
-    }))) : (this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this._dispatchDisplaySave()), e || this._pushHistory(t), this._appliedSnapshot !== t;
+    }))) : (this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this._dispatchDisplaySave({ allowLocked: t })), e || this._pushHistory(i), this._appliedSnapshot !== i;
   }
   async _handleReopen() {
     this._finalized = !1, await this._handleGenerate();
@@ -2308,7 +2308,7 @@ class ee extends R {
   /** Full / One-Page — a display setting, so it sits on the preview card
    * and applies right away (see _handleModeChange). */
   _renderModeToggle() {
-    const e = this._sheetLocked() || this._generating || this._finalizing;
+    const e = this._generating || this._finalizing;
     return d`
       <div class="segmented-control mode-toggle">
         <button
