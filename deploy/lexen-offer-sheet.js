@@ -1,23 +1,23 @@
 var Ce = Object.defineProperty;
-var Oe = (n, e, t) => e in n ? Ce(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
-var G = (n, e, t) => Oe(n, typeof e != "symbol" ? e + "" : e, t);
+var Oe = (r, e, t) => e in r ? Ce(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var F = (r, e, t) => Oe(r, typeof e != "symbol" ? e + "" : e, t);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const j = globalThis, ie = j.ShadowRoot && (j.ShadyCSS === void 0 || j.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, se = Symbol(), ae = /* @__PURE__ */ new WeakMap();
-let ke = class {
+const V = globalThis, te = V.ShadowRoot && (V.ShadyCSS === void 0 || V.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ie = Symbol(), oe = /* @__PURE__ */ new WeakMap();
+let xe = class {
   constructor(e, t, i) {
-    if (this._$cssResult$ = !0, i !== se) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, i !== ie) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = e, this.t = t;
   }
   get styleSheet() {
     let e = this.o;
     const t = this.t;
-    if (ie && e === void 0) {
+    if (te && e === void 0) {
       const i = t !== void 0 && t.length === 1;
-      i && (e = ae.get(t)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && ae.set(t, e));
+      i && (e = oe.get(t)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && oe.set(t, e));
     }
     return e;
   }
@@ -25,85 +25,85 @@ let ke = class {
     return this.cssText;
   }
 };
-const Le = (n) => new ke(typeof n == "string" ? n : n + "", void 0, se), Re = (n, ...e) => {
-  const t = n.length === 1 ? n[0] : e.reduce((i, s, a) => i + ((o) => {
-    if (o._$cssResult$ === !0) return o.cssText;
-    if (typeof o == "number") return o;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + o + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(s) + n[a + 1], n[0]);
-  return new ke(t, n, se);
-}, ze = (n, e) => {
-  if (ie) n.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
+const Le = (r) => new xe(typeof r == "string" ? r : r + "", void 0, ie), ze = (r, ...e) => {
+  const t = r.length === 1 ? r[0] : e.reduce((i, s, o) => i + ((a) => {
+    if (a._$cssResult$ === !0) return a.cssText;
+    if (typeof a == "number") return a;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + a + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(s) + r[o + 1], r[0]);
+  return new xe(t, r, ie);
+}, Re = (r, e) => {
+  if (te) r.adoptedStyleSheets = e.map((t) => t instanceof CSSStyleSheet ? t : t.styleSheet);
   else for (const t of e) {
-    const i = document.createElement("style"), s = j.litNonce;
-    s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, n.appendChild(i);
+    const i = document.createElement("style"), s = V.litNonce;
+    s !== void 0 && i.setAttribute("nonce", s), i.textContent = t.cssText, r.appendChild(i);
   }
-}, ne = ie ? (n) => n : (n) => n instanceof CSSStyleSheet ? ((e) => {
+}, ae = te ? (r) => r : (r) => r instanceof CSSStyleSheet ? ((e) => {
   let t = "";
   for (const i of e.cssRules) t += i.cssText;
   return Le(t);
-})(n) : n;
+})(r) : r;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Be, getOwnPropertyNames: Ue, getOwnPropertySymbols: Ne, getPrototypeOf: Ie } = Object, y = globalThis, re = y.trustedTypes, Ve = re ? re.emptyScript : "", q = y.reactiveElementPolyfillSupport, L = (n, e) => n, ee = { toAttribute(n, e) {
+const { is: Te, defineProperty: Me, getOwnPropertyDescriptor: Be, getOwnPropertyNames: Ne, getOwnPropertySymbols: Ue, getPrototypeOf: Ie } = Object, v = globalThis, ne = v.trustedTypes, Ve = ne ? ne.emptyScript : "", G = v.reactiveElementPolyfillSupport, L = (r, e) => r, Q = { toAttribute(r, e) {
   switch (e) {
     case Boolean:
-      n = n ? Ve : null;
+      r = r ? Ve : null;
       break;
     case Object:
     case Array:
-      n = n == null ? n : JSON.stringify(n);
+      r = r == null ? r : JSON.stringify(r);
   }
-  return n;
-}, fromAttribute(n, e) {
-  let t = n;
+  return r;
+}, fromAttribute(r, e) {
+  let t = r;
   switch (e) {
     case Boolean:
-      t = n !== null;
+      t = r !== null;
       break;
     case Number:
-      t = n === null ? null : Number(n);
+      t = r === null ? null : Number(r);
       break;
     case Object:
     case Array:
       try {
-        t = JSON.parse(n);
+        t = JSON.parse(r);
       } catch {
         t = null;
       }
   }
   return t;
-} }, we = (n, e) => !Te(n, e), le = { attribute: !0, type: String, converter: ee, reflect: !1, useDefault: !1, hasChanged: we };
-Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), y.litPropertyMetadata ?? (y.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
-let P = class extends HTMLElement {
+} }, ke = (r, e) => !Te(r, e), re = { attribute: !0, type: String, converter: Q, reflect: !1, useDefault: !1, hasChanged: ke };
+Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), v.litPropertyMetadata ?? (v.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+let D = class extends HTMLElement {
   static addInitializer(e) {
     this._$Ei(), (this.l ?? (this.l = [])).push(e);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(e, t = le) {
+  static createProperty(e, t = re) {
     if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
       const i = Symbol(), s = this.getPropertyDescriptor(e, i, t);
       s !== void 0 && Me(this.prototype, e, s);
     }
   }
   static getPropertyDescriptor(e, t, i) {
-    const { get: s, set: a } = Be(this.prototype, e) ?? { get() {
+    const { get: s, set: o } = Be(this.prototype, e) ?? { get() {
       return this[t];
-    }, set(o) {
-      this[t] = o;
+    }, set(a) {
+      this[t] = a;
     } };
-    return { get: s, set(o) {
-      const r = s == null ? void 0 : s.call(this);
-      a == null || a.call(this, o), this.requestUpdate(e, r, i);
+    return { get: s, set(a) {
+      const l = s == null ? void 0 : s.call(this);
+      o == null || o.call(this, a), this.requestUpdate(e, l, i);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(e) {
-    return this.elementProperties.get(e) ?? le;
+    return this.elementProperties.get(e) ?? re;
   }
   static _$Ei() {
     if (this.hasOwnProperty(L("elementProperties"))) return;
@@ -113,7 +113,7 @@ let P = class extends HTMLElement {
   static finalize() {
     if (this.hasOwnProperty(L("finalized"))) return;
     if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(L("properties"))) {
-      const t = this.properties, i = [...Ue(t), ...Ne(t)];
+      const t = this.properties, i = [...Ne(t), ...Ue(t)];
       for (const s of i) this.createProperty(s, t[s]);
     }
     const e = this[Symbol.metadata];
@@ -132,8 +132,8 @@ let P = class extends HTMLElement {
     const t = [];
     if (Array.isArray(e)) {
       const i = new Set(e.flat(1 / 0).reverse());
-      for (const s of i) t.unshift(ne(s));
-    } else e !== void 0 && t.push(ne(e));
+      for (const s of i) t.unshift(ae(s));
+    } else e !== void 0 && t.push(ae(e));
     return t;
   }
   static _$Eu(e, t) {
@@ -162,7 +162,7 @@ let P = class extends HTMLElement {
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return ze(e, this.constructor.elementStyles), e;
+    return Re(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     var e;
@@ -184,34 +184,34 @@ let P = class extends HTMLElement {
     this._$AK(e, i);
   }
   _$ET(e, t) {
-    var a;
+    var o;
     const i = this.constructor.elementProperties.get(e), s = this.constructor._$Eu(e, i);
     if (s !== void 0 && i.reflect === !0) {
-      const o = (((a = i.converter) == null ? void 0 : a.toAttribute) !== void 0 ? i.converter : ee).toAttribute(t, i.type);
-      this._$Em = e, o == null ? this.removeAttribute(s) : this.setAttribute(s, o), this._$Em = null;
+      const a = (((o = i.converter) == null ? void 0 : o.toAttribute) !== void 0 ? i.converter : Q).toAttribute(t, i.type);
+      this._$Em = e, a == null ? this.removeAttribute(s) : this.setAttribute(s, a), this._$Em = null;
     }
   }
   _$AK(e, t) {
-    var a, o;
+    var o, a;
     const i = this.constructor, s = i._$Eh.get(e);
     if (s !== void 0 && this._$Em !== s) {
-      const r = i.getPropertyOptions(s), l = typeof r.converter == "function" ? { fromAttribute: r.converter } : ((a = r.converter) == null ? void 0 : a.fromAttribute) !== void 0 ? r.converter : ee;
+      const l = i.getPropertyOptions(s), n = typeof l.converter == "function" ? { fromAttribute: l.converter } : ((o = l.converter) == null ? void 0 : o.fromAttribute) !== void 0 ? l.converter : Q;
       this._$Em = s;
-      const d = l.fromAttribute(t, r.type);
-      this[s] = d ?? ((o = this._$Ej) == null ? void 0 : o.get(s)) ?? d, this._$Em = null;
+      const c = n.fromAttribute(t, l.type);
+      this[s] = c ?? ((a = this._$Ej) == null ? void 0 : a.get(s)) ?? c, this._$Em = null;
     }
   }
-  requestUpdate(e, t, i, s = !1, a) {
-    var o;
+  requestUpdate(e, t, i, s = !1, o) {
+    var a;
     if (e !== void 0) {
-      const r = this.constructor;
-      if (s === !1 && (a = this[e]), i ?? (i = r.getPropertyOptions(e)), !((i.hasChanged ?? we)(a, t) || i.useDefault && i.reflect && a === ((o = this._$Ej) == null ? void 0 : o.get(e)) && !this.hasAttribute(r._$Eu(e, i)))) return;
+      const l = this.constructor;
+      if (s === !1 && (o = this[e]), i ?? (i = l.getPropertyOptions(e)), !((i.hasChanged ?? ke)(o, t) || i.useDefault && i.reflect && o === ((a = this._$Ej) == null ? void 0 : a.get(e)) && !this.hasAttribute(l._$Eu(e, i)))) return;
       this.C(e, t, i);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
   }
-  C(e, t, { useDefault: i, reflect: s, wrapped: a }, o) {
-    i && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(e) && (this._$Ej.set(e, o ?? t ?? this[e]), a !== !0 || o !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (t = void 0), this._$AL.set(e, t)), s === !0 && this._$Em !== e && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(e));
+  C(e, t, { useDefault: i, reflect: s, wrapped: o }, a) {
+    i && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(e) && (this._$Ej.set(e, a ?? t ?? this[e]), o !== !0 || a !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (t = void 0), this._$AL.set(e, t)), s === !0 && this._$Em !== e && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(e));
   }
   async _$EP() {
     this.isUpdatePending = !0;
@@ -231,21 +231,21 @@ let P = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
-        for (const [a, o] of this._$Ep) this[a] = o;
+        for (const [o, a] of this._$Ep) this[o] = a;
         this._$Ep = void 0;
       }
       const s = this.constructor.elementProperties;
-      if (s.size > 0) for (const [a, o] of s) {
-        const { wrapped: r } = o, l = this[a];
-        r !== !0 || this._$AL.has(a) || l === void 0 || this.C(a, void 0, o, l);
+      if (s.size > 0) for (const [o, a] of s) {
+        const { wrapped: l } = a, n = this[o];
+        l !== !0 || this._$AL.has(o) || n === void 0 || this.C(o, void 0, a, n);
       }
     }
     let e = !1;
     const t = this._$AL;
     try {
       e = this.shouldUpdate(t), e ? (this.willUpdate(t), (i = this._$EO) == null || i.forEach((s) => {
-        var a;
-        return (a = s.hostUpdate) == null ? void 0 : a.call(s);
+        var o;
+        return (o = s.hostUpdate) == null ? void 0 : o.call(s);
       }), this.update(t)) : this._$EM();
     } catch (s) {
       throw e = !1, this._$EM(), s;
@@ -281,61 +281,61 @@ let P = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-P.elementStyles = [], P.shadowRootOptions = { mode: "open" }, P[L("elementProperties")] = /* @__PURE__ */ new Map(), P[L("finalized")] = /* @__PURE__ */ new Map(), q == null || q({ ReactiveElement: P }), (y.reactiveElementVersions ?? (y.reactiveElementVersions = [])).push("2.1.2");
+D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[L("elementProperties")] = /* @__PURE__ */ new Map(), D[L("finalized")] = /* @__PURE__ */ new Map(), G == null || G({ ReactiveElement: D }), (v.reactiveElementVersions ?? (v.reactiveElementVersions = [])).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const R = globalThis, de = (n) => n, H = R.trustedTypes, ce = H ? H.createPolicy("lit-html", { createHTML: (n) => n }) : void 0, $e = "$lit$", v = `lit$${Math.random().toFixed(9).slice(2)}$`, Se = "?" + v, je = `<${Se}>`, $ = document, T = () => $.createComment(""), M = (n) => n === null || typeof n != "object" && typeof n != "function", oe = Array.isArray, He = (n) => oe(n) || typeof (n == null ? void 0 : n[Symbol.iterator]) == "function", W = `[ 	
-\f\r]`, C = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, pe = />/g, x = RegExp(`>|${W}(?:([^\\s"'>=/]+)(${W}*=${W}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), ue = /'/g, fe = /"/g, Ee = /^(?:script|style|textarea|title)$/i, Fe = (n) => (e, ...t) => ({ _$litType$: n, strings: e, values: t }), h = Fe(1), D = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), _e = /* @__PURE__ */ new WeakMap(), k = $.createTreeWalker($, 129);
-function Pe(n, e) {
-  if (!oe(n) || !n.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return ce !== void 0 ? ce.createHTML(e) : e;
+const z = globalThis, le = (r) => r, j = z.trustedTypes, de = j ? j.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, we = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + b, je = `<${$e}>`, $ = document, T = () => $.createComment(""), M = (r) => r === null || typeof r != "object" && typeof r != "function", se = Array.isArray, He = (r) => se(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", q = `[ 	
+\f\r]`, O = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ce = /-->/g, he = />/g, x = RegExp(`>|${q}(?:([^\\s"'>=/]+)(${q}*=${q}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), pe = /'/g, ue = /"/g, Se = /^(?:script|style|textarea|title)$/i, Fe = (r) => (e, ...t) => ({ _$litType$: r, strings: e, values: t }), d = Fe(1), A = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), fe = /* @__PURE__ */ new WeakMap(), k = $.createTreeWalker($, 129);
+function Ee(r, e) {
+  if (!se(r) || !r.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return de !== void 0 ? de.createHTML(e) : e;
 }
-const Ge = (n, e) => {
-  const t = n.length - 1, i = [];
-  let s, a = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", o = C;
-  for (let r = 0; r < t; r++) {
-    const l = n[r];
-    let d, p, c = -1, f = 0;
-    for (; f < l.length && (o.lastIndex = f, p = o.exec(l), p !== null); ) f = o.lastIndex, o === C ? p[1] === "!--" ? o = he : p[1] !== void 0 ? o = pe : p[2] !== void 0 ? (Ee.test(p[2]) && (s = RegExp("</" + p[2], "g")), o = x) : p[3] !== void 0 && (o = x) : o === x ? p[0] === ">" ? (o = s ?? C, c = -1) : p[1] === void 0 ? c = -2 : (c = o.lastIndex - p[2].length, d = p[1], o = p[3] === void 0 ? x : p[3] === '"' ? fe : ue) : o === fe || o === ue ? o = x : o === he || o === pe ? o = C : (o = x, s = void 0);
-    const _ = o === x && n[r + 1].startsWith("/>") ? " " : "";
-    a += o === C ? l + je : c >= 0 ? (i.push(d), l.slice(0, c) + $e + l.slice(c) + v + _) : l + v + (c === -2 ? r : _);
+const Ge = (r, e) => {
+  const t = r.length - 1, i = [];
+  let s, o = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", a = O;
+  for (let l = 0; l < t; l++) {
+    const n = r[l];
+    let c, p, h = -1, f = 0;
+    for (; f < n.length && (a.lastIndex = f, p = a.exec(n), p !== null); ) f = a.lastIndex, a === O ? p[1] === "!--" ? a = ce : p[1] !== void 0 ? a = he : p[2] !== void 0 ? (Se.test(p[2]) && (s = RegExp("</" + p[2], "g")), a = x) : p[3] !== void 0 && (a = x) : a === x ? p[0] === ">" ? (a = s ?? O, h = -1) : p[1] === void 0 ? h = -2 : (h = a.lastIndex - p[2].length, c = p[1], a = p[3] === void 0 ? x : p[3] === '"' ? ue : pe) : a === ue || a === pe ? a = x : a === ce || a === he ? a = O : (a = x, s = void 0);
+    const _ = a === x && r[l + 1].startsWith("/>") ? " " : "";
+    o += a === O ? n + je : h >= 0 ? (i.push(c), n.slice(0, h) + we + n.slice(h) + b + _) : n + b + (h === -2 ? l : _);
   }
-  return [Pe(n, a + (n[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
+  return [Ee(r, o + (r[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
 class B {
   constructor({ strings: e, _$litType$: t }, i) {
     let s;
     this.parts = [];
-    let a = 0, o = 0;
-    const r = e.length - 1, l = this.parts, [d, p] = Ge(e, t);
-    if (this.el = B.createElement(d, i), k.currentNode = this.el.content, t === 2 || t === 3) {
-      const c = this.el.content.firstChild;
-      c.replaceWith(...c.childNodes);
+    let o = 0, a = 0;
+    const l = e.length - 1, n = this.parts, [c, p] = Ge(e, t);
+    if (this.el = B.createElement(c, i), k.currentNode = this.el.content, t === 2 || t === 3) {
+      const h = this.el.content.firstChild;
+      h.replaceWith(...h.childNodes);
     }
-    for (; (s = k.nextNode()) !== null && l.length < r; ) {
+    for (; (s = k.nextNode()) !== null && n.length < l; ) {
       if (s.nodeType === 1) {
-        if (s.hasAttributes()) for (const c of s.getAttributeNames()) if (c.endsWith($e)) {
-          const f = p[o++], _ = s.getAttribute(c).split(v), b = /([.?@])?(.*)/.exec(f);
-          l.push({ type: 1, index: a, name: b[2], strings: _, ctor: b[1] === "." ? We : b[1] === "?" ? Ke : b[1] === "@" ? Ye : F }), s.removeAttribute(c);
-        } else c.startsWith(v) && (l.push({ type: 6, index: a }), s.removeAttribute(c));
-        if (Ee.test(s.tagName)) {
-          const c = s.textContent.split(v), f = c.length - 1;
+        if (s.hasAttributes()) for (const h of s.getAttributeNames()) if (h.endsWith(we)) {
+          const f = p[a++], _ = s.getAttribute(h).split(b), y = /([.?@])?(.*)/.exec(f);
+          n.push({ type: 1, index: o, name: y[2], strings: _, ctor: y[1] === "." ? We : y[1] === "?" ? Ke : y[1] === "@" ? Ye : H }), s.removeAttribute(h);
+        } else h.startsWith(b) && (n.push({ type: 6, index: o }), s.removeAttribute(h));
+        if (Se.test(s.tagName)) {
+          const h = s.textContent.split(b), f = h.length - 1;
           if (f > 0) {
-            s.textContent = H ? H.emptyScript : "";
-            for (let _ = 0; _ < f; _++) s.append(c[_], T()), k.nextNode(), l.push({ type: 2, index: ++a });
-            s.append(c[f], T());
+            s.textContent = j ? j.emptyScript : "";
+            for (let _ = 0; _ < f; _++) s.append(h[_], T()), k.nextNode(), n.push({ type: 2, index: ++o });
+            s.append(h[f], T());
           }
         }
-      } else if (s.nodeType === 8) if (s.data === Se) l.push({ type: 2, index: a });
+      } else if (s.nodeType === 8) if (s.data === $e) n.push({ type: 2, index: o });
       else {
-        let c = -1;
-        for (; (c = s.data.indexOf(v, c + 1)) !== -1; ) l.push({ type: 7, index: a }), c += v.length - 1;
+        let h = -1;
+        for (; (h = s.data.indexOf(b, h + 1)) !== -1; ) n.push({ type: 7, index: o }), h += b.length - 1;
       }
-      a++;
+      o++;
     }
   }
   static createElement(e, t) {
@@ -343,12 +343,12 @@ class B {
     return i.innerHTML = e, i;
   }
 }
-function A(n, e, t = n, i) {
-  var o, r;
-  if (e === D) return e;
-  let s = i !== void 0 ? (o = t._$Co) == null ? void 0 : o[i] : t._$Cl;
-  const a = M(e) ? void 0 : e._$litDirective$;
-  return (s == null ? void 0 : s.constructor) !== a && ((r = s == null ? void 0 : s._$AO) == null || r.call(s, !1), a === void 0 ? s = void 0 : (s = new a(n), s._$AT(n, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = A(n, s._$AS(n, e.values), s, i)), e;
+function C(r, e, t = r, i) {
+  var a, l;
+  if (e === A) return e;
+  let s = i !== void 0 ? (a = t._$Co) == null ? void 0 : a[i] : t._$Cl;
+  const o = M(e) ? void 0 : e._$litDirective$;
+  return (s == null ? void 0 : s.constructor) !== o && ((l = s == null ? void 0 : s._$AO) == null || l.call(s, !1), o === void 0 ? s = void 0 : (s = new o(r), s._$AT(r, t, i)), i !== void 0 ? (t._$Co ?? (t._$Co = []))[i] = s : t._$Cl = s), s !== void 0 && (e = C(r, s._$AS(r, e.values), s, i)), e;
 }
 class qe {
   constructor(e, t) {
@@ -363,13 +363,13 @@ class qe {
   u(e) {
     const { el: { content: t }, parts: i } = this._$AD, s = ((e == null ? void 0 : e.creationScope) ?? $).importNode(t, !0);
     k.currentNode = s;
-    let a = k.nextNode(), o = 0, r = 0, l = i[0];
-    for (; l !== void 0; ) {
-      if (o === l.index) {
-        let d;
-        l.type === 2 ? d = new U(a, a.nextSibling, this, e) : l.type === 1 ? d = new l.ctor(a, l.name, l.strings, this, e) : l.type === 6 && (d = new Ze(a, this, e)), this._$AV.push(d), l = i[++r];
+    let o = k.nextNode(), a = 0, l = 0, n = i[0];
+    for (; n !== void 0; ) {
+      if (a === n.index) {
+        let c;
+        n.type === 2 ? c = new N(o, o.nextSibling, this, e) : n.type === 1 ? c = new n.ctor(o, n.name, n.strings, this, e) : n.type === 6 && (c = new Ze(o, this, e)), this._$AV.push(c), n = i[++l];
       }
-      o !== (l == null ? void 0 : l.index) && (a = k.nextNode(), o++);
+      a !== (n == null ? void 0 : n.index) && (o = k.nextNode(), a++);
     }
     return k.currentNode = $, s;
   }
@@ -378,7 +378,7 @@ class qe {
     for (const i of this._$AV) i !== void 0 && (i.strings !== void 0 ? (i._$AI(e, i, t), t += i.strings.length - 2) : i._$AI(e[t])), t++;
   }
 }
-class U {
+class N {
   get _$AU() {
     var e;
     return ((e = this._$AM) == null ? void 0 : e._$AU) ?? this._$Cv;
@@ -398,7 +398,7 @@ class U {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = A(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== D && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : He(e) ? this.k(e) : this._(e);
+    e = C(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== A && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : He(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -410,30 +410,30 @@ class U {
     this._$AH !== u && M(this._$AH) ? this._$AA.nextSibling.data = e : this.T($.createTextNode(e)), this._$AH = e;
   }
   $(e) {
-    var a;
-    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = B.createElement(Pe(i.h, i.h[0]), this.options)), i);
-    if (((a = this._$AH) == null ? void 0 : a._$AD) === s) this._$AH.p(t);
+    var o;
+    const { values: t, _$litType$: i } = e, s = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = B.createElement(Ee(i.h, i.h[0]), this.options)), i);
+    if (((o = this._$AH) == null ? void 0 : o._$AD) === s) this._$AH.p(t);
     else {
-      const o = new qe(s, this), r = o.u(this.options);
-      o.p(t), this.T(r), this._$AH = o;
+      const a = new qe(s, this), l = a.u(this.options);
+      a.p(t), this.T(l), this._$AH = a;
     }
   }
   _$AC(e) {
-    let t = _e.get(e.strings);
-    return t === void 0 && _e.set(e.strings, t = new B(e)), t;
+    let t = fe.get(e.strings);
+    return t === void 0 && fe.set(e.strings, t = new B(e)), t;
   }
   k(e) {
-    oe(this._$AH) || (this._$AH = [], this._$AR());
+    se(this._$AH) || (this._$AH = [], this._$AR());
     const t = this._$AH;
     let i, s = 0;
-    for (const a of e) s === t.length ? t.push(i = new U(this.O(T()), this.O(T()), this, this.options)) : i = t[s], i._$AI(a), s++;
+    for (const o of e) s === t.length ? t.push(i = new N(this.O(T()), this.O(T()), this, this.options)) : i = t[s], i._$AI(o), s++;
     s < t.length && (this._$AR(i && i._$AB.nextSibling, s), t.length = s);
   }
   _$AR(e = this._$AA.nextSibling, t) {
     var i;
     for ((i = this._$AP) == null ? void 0 : i.call(this, !1, !0, t); e !== this._$AB; ) {
-      const s = de(e).nextSibling;
-      de(e).remove(), e = s;
+      const s = le(e).nextSibling;
+      le(e).remove(), e = s;
     }
   }
   setConnected(e) {
@@ -441,32 +441,32 @@ class U {
     this._$AM === void 0 && (this._$Cv = e, (t = this._$AP) == null || t.call(this, e));
   }
 }
-class F {
+class H {
   get tagName() {
     return this.element.tagName;
   }
   get _$AU() {
     return this._$AM._$AU;
   }
-  constructor(e, t, i, s, a) {
-    this.type = 1, this._$AH = u, this._$AN = void 0, this.element = e, this.name = t, this._$AM = s, this.options = a, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = u;
+  constructor(e, t, i, s, o) {
+    this.type = 1, this._$AH = u, this._$AN = void 0, this.element = e, this.name = t, this._$AM = s, this.options = o, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = u;
   }
   _$AI(e, t = this, i, s) {
-    const a = this.strings;
-    let o = !1;
-    if (a === void 0) e = A(this, e, t, 0), o = !M(e) || e !== this._$AH && e !== D, o && (this._$AH = e);
+    const o = this.strings;
+    let a = !1;
+    if (o === void 0) e = C(this, e, t, 0), a = !M(e) || e !== this._$AH && e !== A, a && (this._$AH = e);
     else {
-      const r = e;
-      let l, d;
-      for (e = a[0], l = 0; l < a.length - 1; l++) d = A(this, r[i + l], t, l), d === D && (d = this._$AH[l]), o || (o = !M(d) || d !== this._$AH[l]), d === u ? e = u : e !== u && (e += (d ?? "") + a[l + 1]), this._$AH[l] = d;
+      const l = e;
+      let n, c;
+      for (e = o[0], n = 0; n < o.length - 1; n++) c = C(this, l[i + n], t, n), c === A && (c = this._$AH[n]), a || (a = !M(c) || c !== this._$AH[n]), c === u ? e = u : e !== u && (e += (c ?? "") + o[n + 1]), this._$AH[n] = c;
     }
-    o && !s && this.j(e);
+    a && !s && this.j(e);
   }
   j(e) {
     e === u ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
-class We extends F {
+class We extends H {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -474,7 +474,7 @@ class We extends F {
     this.element[this.name] = e === u ? void 0 : e;
   }
 }
-class Ke extends F {
+class Ke extends H {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -482,14 +482,14 @@ class Ke extends F {
     this.element.toggleAttribute(this.name, !!e && e !== u);
   }
 }
-class Ye extends F {
-  constructor(e, t, i, s, a) {
-    super(e, t, i, s, a), this.type = 5;
+class Ye extends H {
+  constructor(e, t, i, s, o) {
+    super(e, t, i, s, o), this.type = 5;
   }
   _$AI(e, t = this) {
-    if ((e = A(this, e, t, 0) ?? u) === D) return;
-    const i = this._$AH, s = e === u && i !== u || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, a = e !== u && (i === u || s);
-    s && this.element.removeEventListener(this.name, this, i), a && this.element.addEventListener(this.name, this, e), this._$AH = e;
+    if ((e = C(this, e, t, 0) ?? u) === A) return;
+    const i = this._$AH, s = e === u && i !== u || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, o = e !== u && (i === u || s);
+    s && this.element.removeEventListener(this.name, this, i), o && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
   handleEvent(e) {
     var t;
@@ -504,19 +504,19 @@ class Ze {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    A(this, e);
+    C(this, e);
   }
 }
-const K = R.litHtmlPolyfillSupport;
-K == null || K(B, U), (R.litHtmlVersions ?? (R.litHtmlVersions = [])).push("3.3.3");
-const Je = (n, e, t) => {
+const W = z.litHtmlPolyfillSupport;
+W == null || W(B, N), (z.litHtmlVersions ?? (z.litHtmlVersions = [])).push("3.3.3");
+const Je = (r, e, t) => {
   const i = (t == null ? void 0 : t.renderBefore) ?? e;
   let s = i._$litPart$;
   if (s === void 0) {
-    const a = (t == null ? void 0 : t.renderBefore) ?? null;
-    i._$litPart$ = s = new U(e.insertBefore(T(), a), a, void 0, t ?? {});
+    const o = (t == null ? void 0 : t.renderBefore) ?? null;
+    i._$litPart$ = s = new N(e.insertBefore(T(), o), o, void 0, t ?? {});
   }
-  return s._$AI(n), s;
+  return s._$AI(r), s;
 };
 /**
  * @license
@@ -524,7 +524,7 @@ const Je = (n, e, t) => {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const w = globalThis;
-class z extends P {
+class R extends D {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -546,21 +546,21 @@ class z extends P {
     super.disconnectedCallback(), (e = this._$Do) == null || e.setConnected(!1);
   }
   render() {
-    return D;
+    return A;
   }
 }
-var xe;
-z._$litElement$ = !0, z.finalized = !0, (xe = w.litElementHydrateSupport) == null || xe.call(w, { LitElement: z });
-const Y = w.litElementPolyfillSupport;
-Y == null || Y({ LitElement: z });
+var ye;
+R._$litElement$ = !0, R.finalized = !0, (ye = w.litElementHydrateSupport) == null || ye.call(w, { LitElement: R });
+const K = w.litElementPolyfillSupport;
+K == null || K({ LitElement: R });
 (w.litElementVersions ?? (w.litElementVersions = [])).push("4.2.2");
-function ge(n) {
-  const e = String(n || "").replace(/\D/g, "");
-  return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : n || "";
+function _e(r) {
+  const e = String(r || "").replace(/\D/g, "");
+  return e.length === 10 ? `(${e.slice(0, 3)}) ${e.slice(3, 6)}-${e.slice(6)}` : e.length === 11 && e[0] === "1" ? `(${e.slice(1, 4)}) ${e.slice(4, 7)}-${e.slice(7)}` : r || "";
 }
 function Xe() {
-  const n = /* @__PURE__ */ new Date(), e = new Date(n);
-  e.setDate(n.getDate() + 30);
+  const r = /* @__PURE__ */ new Date(), e = new Date(r);
+  e.setDate(r.getDate() + 30);
   const t = (s) => s.toISOString().slice(0, 10);
   return {
     dealer: {
@@ -585,7 +585,7 @@ City, PR`,
     offer: {
       amount: 25e3,
       valid_until: t(e),
-      appraisal_date: t(n),
+      appraisal_date: t(r),
       classification: "Good Condition"
     },
     valuation: {
@@ -684,13 +684,13 @@ City, PR`,
     disclaimer: ", subject to Carfax History and Lien Report"
   };
 }
-const N = [
+const U = [
   { label: "Extra Small", delta: -1 },
   { label: "Small", delta: 0 },
   { label: "Medium", delta: 1 },
   { label: "Large", delta: 2 },
   { label: "Extra Large", delta: 3 }
-], O = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], Z = {
+], E = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], Y = {
   valuation: "Valuation",
   disclosures: "Disclosures",
   observations: "Observations",
@@ -699,7 +699,7 @@ const N = [
   selected_scenarios: "Selected Scenarios",
   recon: "Recon",
   photos: "Photos"
-}, E = [
+}, P = [
   { key: "vehicles", label: "Vehicles" },
   { key: "avgRetail", label: "Average Retail" },
   { key: "avgMileage", label: "Average Mileage" },
@@ -712,14 +712,14 @@ const N = [
   { key: "perception", label: "Perception" },
   { key: "retail", label: "Retail" },
   { key: "ACV", label: "Actual Cash Value" }
-], me = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), J = h`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, Qe = h`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-h`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const be = h`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, ve = h`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, et = h`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, tt = h`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`, it = h`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`, I = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], st = h`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`, V = 8, X = 10, ye = 8;
-function Q(n) {
+], ge = /* @__PURE__ */ new Set(["costMkt", "prcMktAdj", "retail", "ACV"]), Z = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`, Qe = d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 1 1 4 0v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+d`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5.5V4a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const me = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, be = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`, et = d`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`, tt = d`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>`, it = d`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.4 3.6z"/></svg>`, Pe = ["disclosures", "recon", "photos", "market_scenarios", "selected_scenarios"], st = [...Pe, "sections.observations_comments", "market_display", "highlights_display"], ot = d`<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="8.3" r="0.65" fill="currentColor"/></svg>`, I = 8, J = 10, ve = 8;
+function X(r) {
   const e = window.devicePixelRatio || 1;
-  return Math.round(n * e) / e;
+  return Math.round(r * e) / e;
 }
-class ot {
+class at {
   constructor() {
     this.outer = null, this.bubble = null, this.label = null, this.arrow = null, this.anchor = null, this.visible = !1, this.reposition = () => this.updatePosition(), this.dismissOnScroll = () => this.hide();
   }
@@ -773,14 +773,14 @@ class ot {
   show(e, t) {
     if (this.visible && this.anchor === e) return;
     this.visible = !0, this.ensure();
-    const { outer: i, bubble: s, label: a } = this;
+    const { outer: i, bubble: s, label: o } = this;
     this.anchor = e;
-    const o = e.closest("dialog") ?? document.body;
-    i.parentElement !== o && o.appendChild(i), s.style.width = "", a.textContent = t;
-    const r = document.createRange();
-    r.selectNodeContents(a);
-    const l = Array.from(r.getClientRects(), (d) => d.width);
-    s.style.width = `${Math.ceil(Math.max(...l))}px`, this.updatePosition(), window.addEventListener("scroll", this.dismissOnScroll, !0), window.addEventListener("resize", this.reposition), s.getAnimations().forEach((d) => d.cancel()), s.animate(
+    const a = e.closest("dialog") ?? document.body;
+    i.parentElement !== a && a.appendChild(i), s.style.width = "", o.textContent = t;
+    const l = document.createRange();
+    l.selectNodeContents(o);
+    const n = Array.from(l.getClientRects(), (c) => c.width);
+    s.style.width = `${Math.ceil(Math.max(...n))}px`, this.updatePosition(), window.addEventListener("scroll", this.dismissOnScroll, !0), window.addEventListener("resize", this.reposition), s.getAnimations().forEach((c) => c.cancel()), s.animate(
       [
         { opacity: 0, transform: "translateY(6px)" },
         { opacity: 1, transform: "translateY(0)" }
@@ -805,18 +805,18 @@ class ot {
   }
   updatePosition() {
     if (!this.anchor || !this.outer || !this.arrow) return;
-    const e = this.outer, t = this.anchor.getBoundingClientRect(), i = t.left + t.width / 2, s = t.top - X - e.offsetHeight >= V;
+    const e = this.outer, t = this.anchor.getBoundingClientRect(), i = t.left + t.width / 2, s = t.top - J - e.offsetHeight >= I;
     this.setArrowOrientation(this.arrow, s ? "above" : "below");
-    const a = s ? t.top - X - e.offsetHeight : t.bottom + X, o = Math.max(V, window.innerWidth - V - e.offsetWidth), r = Math.min(Math.max(i - e.offsetWidth / 2, V), o), l = Math.min(
-      Math.max(i - r, ye),
-      e.offsetWidth - ye
+    const o = s ? t.top - J - e.offsetHeight : t.bottom + J, a = Math.max(I, window.innerWidth - I - e.offsetWidth), l = Math.min(Math.max(i - e.offsetWidth / 2, I), a), n = Math.min(
+      Math.max(i - l, ve),
+      e.offsetWidth - ve
     );
-    this.arrow.style.left = `${Q(l)}px`, e.style.transform = `translate3d(${Q(r)}px, ${Q(a)}px, 0)`;
+    this.arrow.style.left = `${X(n)}px`, e.style.transform = `translate3d(${X(l)}px, ${X(o)}px, 0)`;
   }
 }
-class te extends z {
+class ee extends R {
   constructor() {
-    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...O], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !0, market_scenarios: !0, selected_scenarios: !0 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._individualOpen = !1, this._individualSections = [], this._individualBusy = !1, this._individualError = "", this._sendPayloadOverride = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._lockOverridden = !1, this._confirmReset = !1, this._undoStack = [], this._redoStack = [], this._onePageRestore = null, this._locks = {
+    super(), this.apiBaseUrl = "", this.apiMode = "url", this.authToken = "", this.templateMode = !1, this.payload = null, this.sharedDisplay = null, this.pdfDisplay = null, this.templateSharedDisplay = null, this.templatePdfDisplay = null, this.employees = [], this._selectedEmployeeIndex = 0, this._vehicleInfo = null, this._generalOpen = !1, this._layoutOpen = !1, this._showHideOpen = !1, this._mode = "full", this._valueDisplay = "offer", this._taxRatePct = null, this._profitName = null, this._disclaimerText = null, this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...E], this._pills = this._defaultPills(), this._groups = this._defaultGroups(), this._pillsOpen = { valuation: !0, market_scenarios: !0, selected_scenarios: !0 }, this._finalized = !1, this._autoPreviewDone = !1, this._autoPreviewTimer = null, this._autoRefreshTimer = null, this._splitOpen = !1, this._sendVia = null, this._doneSentVia = null, this._pdfSent = !1, this._confirmSendEmail = !1, this._sendMessageType = null, this._manualCustomerEmail = "", this._previewStale = !1, this._individualOpen = !1, this._individualSections = [], this._individualBusy = !1, this._individualError = "", this._sendPayloadOverride = null, this._generating = !1, this._finalizing = !1, this._statusMsg = "", this._statusError = !1, this._pdfUrl = "", this._pdfVehicle = null, this._lastPrintoutRequest = null, this._savedConfirm = !1, this._lockOverridden = !1, this._confirmReset = !1, this._undoStack = [], this._redoStack = [], this._locks = {
       mode: !1,
       condition: !1,
       value_display: !1,
@@ -840,7 +840,7 @@ class te extends z {
       recon: !1,
       photos: !1,
       signature: !1
-    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1, this._tooltip = new ot();
+    }, this._dragSrcSection = null, this._dragSrcIndex = -1, this._placeholder = null, this._pendingDataLoad = !1, this._tooltip = new at();
   }
   // ── Public API ─────────────────────────────────────────────────────────────
   /** Returns the full current customization state. Save this to restore later. */
@@ -870,9 +870,9 @@ class te extends z {
       "valuation.tax_savings": !0,
       "sections.observations_highlights": !0,
       "sections.observations_comments": !0,
-      ...Object.fromEntries(E.flatMap((e) => [
-        [`market_scenarios.${e.key}`, !me.has(e.key)],
-        [`selected_scenarios.${e.key}`, !me.has(e.key)]
+      ...Object.fromEntries(P.flatMap((e) => [
+        [`market_scenarios.${e.key}`, !ge.has(e.key)],
+        [`selected_scenarios.${e.key}`, !ge.has(e.key)]
       ]))
     };
   }
@@ -895,15 +895,15 @@ class te extends z {
     if (!e) return;
     const t = ["valuation", "disclosures", "observations", "market", "market_scenarios", "selected_scenarios", "recon", "photos"], i = ["valuation", "observations", "market_scenarios", "selected_scenarios"], s = e.sections || {};
     this._pills = { ...this._defaultPills(), ...e.pills || {} };
-    const a = { ...this._defaultGroups(), signature: this._groups.signature };
-    t.forEach((o) => {
-      s[o] != null && (a[o] = s[o] ? "checked" : "unchecked");
-    }), this._groups = a, i.forEach((o) => {
-      this._groups[o] === "checked" && this._recomputeGroupState(o);
-    }), e.section_order != null && (this._sectionOrder = e.section_order.filter((o) => O.includes(o))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full"), e.recon_view != null && (this._reconView = e.recon_view === "detail" ? "detail" : "summary"), e.highlights_view != null && (this._highlightsView = e.highlights_view === "detail" ? "detail" : "summary");
+    const o = { ...this._defaultGroups(), signature: this._groups.signature };
+    t.forEach((a) => {
+      s[a] != null && (o[a] = s[a] ? "checked" : "unchecked");
+    }), this._groups = o, i.forEach((a) => {
+      this._groups[a] === "checked" && this._recomputeGroupState(a);
+    }), e.section_order != null && (this._sectionOrder = e.section_order.filter((a) => E.includes(a))), e.tax_rate_pct != null && (this._taxRatePct = e.tax_rate_pct), e.value_display != null && (this._valueDisplay = e.value_display), e.profit_name != null && (this._profitName = e.profit_name), e.market_view != null && (this._marketDisplay = e.market_view === "summary" ? "summary" : "full"), e.recon_view != null && (this._reconView = e.recon_view === "detail" ? "detail" : "summary"), e.highlights_view != null && (this._highlightsView = e.highlights_view === "detail" ? "detail" : "summary");
   }
   _applyPdfDisplay(e) {
-    e && (e.mode != null && (this._mode = e.mode, this._onePageRestore = null), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.scenario_layout != null && (this._scenarioLayout = e.scenario_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.signature != null && (this._groups = { ...this._groups, signature: e.signature ? "checked" : "unchecked" }), e.locks && (this._locks = { ...this._locks, ...e.locks }));
+    e && (e.mode != null && (this._mode = e.mode), e.font_size_index != null && (this._fontSizeIndex = e.font_size_index), e.photos_per_row != null && (this._photosPerRow = e.photos_per_row), e.disc_layout != null && (this._discLayout = e.disc_layout), e.scenario_layout != null && (this._scenarioLayout = e.scenario_layout), e.disclaimer_text != null && (this._disclaimerText = e.disclaimer_text), e.disclaimer_punct != null && (this._disclaimerPunct = e.disclaimer_punct), e.selected_emp_idx != null && (this._selectedEmployeeIndex = e.selected_emp_idx), e.signature != null && (this._groups = { ...this._groups, signature: e.signature ? "checked" : "unchecked" }), e.locks && (this._locks = { ...this._locks, ...e.locks }));
   }
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   disconnectedCallback() {
@@ -916,17 +916,17 @@ class te extends z {
     }));
   }
   updated(e) {
-    var a, o, r, l, d, p;
+    var o, a, l, n, c, p;
     const t = this._pendingDataLoad;
     if (e.has("sharedDisplay") || e.has("pdfDisplay") ? this._pendingDataLoad = !0 : this._pendingDataLoad && (this._pendingDataLoad = !1), e.has("sharedDisplay") && this.sharedDisplay && this._applySharedDisplay(this.sharedDisplay), e.has("pdfDisplay") && this.pdfDisplay && this._applyPdfDisplay(this.pdfDisplay), (e.has("sharedDisplay") || e.has("pdfDisplay")) && this._autoPreviewDone && !this._savedDisplayConsumed && this.payload && this.apiBaseUrl && (this._savedDisplayConsumed = !0, clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       this._handleGenerate();
     }, 300)), e.has("payload") && this.payload && (this._vehicleInfo = this._vehicleInfoFromData(this.payload), this._taxRatePct === null)) {
-      const c = (r = (o = (a = this.payload) == null ? void 0 : a.valuation) == null ? void 0 : o.tax_savings) == null ? void 0 : r.rate_pct;
-      this._taxRatePct = c != null ? parseFloat(parseFloat(c).toFixed(2)) : 0;
+      const h = (l = (a = (o = this.payload) == null ? void 0 : o.valuation) == null ? void 0 : a.tax_savings) == null ? void 0 : l.rate_pct;
+      this._taxRatePct = h != null ? parseFloat(parseFloat(h).toFixed(2)) : 0;
     }
-    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((l = this.employees) != null && l.length) && ((p = (d = this.payload) == null ? void 0 : d.employee) != null && p.name)) {
-      const c = this.employees.findIndex((f) => f.name === this.payload.employee.name);
-      c !== -1 && (this._selectedEmployeeIndex = c);
+    if (e.has("taxRate") && this.taxRate != null && this._taxRatePct === null && (this._taxRatePct = parseFloat(parseFloat(this.taxRate).toFixed(2))), e.has("profitLabel") && this.profitLabel != null && (!this.templateMode || this._profitName === null || this._profitName === void 0) && (this._profitName = this.profitLabel), e.has("disclaimerText") && this.disclaimerText != null && (!this.templateMode || this._disclaimerText === null || this._disclaimerText === void 0) && (this._disclaimerText = this.disclaimerText), e.has("employees") && ((n = this.employees) != null && n.length) && ((p = (c = this.payload) == null ? void 0 : c.employee) != null && p.name)) {
+      const h = this.employees.findIndex((f) => f.name === this.payload.employee.name);
+      h !== -1 && (this._selectedEmployeeIndex = h);
     }
     this._savedConfirm && !e.has("_savedConfirm") && [
       "_mode",
@@ -947,7 +947,7 @@ class te extends z {
       "_groups",
       "_selectedEmployeeIndex",
       "_locks"
-    ].some((f) => e.has(f)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked, this._lockOverridden = !1, this._sheetLocked() && this._previewStale && this._handleDiscardChanges()), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((c) => e.has(c)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
+    ].some((f) => e.has(f)) && (this._savedConfirm = !1), e.has("locked") && (this._finalized = !!this.locked, this._lockOverridden = !1, this._sheetLocked() && this._previewStale && this._handleDiscardChanges()), !this._autoPreviewDone && this.apiBaseUrl && ["payload", "sharedDisplay", "pdfDisplay", "employees", "locked"].some((h) => e.has(h)) && (clearTimeout(this._autoPreviewTimer), this._autoPreviewTimer = setTimeout(() => {
       !this._autoPreviewDone && this.apiBaseUrl && (this.templateMode || this.payload) && (this._autoPreviewDone = !0, this._handleGenerate());
     }, 300)), this._autoPreviewDone && this.apiBaseUrl && !(t || e.has("sharedDisplay") || e.has("pdfDisplay") || e.has("payload") || e.has("employees")) && [
       "_mode",
@@ -970,8 +970,8 @@ class te extends z {
     ].some((_) => e.has(_)) && (this._previewStale = !0);
     const s = this.shadowRoot;
     if (s)
-      for (const [c, f] of Object.entries(this._groups)) {
-        const _ = s.querySelector(`input[data-group="${c}"]`);
+      for (const [h, f] of Object.entries(this._groups)) {
+        const _ = s.querySelector(`input[data-group="${h}"]`);
         _ && (_.indeterminate = f === "indeterminate", _.checked = f === "checked" || f === "indeterminate");
       }
   }
@@ -991,11 +991,11 @@ class te extends z {
    * offer away from the calculated ACV for this scenario — ACV and Cost to
    * Market are derived from that original valuation, so they go stale too. */
   _isScenarioStale(e) {
-    var o, r, l;
+    var a, l, n;
     const t = e === "market_scenarios" ? "market" : e === "selected_scenarios" ? "selected" : null;
     if (!t) return !1;
-    const i = this._getPayloadData(), s = (o = i == null ? void 0 : i.offer) == null ? void 0 : o.amount, a = this._parseCurrency((l = (r = i == null ? void 0 : i.scenarios) == null ? void 0 : r[t]) == null ? void 0 : l.ACV);
-    return s == null || a == null ? !1 : Math.round(s) !== Math.round(a);
+    const i = this._getPayloadData(), s = (a = i == null ? void 0 : i.offer) == null ? void 0 : a.amount, o = this._parseCurrency((n = (l = i == null ? void 0 : i.scenarios) == null ? void 0 : l[t]) == null ? void 0 : n.ACV);
+    return s == null || o == null ? !1 : Math.round(s) !== Math.round(o);
   }
   /** ACV and Cost to Market are the only fields tied to that valuation. */
   _isPillLockedStale(e) {
@@ -1003,8 +1003,8 @@ class te extends z {
     return i !== "ACV" && i !== "costMkt" ? !1 : this._isScenarioStale(t);
   }
   _vehicleInfoFromData(e) {
-    const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", o = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
-    return { amount: s, desc: o, vin: t.vin || "" };
+    const t = e.vehicle || {}, i = e.offer || {}, s = this._fmtPrice(i.amount) + " Offer", a = [t.year, t.make, t.model, t.trim].filter(Boolean).join(" ") + (t.color ? ` (${t.color})` : "");
+    return { amount: s, desc: a, vin: t.vin || "" };
   }
   _getGroupState(e) {
     return this._groups[e] || "checked";
@@ -1013,13 +1013,13 @@ class te extends z {
   _recomputeGroupState(e) {
     const t = { ...this._groups };
     if (e === "valuation") {
-      const i = ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"], s = i.filter((a) => this._pills[a]).length;
+      const i = ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"], s = i.filter((o) => this._pills[o]).length;
       s === 0 ? t.valuation = "unchecked" : s === i.length ? t.valuation = "checked" : t.valuation = "indeterminate";
     } else if (e === "observations") {
-      const i = ["sections.observations_highlights", "sections.observations_comments"], s = i.filter((a) => this._pills[a]).length;
+      const i = ["sections.observations_highlights", "sections.observations_comments"], s = i.filter((o) => this._pills[o]).length;
       s === 0 ? t.observations = "unchecked" : s === i.length ? t.observations = "checked" : t.observations = "indeterminate";
     } else if (e === "market_scenarios" || e === "selected_scenarios") {
-      const i = E.map((a) => `${e}.${a.key}`), s = i.filter((a) => this._pills[a]).length;
+      const i = P.map((o) => `${e}.${o.key}`), s = i.filter((o) => this._pills[o]).length;
       s === 0 ? t[e] = "unchecked" : s === i.length ? t[e] = "checked" : t[e] = "indeterminate";
     }
     this._groups = t;
@@ -1040,8 +1040,22 @@ class te extends z {
   _isOnePage() {
     return this._mode === "one_page";
   }
+  /** True when One-Page hides `key` (a section, pill path or view control). */
+  _onePageLocked(e) {
+    return this._isOnePage() && st.includes(e);
+  }
+  /** Groups / pills / views as they print: the real settings with One-Page's
+   * locks applied on top. */
+  _effectiveSettings() {
+    if (!this._isOnePage())
+      return { groups: this._groups, pills: this._pills, marketDisplay: this._marketDisplay, highlightsView: this._highlightsView };
+    const e = { ...this._groups }, t = { ...this._pills, "sections.observations_comments": !1 };
+    return Pe.forEach((i) => {
+      e[i] = "unchecked";
+    }), e.observations !== "unchecked" && (e.observations = t["sections.observations_highlights"] ? "indeterminate" : "unchecked"), { groups: e, pills: t, marketDisplay: "summary", highlightsView: "summary" };
+  }
   _isSectionDisabled(e) {
-    return this._groups[e] === "unchecked";
+    return this._effectiveSettings().groups[e] === "unchecked";
   }
   // ── Display block builder ──────────────────────────────────────────────────
   _buildSharedState() {
@@ -1081,46 +1095,48 @@ class te extends z {
       locks: { ...this._locks }
     };
   }
-  _buildDisplay() {
-    const e = this._pills, t = this._groups;
+  /** Display block for the renderer. `eff` defaults to what prints now
+   * (One-Page's hiding applied). */
+  _buildDisplay(e = this._effectiveSettings()) {
+    const t = e.pills, i = e.groups;
     return {
       valuation: {
-        retail_value: e["valuation.retail_value"],
-        recon: e["valuation.recon"],
-        fixed_overhead: e["valuation.fixed_overhead"],
-        target_profit: e["valuation.target_profit"],
-        tax_savings: e["valuation.tax_savings"]
+        retail_value: t["valuation.retail_value"],
+        recon: t["valuation.recon"],
+        fixed_overhead: t["valuation.fixed_overhead"],
+        target_profit: t["valuation.target_profit"],
+        tax_savings: t["valuation.tax_savings"]
       },
       sections: {
-        valuation: t.valuation === "checked" || t.valuation === "indeterminate",
-        disclosures: t.disclosures === "checked",
+        valuation: i.valuation === "checked" || i.valuation === "indeterminate",
+        disclosures: i.disclosures === "checked",
         disclosures_horizontal: this._discLayout === "horizontal",
-        disclosures_signature: t.signature === "checked",
-        observations: t.observations === "checked" || t.observations === "indeterminate",
-        observations_highlights: e["sections.observations_highlights"],
-        observations_comments: e["sections.observations_comments"],
-        market_summary: t.market === "checked" && this._marketDisplay === "summary",
-        market_comparables: t.market === "checked" && this._marketDisplay === "full",
-        market_scenarios: t.market_scenarios === "checked" || t.market_scenarios === "indeterminate",
-        selected_scenarios: t.selected_scenarios === "checked" || t.selected_scenarios === "indeterminate",
-        recon_breakdown: t.recon === "checked",
-        photos: t.photos === "checked"
+        disclosures_signature: i.signature === "checked",
+        observations: i.observations === "checked" || i.observations === "indeterminate",
+        observations_highlights: t["sections.observations_highlights"],
+        observations_comments: t["sections.observations_comments"],
+        market_summary: i.market === "checked" && e.marketDisplay === "summary",
+        market_comparables: i.market === "checked" && e.marketDisplay === "full",
+        market_scenarios: i.market_scenarios === "checked" || i.market_scenarios === "indeterminate",
+        selected_scenarios: i.selected_scenarios === "checked" || i.selected_scenarios === "indeterminate",
+        recon_breakdown: i.recon === "checked",
+        photos: i.photos === "checked"
       },
       general: {
         offer_label: !1,
-        condition: e["general.condition"],
+        condition: t["general.condition"],
         value_display: this._valueDisplay
       },
       scenarios: {
-        market: Object.fromEntries(E.map((s) => [s.key, this._isPillLockedStale(`market_scenarios.${s.key}`) ? !1 : e[`market_scenarios.${s.key}`]])),
-        selected: Object.fromEntries(E.map((s) => [s.key, this._isPillLockedStale(`selected_scenarios.${s.key}`) ? !1 : e[`selected_scenarios.${s.key}`]]))
+        market: Object.fromEntries(P.map((o) => [o.key, this._isPillLockedStale(`market_scenarios.${o.key}`) ? !1 : t[`market_scenarios.${o.key}`]])),
+        selected: Object.fromEntries(P.map((o) => [o.key, this._isPillLockedStale(`selected_scenarios.${o.key}`) ? !1 : t[`selected_scenarios.${o.key}`]]))
       },
       scenario_layout: this._scenarioLayout,
       // "summary" (default — aggregate count+total row) or "detail" (every
       // damage note listed individually, italicized-prefix, non-interleaved).
       recon_view: this._reconView,
       // Same summary/detail concept, independent toggle for Observations' Highlights.
-      highlights_view: this._highlightsView,
+      highlights_view: e.highlightsView,
       // Tells the renderer to clamp long free text (Comments) to fit one page.
       one_page: this._isOnePage()
     };
@@ -1133,68 +1149,31 @@ class te extends z {
     if (this._sheetLocked()) return;
     this._confirmReset = !1;
     const e = this._appliedSnapshot;
-    this._onePageRestore = null, this._pendingDataLoad = !0, this.templateSharedDisplay || this.templatePdfDisplay ? (this.templateSharedDisplay && this._applySharedDisplay(this.templateSharedDisplay), this.templatePdfDisplay && this._applyPdfDisplay(this.templatePdfDisplay)) : this._resetToggles(), this._previewStale = !0, this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this._pushHistory(e), this.dispatchEvent(new CustomEvent("display-save", {
+    this._pendingDataLoad = !0, this.templateSharedDisplay || this.templatePdfDisplay ? (this.templateSharedDisplay && this._applySharedDisplay(this.templateSharedDisplay), this.templatePdfDisplay && this._applyPdfDisplay(this.templatePdfDisplay)) : this._resetToggles(), this._previewStale = !0, this._finalizing = !0, await this._handleGenerate(!1), this._finalizing = !1, this._finalized = !0, this._pushHistory(e), this.dispatchEvent(new CustomEvent("display-save", {
       detail: { shared: null, pdf: null, employee: null, payload: null },
       bubbles: !0,
       composed: !0
     }));
   }
-  /** Settings after switching to `value` (pure — works on a _captureSettings
-   * object). It's a preset, not a display rule — everything stays editable
-   * afterwards and prints as shown. One-Page turns off its fixed group of
-   * sections and Comments, and sets Market + Highlights to Summary. Full turns back on the
-   * sections One-Page turned off (`restore`; when unknown, e.g. the sheet was
-   * saved in One-Page, whichever of them the location default shows), sets
-   * Market to Full and puts Highlights + Comments back. Neither touches the order. */
-  _withMode(e, t, i) {
-    var l, d;
-    const s = { ...e.groups }, a = { ...e.pills }, o = (p, c) => {
-      if (a["sections.observations_comments"] = p, s.observations === "unchecked" && !c) return;
-      const f = this._pillKeysForGroup("observations"), _ = f.filter((b) => a[b]).length;
-      s.observations = _ === 0 ? "unchecked" : _ === f.length ? "checked" : "indeterminate";
-    };
-    return t === "one_page" ? (I.forEach((p) => {
-      s[p] = "unchecked";
-    }), o(!1), { ...e, mode: t, groups: s, pills: a, marketDisplay: "summary", highlightsView: "summary" }) : (i ? o(i.comments, i.observationsOn) : o(((d = (l = this.templateSharedDisplay) == null ? void 0 : l.sections) == null ? void 0 : d.observations_comments) !== !1, !1), ((i == null ? void 0 : i.sections) || this._fullDefaultSections()).forEach((p) => {
-      const c = this._pillKeysForGroup(p);
-      if (!c.length) {
-        s[p] = "checked";
-        return;
-      }
-      const f = c.filter((_) => a[_]).length;
-      f === 0 && c.forEach((_) => {
-        a[_] = !0;
-      }), s[p] = f === 0 || f === c.length ? "checked" : "indeterminate";
-    }), { ...e, mode: t, groups: s, pills: a, marketDisplay: "full", highlightsView: (i == null ? void 0 : i.highlightsView) || e.highlightsView });
-  }
-  /** One-Page sections Full turns on when we don't know what was on before
-   * One-Page: the location default's choice, or all of them without one. */
-  _fullDefaultSections() {
-    var t;
-    const e = (t = this.templateSharedDisplay) == null ? void 0 : t.sections;
-    return e ? I.filter((i) => e[i] !== !1) : [...I];
-  }
-  /** Full / One-Page toggle — see _withMode for what each side sets. It
-   * changes real settings, so it's an ordinary edit: Apply to save, Discard
-   * to undo. */
-  _handleModeChange(e) {
-    if (this._sheetLocked() || e === this._mode) return;
-    const t = this._onePageRestore;
-    this._onePageRestore = e === "one_page" ? {
-      sections: I.filter((i) => this._groups[i] !== "unchecked"),
-      highlightsView: this._highlightsView,
-      comments: !!this._pills["sections.observations_comments"],
-      observationsOn: this._groups.observations !== "unchecked"
-    } : null, this._restoreSettings(this._withMode(this._captureSettings(), e, t));
+  /** Full / One-Page toggle. One-Page is a display rule: it hides what
+   * can't fit on one page (ONE_PAGE_LOCKED) without touching the real
+   * settings, so Full prints exactly what it did before. Not an edit — it
+   * re-renders and saves right away (an undo step, like any apply). Other
+   * unapplied edits stay pending: the switch applies on top of the last
+   * applied version, then the pending edits come back. */
+  async _handleModeChange(e) {
+    if (this._sheetLocked() || e === this._mode || this._generating || this._finalizing) return;
+    const t = this._previewStale && this._appliedSnapshot ? { ...this._captureSettings(), mode: e } : null;
+    t ? (this._pendingDataLoad = !0, this._restoreSettings({ ...this._appliedSnapshot, mode: e })) : this._mode = e, await this._handleApply(), t && (this._pendingDataLoad = !0, this._restoreSettings(t), this._previewStale = !0);
   }
   _handleGroupChange(e, t) {
     if (this._groups = { ...this._groups, [e]: t ? "checked" : "unchecked" }, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(e)) {
       const s = this._pillKeysForGroup(e);
-      if (s.filter((o) => this._pills[o]).length === 0) {
-        const o = { ...this._pills };
-        s.forEach((r) => {
-          o[r] = !0;
-        }), this._pills = o;
+      if (s.filter((a) => this._pills[a] && !this._onePageLocked(a)).length === 0) {
+        const a = { ...this._pills };
+        s.forEach((l) => {
+          a[l] = !0;
+        }), this._pills = a;
       } else
         this._recomputeGroupState(e);
     }
@@ -1208,7 +1187,7 @@ class te extends z {
   }
   _handleFontSizeStep(e) {
     const t = this._fontSizeIndex + e;
-    t >= 0 && t < N.length && (this._fontSizeIndex = t);
+    t >= 0 && t < U.length && (this._fontSizeIndex = t);
   }
   _handlePhotosPerRowStep(e) {
     const t = this._photosPerRow + e;
@@ -1251,7 +1230,7 @@ class te extends z {
     };
   }
   _restoreSettings(e) {
-    e.mode !== "one_page" && (this._onePageRestore = null), this._mode = e.mode, this._valueDisplay = e.valueDisplay, this._taxRatePct = e.taxRatePct, this._profitName = e.profitName, this._disclaimerText = e.disclaimerText, this._disclaimerPunct = e.disclaimerPunct, this._fontSizeIndex = e.fontSizeIndex, this._photosPerRow = e.photosPerRow, this._discLayout = e.discLayout, this._marketDisplay = e.marketDisplay, this._scenarioLayout = e.scenarioLayout, this._reconView = e.reconView, this._highlightsView = e.highlightsView, this._sectionOrder = [...e.sectionOrder], this._pills = { ...e.pills }, this._groups = { ...e.groups }, this._selectedEmployeeIndex = e.selectedEmployeeIndex;
+    this._mode = e.mode, this._valueDisplay = e.valueDisplay, this._taxRatePct = e.taxRatePct, this._profitName = e.profitName, this._disclaimerText = e.disclaimerText, this._disclaimerPunct = e.disclaimerPunct, this._fontSizeIndex = e.fontSizeIndex, this._photosPerRow = e.photosPerRow, this._discLayout = e.discLayout, this._marketDisplay = e.marketDisplay, this._scenarioLayout = e.scenarioLayout, this._reconView = e.reconView, this._highlightsView = e.highlightsView, this._sectionOrder = [...e.sectionOrder], this._pills = { ...e.pills }, this._groups = { ...e.groups }, this._selectedEmployeeIndex = e.selectedEmployeeIndex;
   }
   /** Captures the current customize-panel state as the "last applied" baseline,
    * called whenever a generate succeeds (initial auto-preview, Apply, Reopen). */
@@ -1287,7 +1266,7 @@ class te extends z {
     var t, i, s;
     this._mode = "full", this._valueDisplay = "offer";
     const e = (s = (i = (t = this.payload) == null ? void 0 : t.valuation) == null ? void 0 : i.tax_savings) == null ? void 0 : s.rate_pct;
-    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...O], this._pills = this._defaultPills(), this._groups = this._defaultGroups();
+    this._taxRatePct = e != null ? parseFloat(parseFloat(e).toFixed(2)) : this.taxRate != null ? parseFloat(parseFloat(this.taxRate).toFixed(2)) : 0, this._profitName = this.profitLabel || "", this._disclaimerText = this.disclaimerText || "", this._disclaimerPunct = ",", this._fontSizeIndex = 2, this._photosPerRow = 3, this._discLayout = "horizontal", this._marketDisplay = "full", this._scenarioLayout = "tiles", this._reconView = "summary", this._highlightsView = "summary", this._sectionOrder = [...E], this._pills = this._defaultPills(), this._groups = this._defaultGroups();
   }
   // ── Drag-and-drop ──────────────────────────────────────────────────────────
   _handleDragStart(e, t) {
@@ -1302,8 +1281,8 @@ class te extends z {
   }
   _handleDragOver(e, t) {
     if (e.preventDefault(), e.dataTransfer.dropEffect = "move", t === this._dragSrcSection || !this._placeholder) return;
-    const i = e.currentTarget, s = i.getBoundingClientRect(), a = e.clientY > s.top + s.height / 2, o = i.parentNode;
-    a ? o.insertBefore(this._placeholder, i.nextSibling) : o.insertBefore(this._placeholder, i);
+    const i = e.currentTarget, s = i.getBoundingClientRect(), o = e.clientY > s.top + s.height / 2, a = i.parentNode;
+    o ? a.insertBefore(this._placeholder, i.nextSibling) : a.insertBefore(this._placeholder, i);
   }
   _commitDrop() {
     const e = this._dragSrcSection;
@@ -1327,10 +1306,10 @@ class te extends z {
     e.preventDefault(), this._commitDrop();
   }
   _handleMoveSection(e, t) {
-    const i = this._sectionOrder.filter((o) => !this._isSectionDisabled(o)), s = i.indexOf(e), a = s + t;
-    s === -1 || a < 0 || a >= i.length || ([i[s], i[a]] = [i[a], i[s]], this._setActiveOrder(i), this.updateComplete.then(() => {
-      const o = this.shadowRoot.querySelector(`.sortable-item[data-section="${e}"]`);
-      o && (o.classList.remove("dropped"), o.offsetWidth, o.classList.add("dropped"), setTimeout(() => o.classList.remove("dropped"), 1e3));
+    const i = this._sectionOrder.filter((a) => !this._isSectionDisabled(a)), s = i.indexOf(e), o = s + t;
+    s === -1 || o < 0 || o >= i.length || ([i[s], i[o]] = [i[o], i[s]], this._setActiveOrder(i), this.updateComplete.then(() => {
+      const a = this.shadowRoot.querySelector(`.sortable-item[data-section="${e}"]`);
+      a && (a.classList.remove("dropped"), a.offsetWidth, a.classList.add("dropped"), setTimeout(() => a.classList.remove("dropped"), 1e3));
     }));
   }
   _handleDragEnd(e) {
@@ -1377,10 +1356,12 @@ class te extends z {
     return !!this.locked && !this.templateMode && !this._lockOverridden;
   }
   _isLocked(e) {
-    return !1;
+    return this._onePageLocked(e);
   }
   _lk(e) {
-    return u;
+    return this._onePageLocked(e) ? d`<span class="full-only-chip"
+      @mouseenter="${(t) => this._showTooltip(t, "Hidden on one page")}"
+      @mouseleave="${() => this._hideTooltip()}">Full only</span>` : u;
   }
   // ── Save Settings ──────────────────────────────────────────────────────────
   _handleSaveSettings() {
@@ -1400,32 +1381,32 @@ class te extends z {
    * shared by the main preview and individual-section prints so both apply the
    * same payload overrides (profit label, disclaimer, employee, tax rate…). */
   _buildPrintoutRequest(e, t = !1) {
-    var r, l, d, p, c, f, _, b;
+    var l, n, c, p, h, f, _, y;
     const i = {
       mode: this._mode,
       display: e,
       preview_logo: !0,
       preview_photos: !0,
       font_roboto: !0,
-      font_size_delta: N[this._fontSizeIndex].delta,
+      font_size_delta: U[this._fontSizeIndex].delta,
       photos_per_row: this._photosPerRow,
       section_order: this._sectionOrder,
       watermark: t
-    }, s = { ...this._getPayloadData() }, a = this._profitName != null ? this._profitName : this.profitLabel;
-    a != null && ((r = s.valuation) != null && r.target_profit) && (s.valuation = {
+    }, s = { ...this._getPayloadData() }, o = this._profitName != null ? this._profitName : this.profitLabel;
+    o != null && ((l = s.valuation) != null && l.target_profit) && (s.valuation = {
       ...s.valuation,
-      target_profit: { ...s.valuation.target_profit, label: a || "Target Profit" }
+      target_profit: { ...s.valuation.target_profit, label: o || "Target Profit" }
     });
-    const o = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
-    if (o !== null) {
-      const g = this._disclaimerPunct ?? ".", S = o ? o.replace(/\.+$/, "") : "";
+    const a = this._disclaimerText != null ? this._disclaimerText : this.disclaimerText ?? null;
+    if (a !== null) {
+      const g = this._disclaimerPunct ?? ".", S = a ? a.replace(/\.+$/, "") : "";
       s.disclaimer = S ? g + " " + S : "";
     }
-    if ((d = (l = s.dealer) == null ? void 0 : l.logo_url) != null && d.startsWith("//") && (s.dealer = { ...s.dealer, logo_url: "https:" + s.dealer.logo_url }), (p = s.employee) != null && p.phone && (s.employee = { ...s.employee, phone: ge(s.employee.phone) }), this.employees && this.employees.length > 0) {
+    if ((c = (n = s.dealer) == null ? void 0 : n.logo_url) != null && c.startsWith("//") && (s.dealer = { ...s.dealer, logo_url: "https:" + s.dealer.logo_url }), (p = s.employee) != null && p.phone && (s.employee = { ...s.employee, phone: _e(s.employee.phone) }), this.employees && this.employees.length > 0) {
       const g = this.employees[this._selectedEmployeeIndex] || this.employees[0];
-      s.employee = { name: g.name || "", phone: ge(g.phone || ""), email: g.email || "" };
+      s.employee = { name: g.name || "", phone: _e(g.phone || ""), email: g.email || "" };
     }
-    if (s.disclosures && (s.disclosures = s.disclosures.filter((g) => g.answer && g.answer.trim() !== "")), (c = s.market) != null && c.comparables) {
+    if (s.disclosures && (s.disclosures = s.disclosures.filter((g) => g.answer && g.answer.trim() !== "")), (h = s.market) != null && h.comparables) {
       const g = s.market.comparables.map((m) => ({
         ...m,
         days_on_market: m.listing_type === "delisted" && m.delisted_days || m.days_on_market
@@ -1436,7 +1417,7 @@ class te extends z {
         summary: { ...s.market.summary, avg_days: De }
       };
     }
-    if (this._taxRatePct !== null && ((_ = s.valuation) != null && _.tax_savings) && ((b = s.offer) == null ? void 0 : b.amount) != null) {
+    if (this._taxRatePct !== null && ((_ = s.valuation) != null && _.tax_savings) && ((y = s.offer) == null ? void 0 : y.amount) != null) {
       const g = Math.round(s.offer.amount * this._taxRatePct / 100);
       s.valuation = {
         ...s.valuation,
@@ -1462,12 +1443,12 @@ class te extends z {
     });
     if (this.apiMode === "binary") {
       if (!i.ok) {
-        let l = "Request failed";
+        let n = "Request failed";
         try {
-          l = (await i.json()).error || l;
+          n = (await i.json()).error || n;
         } catch {
         }
-        throw new Error(l);
+        throw new Error(n);
       }
       return { blob: await i.blob(), vehicle: null, rawUrl: null };
     }
@@ -1478,35 +1459,35 @@ class te extends z {
       throw new Error("Server error — check terminal for traceback");
     }
     if (!i.ok) throw new Error(s.error || "Failed");
-    const a = this.apiBaseUrl + s.pdf_url + "?t=" + Date.now(), o = { "ngrok-skip-browser-warning": "true" };
-    return this.authToken && (o.Authorization = `Bearer ${this.authToken}`), { blob: await (await fetch(a, { headers: o })).blob(), vehicle: s.vehicle, rawUrl: a };
+    const o = this.apiBaseUrl + s.pdf_url + "?t=" + Date.now(), a = { "ngrok-skip-browser-warning": "true" };
+    return this.authToken && (a.Authorization = `Bearer ${this.authToken}`), { blob: await (await fetch(o, { headers: a })).blob(), vehicle: s.vehicle, rawUrl: o };
   }
   async _handleGenerate(e = !1) {
     var t, i;
     this._generating = !0, this._statusMsg = "Generating…", this._statusError = !1;
     try {
-      const s = this._buildPrintoutRequest(this._buildDisplay(), e), a = s.raw_payload;
+      const s = this._buildPrintoutRequest(this._buildDisplay(), e), o = s.raw_payload;
       this._lastPrintoutRequest = { ...s };
-      const { blob: o, vehicle: r, rawUrl: l } = await this._fetchPrintout(s), d = (((t = a.customer) == null ? void 0 : t.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim();
+      const { blob: a, vehicle: l, rawUrl: n } = await this._fetchPrintout(s), c = (((t = o.customer) == null ? void 0 : t.name) || "Customer").replace(/[^a-zA-Z0-9 ]/g, "").trim();
       if (this.apiMode === "binary") {
-        const p = await new Promise((c, f) => {
+        const p = await new Promise((h, f) => {
           const _ = new FileReader();
-          _.onload = () => c(_.result), _.onerror = f, _.readAsDataURL(o);
+          _.onload = () => h(_.result), _.onerror = f, _.readAsDataURL(a);
         });
-        this._pdfFilename = `${d}_${((i = a.vehicle) == null ? void 0 : i.vin) || "offer"}.pdf`, this._pdfUrl = p, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: p, blob: o },
+        this._pdfFilename = `${c}_${((i = o.vehicle) == null ? void 0 : i.vin) || "offer"}.pdf`, this._pdfUrl = p, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
+          detail: { pdfUrl: p, blob: a },
           bubbles: !0,
           composed: !0
         }));
       } else {
-        this._pdfVehicle = r;
-        const p = (r == null ? void 0 : r.vin) || "offer";
-        this._pdfFilename = `${d}_${p}.pdf`;
-        const c = new File([o], this._pdfFilename, { type: "application/pdf" });
+        this._pdfVehicle = l;
+        const p = (l == null ? void 0 : l.vin) || "offer";
+        this._pdfFilename = `${c}_${p}.pdf`;
+        const h = new File([a], this._pdfFilename, { type: "application/pdf" });
         this._currentBlobUrl && URL.revokeObjectURL(this._currentBlobUrl);
-        const f = URL.createObjectURL(c);
+        const f = URL.createObjectURL(h);
         this._currentBlobUrl = f, this._pdfUrl = f, this._statusMsg = "", this._previewStale = !1, this._snapshotAppliedState(), this._doneSentVia = null, this._pdfSent = !1, this.dispatchEvent(new CustomEvent("offer-generated", {
-          detail: { pdfUrl: l },
+          detail: { pdfUrl: n },
           bubbles: !0,
           composed: !0
         }));
@@ -1526,22 +1507,22 @@ class te extends z {
    * come straight from the main settings — whether or not that section is
    * switched on in the main sheet. */
   _buildIndividualDisplay(e) {
-    const t = (d) => e.includes(d), i = this._buildDisplay(), s = (d) => Object.values(d).every((p) => !p), a = (d) => Object.fromEntries(Object.keys(d).map((p) => [p, !0])), o = s(i.valuation) ? a(i.valuation) : i.valuation, r = Object.fromEntries(Object.entries(i.scenarios).map(([d, p]) => [
-      d,
-      s(p) ? a(p) : p
-    ])), l = !i.sections.observations_highlights && !i.sections.observations_comments;
+    const t = (c) => e.includes(c), i = this._buildDisplay({ groups: this._groups, pills: this._pills, marketDisplay: this._marketDisplay, highlightsView: this._highlightsView }), s = (c) => Object.values(c).every((p) => !p), o = (c) => Object.fromEntries(Object.keys(c).map((p) => [p, !0])), a = s(i.valuation) ? o(i.valuation) : i.valuation, l = Object.fromEntries(Object.entries(i.scenarios).map(([c, p]) => [
+      c,
+      s(p) ? o(p) : p
+    ])), n = !i.sections.observations_highlights && !i.sections.observations_comments;
     return {
       ...i,
-      valuation: o,
-      scenarios: r,
+      valuation: a,
+      scenarios: l,
       sections: {
         ...i.sections,
         valuation: t("valuation"),
         disclosures: t("disclosures"),
         disclosures_signature: !1,
         observations: t("observations"),
-        observations_highlights: l || i.sections.observations_highlights,
-        observations_comments: l || i.sections.observations_comments,
+        observations_highlights: n || i.sections.observations_highlights,
+        observations_comments: n || i.sections.observations_comments,
         market_summary: t("market") && this._marketDisplay === "summary",
         market_comparables: t("market") && this._marketDisplay === "full",
         market_scenarios: t("market_scenarios"),
@@ -1556,7 +1537,7 @@ class te extends z {
   }
   _toggleIndividualSection(e, t) {
     const i = new Set(this._individualSections);
-    t ? i.add(e) : i.delete(e), this._individualSections = O.filter((s) => i.has(s));
+    t ? i.add(e) : i.delete(e), this._individualSections = E.filter((s) => i.has(s));
   }
   _individualFilename(e) {
     var i, s;
@@ -1575,7 +1556,7 @@ class te extends z {
   /** Hands the individual-sections request to the regular email-confirm modal, which
    * picks the recipient and sends it through the same pdf-send event. */
   _handleIndividualEmail() {
-    const e = this._buildPrintoutRequest(this._buildIndividualDisplay(this._individualSections)), t = this._sectionOrder.filter((i) => this._individualSections.includes(i)).map((i) => i === "market" && this._marketDisplay === "summary" ? "Market Summary" : Z[i]);
+    const e = this._buildPrintoutRequest(this._buildIndividualDisplay(this._individualSections)), t = this._sectionOrder.filter((i) => this._individualSections.includes(i)).map((i) => i === "market" && this._marketDisplay === "summary" ? "Market Summary" : Y[i]);
     this._sendPayloadOverride = {
       ...e,
       filename: this._individualFilename(e.raw_payload),
@@ -1607,8 +1588,8 @@ class te extends z {
     try {
       const i = { "ngrok-skip-browser-warning": "true" };
       this.authToken && (i.Authorization = `Bearer ${this.authToken}`);
-      const a = await (await fetch(this._pdfUrl, { headers: i })).blob(), o = URL.createObjectURL(a), r = document.createElement("a");
-      r.href = o, r.download = e, r.click(), setTimeout(() => URL.revokeObjectURL(o), 1e4);
+      const o = await (await fetch(this._pdfUrl, { headers: i })).blob(), a = URL.createObjectURL(o), l = document.createElement("a");
+      l.href = a, l.download = e, l.click(), setTimeout(() => URL.revokeObjectURL(a), 1e4);
     } catch {
       window.open(this._pdfUrl, "_blank");
     }
@@ -1630,19 +1611,19 @@ class te extends z {
     this._splitOpen = !1;
     const s = this._sendPayloadOverride;
     this._sendPayloadOverride = null, s || (this._doneSentVia = e, this._pdfSent = !0);
-    const a = s || {
+    const o = s || {
       ...this._lastPrintoutRequest,
       filename: this._pdfFilename || null
     };
-    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] to_email:", t), console.log("[pdf-send] message_type:", i), console.log("[pdf-send] payload:", a), this.dispatchEvent(new CustomEvent("pdf-send", {
-      detail: { send_via: e, to_email: t, message_type: i, payload: a },
+    console.log("[pdf-send] send_via:", e), console.log("[pdf-send] to_email:", t), console.log("[pdf-send] message_type:", i), console.log("[pdf-send] payload:", o), this.dispatchEvent(new CustomEvent("pdf-send", {
+      detail: { send_via: e, to_email: t, message_type: i, payload: o },
       bubbles: !0,
       composed: !0
     }));
   }
   // ── Render helpers ─────────────────────────────────────────────────────────
   _renderHeader() {
-    return h`
+    return d`
       <div class="component-header">
         <div class="wrap">
           <h1>LXN Offer Sheet Generator</h1>
@@ -1652,7 +1633,7 @@ class te extends z {
   }
   _renderOfferCard() {
     if (this.templateMode)
-      return h`
+      return d`
         <div class="card">
           <h2>Template</h2>
           <div style="font-size:13px; color:#667085; line-height:1.6;">
@@ -1661,18 +1642,18 @@ class te extends z {
         </div>
       `;
     const e = this._vehicleInfo;
-    return h`
+    return d`
       <div class="card">
         <div class="offer-header-row">
           <h2>Offer</h2>
         </div>
-        ${e ? h`
+        ${e ? d`
           <div class="vehicle-info">
             <div class="amount">${e.amount}</div>
             <div class="desc">${e.desc}</div>
-            ${e.vin ? h`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
+            ${e.vin ? d`<div style="font-size:11px;color:#006073;margin-top:2px;">${e.vin}</div>` : u}
           </div>
-        ` : h`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
+        ` : d`<div style="font-size:13px; color:#aab4c0;">Loading offer details…</div>`}
       </div>
     `;
   }
@@ -1690,20 +1671,23 @@ class te extends z {
   
     ── end removed ─────────────────────────────────────────────────────────────── */
   _renderCustomizeCard() {
-    const e = N[this._fontSizeIndex].label, t = O.map((r) => this._renderShowHideGroup(r)), i = this._sheetLocked(), s = !!(this.templateSharedDisplay || this.templatePdfDisplay), a = s ? "location default" : "default", o = s ? "location defaults" : "default configuration";
-    return h`
+    const e = U[this._fontSizeIndex].label, i = [
+      ...this._sectionOrder.filter((n) => E.includes(n)),
+      ...E.filter((n) => !this._sectionOrder.includes(n))
+    ].map((n) => this._renderShowHideGroup(n)), s = this._sheetLocked(), o = !!(this.templateSharedDisplay || this.templatePdfDisplay), a = o ? "location default" : "default", l = o ? "location defaults" : "default configuration";
+    return d`
       <div class="card">
-        <div class="${i ? "settings-locked" : ""}">
+        <div class="${s ? "settings-locked" : ""}">
         <div class="customize-header-row">
           <h2>Customize</h2>
-          <div class="customize-header-ctrls" ?inert="${i}">
+          <div class="customize-header-ctrls" ?inert="${s}">
           <div class="history-btns">
             <button class="history-btn" type="button" aria-label="Undo"
               ?disabled="${!this._undoStack.length || this._generating || this._finalizing}"
               @click="${() => {
       this._hideTooltip(), this._handleUndo();
     }}"
-              @mouseenter="${(r) => this._showTooltip(r, "Undo last apply")}"
+              @mouseenter="${(n) => this._showTooltip(n, "Undo last apply")}"
               @mouseleave="${() => this._hideTooltip()}"
             >${tt}</button>
             <button class="history-btn" type="button" aria-label="Redo"
@@ -1711,33 +1695,14 @@ class te extends z {
               @click="${() => {
       this._hideTooltip(), this._handleRedo();
     }}"
-              @mouseenter="${(r) => this._showTooltip(r, "Redo apply")}"
+              @mouseenter="${(n) => this._showTooltip(n, "Redo apply")}"
               @mouseleave="${() => this._hideTooltip()}"
             >${it}</button>
-          </div>
-          <div class="ctrl-group ${this._isLocked("mode") ? "locked" : ""}">
-            <div class="segmented-control" style="width:auto;">
-              <button
-                class="seg-btn ${this._mode === "full" ? "active" : ""}"
-                ?disabled="${this._isLocked("mode") || this._generating || this._finalizing}"
-                @click="${() => this._handleModeChange("full")}"
-                @mouseenter="${(r) => this._showTooltip(r, "Restores sections hidden by one-page")}"
-                @mouseleave="${() => this._hideTooltip()}"
-              >Full</button>
-              <button
-                class="seg-btn ${this._isOnePage() ? "active" : ""}"
-                ?disabled="${this._isLocked("mode") || this._generating || this._finalizing}"
-                @click="${() => this._handleModeChange("one_page")}"
-                @mouseenter="${(r) => this._showTooltip(r, "Hides a fixed group of sections to fit content to one page")}"
-                @mouseleave="${() => this._hideTooltip()}"
-              >One-Page</button>
-            </div>
-            ${this._lk("mode")}
           </div>
           </div>
         </div>
 
-        ${i ? h`
+        ${s ? d`
           <div class="locked-notice">
             ${Qe}
             <span>This offer has been accepted or declined. Editing will change its offer sheet from the version the customer saw.</span>
@@ -1753,9 +1718,9 @@ class te extends z {
       this._generalOpen = !this._generalOpen;
     }}">
             <span>General</span>
-            <div class="section-chevron">${J}</div>
+            <div class="section-chevron">${Z}</div>
           </div>
-          <div class="section-body" ?inert="${i}">
+          <div class="section-body" ?inert="${s}">
             <div class="config-row">
               <span>$ Amount (header)</span>
               <div class="ctrl-group ${this._isLocked("value_display") ? "locked" : ""}">
@@ -1807,17 +1772,17 @@ class te extends z {
                 ${this._lk("profit_label")}
               </div>
             </div>
-            ${!this.templateMode && this.employees && this.employees.length > 0 ? h`
+            ${!this.templateMode && this.employees && this.employees.length > 0 ? d`
               <div class="config-row">
                 <span>Employee</span>
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
-                  @change="${(r) => {
-      this._selectedEmployeeIndex = parseInt(r.target.value);
+                  @change="${(n) => {
+      this._selectedEmployeeIndex = parseInt(n.target.value);
     }}"
                 >
-                  ${this.employees.map((r, l) => h`
-                    <option value="${l}" ?selected="${l === this._selectedEmployeeIndex}">${r.name}</option>
+                  ${this.employees.map((n, c) => d`
+                    <option value="${c}" ?selected="${c === this._selectedEmployeeIndex}">${n.name}</option>
                   `)}
                 </select>
               </div>
@@ -1829,7 +1794,7 @@ class te extends z {
                   <button class="step-btn" ?disabled="${this._fontSizeIndex <= 0 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(-1)}">−</button>
                   <span class="stepper-value font-size-display">${e}</span>
-                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= N.length - 1 || this._isLocked("font_size")}"
+                  <button class="step-btn" ?disabled="${this._fontSizeIndex >= U.length - 1 || this._isLocked("font_size")}"
                           @click="${() => this._handleFontSizeStep(1)}">+</button>
                 </div>
                 ${this._lk("font_size")}
@@ -1865,15 +1830,15 @@ class te extends z {
             <div class="config-row">
               <span>Market</span>
               <div class="ctrl-group ${this._isLocked("market_display") ? "locked" : ""}">
+                ${this._lk("market_display")}
                 <div class="segmented-control">
-                  <button class="seg-btn ${this._marketDisplay === "summary" ? "active" : ""}"
+                  <button class="seg-btn ${this._onePageLocked("market_display") || this._marketDisplay === "summary" ? "active" : ""}"
                           ?disabled="${this._isLocked("market_display")}"
                           @click="${() => this._handleSegmentedClick("market-display", "summary")}">Summary</button>
-                  <button class="seg-btn ${this._marketDisplay === "full" ? "active" : ""}"
+                  <button class="seg-btn ${!this._onePageLocked("market_display") && this._marketDisplay === "full" ? "active" : ""}"
                           ?disabled="${this._isLocked("market_display")}"
                           @click="${() => this._handleSegmentedClick("market-display", "full")}">Full</button>
                 </div>
-                ${this._lk("market_display")}
               </div>
             </div>
             <div class="config-row">
@@ -1907,15 +1872,15 @@ class te extends z {
             <div class="config-row">
               <span>Highlights</span>
               <div class="ctrl-group ${this._isLocked("highlights_display") ? "locked" : ""}">
+                ${this._lk("highlights_display")}
                 <div class="segmented-control">
-                  <button class="seg-btn ${this._highlightsView === "summary" ? "active" : ""}"
+                  <button class="seg-btn ${this._onePageLocked("highlights_display") || this._highlightsView === "summary" ? "active" : ""}"
                           ?disabled="${this._isLocked("highlights_display")}"
                           @click="${() => this._handleSegmentedClick("highlights-display", "summary")}">Summary</button>
-                  <button class="seg-btn ${this._highlightsView === "detail" ? "active" : ""}"
+                  <button class="seg-btn ${!this._onePageLocked("highlights_display") && this._highlightsView === "detail" ? "active" : ""}"
                           ?disabled="${this._isLocked("highlights_display")}"
                           @click="${() => this._handleSegmentedClick("highlights-display", "detail")}">Detail</button>
                 </div>
-                ${this._lk("highlights_display")}
               </div>
             </div>
             <div style="padding:8px 0 4px;">
@@ -1928,8 +1893,8 @@ class te extends z {
                 <select
                   style="font-size:12px;padding:3px 8px;border:1.5px solid #d0d5dd;border-radius:6px;background:#fff;color:#222222;cursor:pointer;outline:none;"
                   ?disabled="${this._isLocked("disclaimer")}"
-                  @change="${(r) => {
-      this._disclaimerPunct = r.target.value;
+                  @change="${(n) => {
+      this._disclaimerPunct = n.target.value;
     }}"
                 >
                   <option value="," ?selected="${this._disclaimerPunct === ","}">Comma (,)</option>
@@ -1956,9 +1921,9 @@ class te extends z {
       this._showHideOpen = !this._showHideOpen;
     }}">
             <span>Show / Hide</span>
-            <div class="section-chevron">${J}</div>
+            <div class="section-chevron">${Z}</div>
           </div>
-          <div class="section-body" ?inert="${i}">
+          <div class="section-body" ?inert="${s}">
             <!-- Header group (no checkbox) -->
             <div class="toggle-group">
               <div class="group-row">
@@ -1973,7 +1938,7 @@ class te extends z {
               </div>
             </div>
             <!-- Section groups in layout order -->
-            ${t}
+            ${i}
             <!-- Signature (always at end of PDF, not draggable) -->
             <div class="toggle-group" data-group="signature">
               <div class="group-row ${this._isLocked("signature") ? "group-row-locked" : ""}">
@@ -1983,7 +1948,7 @@ class te extends z {
                     data-group="signature"
                     .checked="${this._groups.signature === "checked"}"
                     ?disabled="${this._isLocked("signature")}"
-                    @change="${(r) => this._handleGroupChange("signature", r.target.checked)}"
+                    @change="${(n) => this._handleGroupChange("signature", n.target.checked)}"
                   >
                   Customer Signature
                 </label>
@@ -2003,33 +1968,33 @@ class te extends z {
             <span>Layout</span>
             <div style="display:flex;align-items:center;gap:6px;">
               ${this._lk("section_order")}
-              <div class="section-chevron">${J}</div>
+              <div class="section-chevron">${Z}</div>
             </div>
           </div>
-          <div class="section-body" ?inert="${i}">
+          <div class="section-body" ?inert="${s}">
             <div class="sortable-list ${this._isLocked("section_order") ? "disabled" : ""}"
-              @dragover="${(r) => r.preventDefault()}"
-              @drop="${(r) => this._handleListDrop(r)}"
+              @dragover="${(n) => n.preventDefault()}"
+              @drop="${(n) => this._handleListDrop(n)}"
             >
               ${(() => {
-      const r = this._displayOrder(), l = r.filter((d) => !this._isSectionDisabled(d)).length;
-      return r.map((d, p) => {
-        const c = this._isSectionDisabled(d) || this._isLocked("section_order");
-        return h`
+      const n = this._displayOrder(), c = n.filter((p) => !this._isSectionDisabled(p)).length;
+      return n.map((p, h) => {
+        const f = this._isSectionDisabled(p) || this._isLocked("section_order");
+        return d`
                   <div
-                    class="sortable-item ${c ? "disabled" : ""}"
-                    data-section="${d}"
-                    draggable="${c ? "false" : "true"}"
-                    @dragstart="${(f) => this._handleDragStart(f, d)}"
-                    @dragover="${(f) => this._handleDragOver(f, d)}"
-                    @drop="${(f) => this._handleDrop(f)}"
-                    @dragend="${(f) => this._handleDragEnd(f)}"
+                    class="sortable-item ${f ? "disabled" : ""}"
+                    data-section="${p}"
+                    draggable="${f ? "false" : "true"}"
+                    @dragstart="${(_) => this._handleDragStart(_, p)}"
+                    @dragover="${(_) => this._handleDragOver(_, p)}"
+                    @drop="${(_) => this._handleDrop(_)}"
+                    @dragend="${(_) => this._handleDragEnd(_)}"
                   >
                     <span class="drag-handle">⠿</span>
-                    <span>${Z[d]}</span>
+                    <span>${Y[p]}</span>
                     <div class="sort-arrows">
-                      <button class="sort-arrow" ?disabled="${c || p === 0}" @click="${() => this._handleMoveSection(d, -1)}">▲</button>
-                      <button class="sort-arrow" ?disabled="${c || p >= l - 1}" @click="${() => this._handleMoveSection(d, 1)}">▼</button>
+                      <button class="sort-arrow" ?disabled="${f || h === 0}" @click="${() => this._handleMoveSection(p, -1)}">▲</button>
+                      <button class="sort-arrow" ?disabled="${f || h >= c - 1}" @click="${() => this._handleMoveSection(p, 1)}">▼</button>
                     </div>
                   </div>
                 `;
@@ -2043,11 +2008,11 @@ class te extends z {
 
         <div class="divider"></div>
 
-        ${this._statusError && this._statusMsg ? h`
+        ${this._statusError && this._statusMsg ? d`
           <div class="action-msg error">${this._statusMsg}</div>
         ` : u}
 
-        ${this.templateMode ? h`
+        ${this.templateMode ? d`
           <button
             class="btn btn-green"
             ?disabled="${this._generating || this._finalizing}"
@@ -2055,7 +2020,7 @@ class te extends z {
           >${this._generating ? "Saving…" : this._savedConfirm ? "Saved ✓" : "Save Template"}</button>
         ` : u}
 
-        ${!this.templateMode && !i ? h`
+        ${!this.templateMode && !s ? d`
           <div class="action-btns">
             <div class="apply-btn-wrap">
               <button
@@ -2069,9 +2034,9 @@ class te extends z {
                 @click="${() => this._handleDiscardChanges()}"
               >Discard Changes</button>
             </div>
-            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? h`
+            ${this.sharedDisplay || this.pdfDisplay ? this._confirmReset ? d`
               <div class="confirm-reset">
-                <span class="confirm-reset-msg">Reset all settings to the ${o}?</span>
+                <span class="confirm-reset-msg">Reset all settings to the ${l}?</span>
                 <div class="confirm-reset-btns">
                   <button class="confirm-reset-yes" @click="${() => this._handleReset()}">Yes, reset</button>
                   <button class="confirm-reset-no"  @click="${() => {
@@ -2079,7 +2044,7 @@ class te extends z {
     }}">Cancel</button>
                 </div>
               </div>
-            ` : h`
+            ` : d`
               <button class="reset-btn"
                 ?disabled="${this._generating || this._finalizing}"
                 @click="${() => {
@@ -2095,24 +2060,24 @@ class te extends z {
   _renderShowHideGroup(e) {
     if (e === "market_scenarios") return this._renderScenarioGroup("market_scenarios", "Market Scenarios", "Market");
     if (e === "selected_scenarios") return this._renderScenarioGroup("selected_scenarios", "Selected Scenarios", "Selected");
-    const t = this._isLocked(e), i = this._groups[e], a = h`
+    const t = this._isLocked(e), i = this._effectiveSettings().groups[e], o = d`
       <div class="group-row ${t ? "group-row-locked" : ""}">
         <label class="group-header">
           <input type="checkbox" data-group="${e}"
             .checked="${i === "checked" || i === "indeterminate"}"
             ?disabled="${t}"
-            @change="${(o) => this._handleGroupChange(e, o.target.checked)}"
+            @change="${(a) => this._handleGroupChange(e, a.target.checked)}"
           >${{ valuation: "Valuation", disclosures: "Disclosures", observations: "Observations", market: "Selected Comparables", recon: "Recon", photos: "Photos" }[e]}
         </label>
         ${this._lk(e)}
       </div>`;
     if (e === "valuation") {
-      const o = !!this._pillsOpen.valuation;
-      return h`
+      const a = !!this._pillsOpen.valuation;
+      return d`
         <div class="toggle-group" data-group="valuation">
-          ${a}
+          ${o}
           <div class="pill-group ${t ? "locked" : ""} ${i === "unchecked" ? "group-off" : ""}">
-            ${o ? h`
+            ${a ? d`
               ${this._renderPill("valuation.retail_value", "Retail Value", "valuation")}
               ${this._renderPill("valuation.recon", "Recon", "valuation")}
               ${this._renderPill("valuation.fixed_overhead", "Fixed Overhead", "valuation")}
@@ -2123,51 +2088,51 @@ class te extends z {
           </div>
         </div>`;
     }
-    return e === "observations" ? h`
+    return e === "observations" ? d`
         <div class="toggle-group" data-group="observations">
-          ${a}
+          ${o}
           <div class="pill-group ${t ? "locked" : ""} ${i === "unchecked" ? "group-off" : ""}">
             ${this._renderPill("sections.observations_highlights", "Highlights", "observations")}
             ${this._renderPill("sections.observations_comments", "Comments", "observations")}
           </div>
-        </div>` : h`
+        </div>` : d`
       <div class="toggle-group" data-group="${e}">
-        ${a}
+        ${o}
       </div>`;
   }
   /** Pill keys for a toggle-able group — same lists as _recomputeGroupState. */
   _pillKeysForGroup(e) {
-    return e === "valuation" ? ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"] : e === "observations" ? ["sections.observations_highlights", "sections.observations_comments"] : e === "market_scenarios" || e === "selected_scenarios" ? E.map((t) => `${e}.${t.key}`) : [];
+    return e === "valuation" ? ["valuation.retail_value", "valuation.recon", "valuation.fixed_overhead", "valuation.target_profit", "valuation.tax_savings"] : e === "observations" ? ["sections.observations_highlights", "sections.observations_comments"] : e === "market_scenarios" || e === "selected_scenarios" ? P.map((t) => `${e}.${t.key}`) : [];
   }
   /** Independent toggle — not nested under Selected Comparables, not part of the
    * draggable section order (mirrors how Signature is handled). Each of the 12
    * KPI fields gets its own pill, same idiom as Valuation/Observations. */
   _renderPillsToggle(e) {
-    const t = !!this._pillsOpen[e], i = this._pillKeysForGroup(e), s = i.filter((o) => !this._isPillLockedStale(o) && this._pills[o]).length, a = i.length;
-    return h`
+    const t = !!this._pillsOpen[e], i = this._pillKeysForGroup(e), s = i.filter((a) => !this._isPillLockedStale(a) && this._pills[a]).length, o = i.length;
+    return d`
       <span
         class="pill-toggle"
         title="${t ? "Collapse fields" : "Expand fields"}"
         @click="${() => this._togglePillsOpen(e)}"
-      >${t ? "‹ Collapse" : `Expand (${s}/${a}) ›`}</span>
+      >${t ? "‹ Collapse" : `Expand (${s}/${o}) ›`}</span>
     `;
   }
   _renderScenarioGroup(e, t, i) {
-    const s = this._isLocked(e), a = this._groups[e], o = a === "checked" || a === "indeterminate", r = !!this._pillsOpen[e];
-    return h`
+    const s = this._isLocked(e), o = this._effectiveSettings().groups[e], a = o === "checked" || o === "indeterminate", l = !!this._pillsOpen[e];
+    return d`
       <div class="toggle-group" data-group="${e}">
         <div class="group-row ${s ? "group-row-locked" : ""}">
           <label class="group-header">
             <input type="checkbox" data-group="${e}"
-              .checked="${o}"
+              .checked="${a}"
               ?disabled="${s}"
-              @change="${(l) => this._handleGroupChange(e, l.target.checked)}"
+              @change="${(n) => this._handleGroupChange(e, n.target.checked)}"
             >${t}
           </label>
           ${this._lk(e)}
         </div>
-        <div class="pill-group ${s ? "locked" : ""} ${a === "unchecked" ? "group-off" : ""}">
-          ${r ? E.map((l) => this._renderPill(`${e}.${l.key}`, l.label.replace("{basis}", i), e)) : u}
+        <div class="pill-group ${s ? "locked" : ""} ${o === "unchecked" ? "group-off" : ""}">
+          ${l ? P.map((n) => this._renderPill(`${e}.${n.key}`, n.label.replace("{basis}", i), e)) : u}
           ${this._renderPillsToggle(e)}
         </div>
       </div>`;
@@ -2182,45 +2147,45 @@ class te extends z {
     this._tooltip.hide();
   }
   _renderPill(e, t, i) {
-    const s = this._isPillLockedStale(e), a = !s && this._pills[e], o = "Not available: Offer has been adjusted manually";
-    return h`
+    const s = this._isPillLockedStale(e), o = this._onePageLocked(e), a = !s && !o && this._pills[e], l = o ? "Hidden on one page" : "Not available: Offer has been adjusted manually", n = s || o;
+    return d`
       <span
-        class="pill ${a ? "active" : ""} ${s ? "stale" : ""}"
-        @mouseenter="${(r) => {
-      s && this._showTooltip(r, o);
+        class="pill ${a ? "active" : ""} ${s ? "stale" : ""} ${o ? "one-page-locked" : ""}"
+        @mouseenter="${(c) => {
+      n && this._showTooltip(c, l);
     }}"
         @mouseleave="${() => {
-      s && this._hideTooltip();
+      n && this._hideTooltip();
     }}"
         @click="${() => {
-      s || this._handlePillClick(e, i);
+      n || this._handlePillClick(e, i);
     }}"
-      >${s ? h`<span class="pill-stale-icon">${st}</span>` : u}${t}</span>
+      >${s ? d`<span class="pill-stale-icon">${ot}</span>` : u}${t}</span>
     `;
   }
   _renderSendInline() {
-    var a;
-    const e = this._resolveEmployee(), t = !!((a = this.payload) != null && a.customer) || !!(e != null && e.email), i = !!this._pdfUrl && !this._generating;
-    return t ? h`
+    var o;
+    const e = this._resolveEmployee(), t = !!((o = this.payload) != null && o.customer) || !!(e != null && e.email), i = !!this._pdfUrl && !this._generating;
+    return t ? d`
       <button
         class="email-icon-btn"
         ?disabled="${!i}"
-        @mouseenter="${(o) => this._showTooltip(o, "Email offer printout")}"
+        @mouseenter="${(a) => this._showTooltip(a, "Email offer printout")}"
         @mouseleave="${() => this._hideTooltip()}"
         @click="${() => {
       this._hideTooltip(), this._sendPayloadOverride = null, this._confirmSendEmail = !0, this._sendMessageType = null, this._manualCustomerEmail = "";
     }}"
-      >${be}</button>
+      >${me}</button>
     ` : u;
   }
   _renderSendConfirmModal() {
-    var d, p;
-    const e = this._resolveEmployee(), t = ((p = (d = this.payload) == null ? void 0 : d.customer) == null ? void 0 : p.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", a = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), o = a === "customer" && !t, r = a === "employee" ? i : t || this._manualCustomerEmail.trim(), l = !!r;
-    return h`
+    var c, p;
+    const e = this._resolveEmployee(), t = ((p = (c = this.payload) == null ? void 0 : c.customer) == null ? void 0 : p.email) || "", i = (e == null ? void 0 : e.email) || "", s = (e == null ? void 0 : e.name) || "an unspecified employee", o = this._sendMessageType || (t ? "customer" : i ? "employee" : "customer"), a = o === "customer" && !t, l = o === "employee" ? i : t || this._manualCustomerEmail.trim(), n = !!l;
+    return d`
       <div class="modal-overlay" @click="${() => this._closeSendModal()}">
-        <div class="modal-box" @click="${(c) => c.stopPropagation()}">
+        <div class="modal-box" @click="${(h) => h.stopPropagation()}">
           <p class="modal-msg">
-            ${this._sendPayloadOverride ? h`Send the selected sections?` : h`Send this offer as an offer made by <strong>${s}</strong>?`}
+            ${this._sendPayloadOverride ? d`Send the selected sections?` : d`Send this offer as an offer made by <strong>${s}</strong>?`}
           </p>
 
           <div class="modal-recipient-group">
@@ -2228,19 +2193,19 @@ class te extends z {
               <input
                 type="radio"
                 name="send-recipient"
-                .checked="${a === "customer"}"
+                .checked="${o === "customer"}"
                 @change="${() => {
       this._sendMessageType = "customer";
     }}"
               />
-              <span>Customer's inbox${t ? h` — ${t}` : u}</span>
+              <span>Customer's inbox${t ? d` — ${t}` : u}</span>
             </label>
-            ${i ? h`
+            ${i ? d`
               <label class="modal-recipient-option">
                 <input
                   type="radio"
                   name="send-recipient"
-                  .checked="${a === "employee"}"
+                  .checked="${o === "employee"}"
                   @change="${() => {
       this._sendMessageType = "employee";
     }}"
@@ -2250,23 +2215,23 @@ class te extends z {
             ` : u}
           </div>
 
-          ${o ? h`
+          ${a ? d`
             <input
               type="email"
               class="modal-email-input"
               placeholder="Customer email address"
               .value="${this._manualCustomerEmail}"
-              @input="${(c) => {
-      this._manualCustomerEmail = c.target.value;
+              @input="${(h) => {
+      this._manualCustomerEmail = h.target.value;
     }}"
             />
           ` : u}
 
           <div class="modal-btns">
             <button class="modal-btn-confirm"
-              ?disabled="${!l}"
+              ?disabled="${!n}"
               @click="${() => {
-      this._confirmSendEmail = !1, this._handleSend("email", r, a);
+      this._confirmSendEmail = !1, this._handleSend("email", l, o);
     }}"
             >Yes, send</button>
             <button class="modal-btn-cancel" @click="${() => this._closeSendModal()}">Cancel</button>
@@ -2276,41 +2241,41 @@ class te extends z {
     `;
   }
   _renderIndividualModal() {
-    var a;
-    const e = this._resolveEmployee(), t = !!((a = this.payload) != null && a.customer) || !!(e != null && e.email), i = this._individualSections.length === 0, s = this._individualBusy;
-    return h`
+    var o;
+    const e = this._resolveEmployee(), t = !!((o = this.payload) != null && o.customer) || !!(e != null && e.email), i = this._individualSections.length === 0, s = this._individualBusy;
+    return d`
       <div class="modal-overlay" @click="${() => {
       s || (this._individualOpen = !1);
     }}">
-        <div class="modal-box" @click="${(o) => o.stopPropagation()}">
+        <div class="modal-box" @click="${(a) => a.stopPropagation()}">
           <p class="modal-msg modal-title">Download or Email Individual Sections</p>
 
           <div class="modal-recipient-group">
-            ${this._sectionOrder.map((o) => h`
+            ${this._sectionOrder.map((a) => d`
               <label class="modal-recipient-option">
                 <input
                   type="checkbox"
-                  .checked="${this._individualSections.includes(o)}"
+                  .checked="${this._individualSections.includes(a)}"
                   ?disabled="${s}"
-                  @change="${(r) => this._toggleIndividualSection(o, r.target.checked)}"
+                  @change="${(l) => this._toggleIndividualSection(a, l.target.checked)}"
                 />
-                <span>${Z[o]}</span>
+                <span>${Y[a]}</span>
               </label>
             `)}
           </div>
 
-          ${this._individualError ? h`<div class="action-msg error" style="margin:0 0 12px;">${this._individualError}</div>` : u}
+          ${this._individualError ? d`<div class="action-msg error" style="margin:0 0 12px;">${this._individualError}</div>` : u}
 
           <div class="modal-btns">
             <button class="modal-btn-confirm modal-btn-icon"
               ?disabled="${i || s}"
               @click="${() => this._handleIndividualPrint()}"
-            >${s ? "Generating…" : h`${ve}Download`}</button>
-            ${t ? h`
+            >${s ? "Generating…" : d`${be}Download`}</button>
+            ${t ? d`
               <button class="modal-btn-confirm modal-btn-icon modal-btn-teal"
                 ?disabled="${i || s}"
                 @click="${() => this._handleIndividualEmail()}"
-              >${be}Email</button>
+              >${me}Email</button>
             ` : u}
             <button class="modal-btn-cancel" ?disabled="${s}" @click="${() => {
       this._individualOpen = !1;
@@ -2340,39 +2305,68 @@ class te extends z {
     </div>
   
     ── end removed ─────────────────────────────────────────────────────────────── */
+  /** Full / One-Page — a display setting, so it sits on the preview card
+   * and applies right away (see _handleModeChange). */
+  _renderModeToggle() {
+    const e = this._sheetLocked() || this._generating || this._finalizing;
+    return d`
+      <div class="segmented-control mode-toggle">
+        <button
+          class="seg-btn ${this._mode === "full" ? "active" : ""}"
+          ?disabled="${e}"
+          @click="${() => {
+      this._hideTooltip(), this._handleModeChange("full");
+    }}"
+          @mouseenter="${(t) => this._showTooltip(t, "Prints every section you have on")}"
+          @mouseleave="${() => this._hideTooltip()}"
+        >Full</button>
+        <button
+          class="seg-btn ${this._isOnePage() ? "active" : ""}"
+          ?disabled="${e}"
+          @click="${() => {
+      this._hideTooltip(), this._handleModeChange("one_page");
+    }}"
+          @mouseenter="${(t) => this._showTooltip(t, "Hides sections that don't fit on one page")}"
+          @mouseleave="${() => this._hideTooltip()}"
+        >One-Page</button>
+      </div>
+    `;
+  }
   _renderPreviewPane() {
-    const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e && !this._statusError, a = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
-    return h`
+    const e = !!this._pdfUrl, t = this._generating || this._finalizing, i = t || !!this.apiBaseUrl && !e && !this._statusError, o = !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.pdfViewerEnabled;
+    return d`
       <div class="preview-pane">
         <div class="card preview-card">
           <div class="preview-card-header">
-            <div
-              class="preview-title-group"
-              @mouseenter="${(o) => this._showTooltip(o, this._previewStale ? "Unapplied changes" : "Up to date")}"
-              @mouseleave="${() => this._hideTooltip()}"
-            >
-              <h2>${a ? "Preview" : "PDF"}</h2>
-              <span class="preview-status-dot ${this._previewStale ? "stale" : ""}"></span>
+            <div class="preview-title-group">
+              <span
+                class="preview-status-hit"
+                @mouseenter="${(a) => this._showTooltip(a, this._previewStale ? "Unapplied changes" : "Up to date")}"
+                @mouseleave="${() => this._hideTooltip()}"
+              ><span class="preview-status-dot ${this._previewStale ? "stale" : ""}"></span></span>
+              <h2>${o ? "Preview" : "PDF"}</h2>
+              ${this._renderModeToggle()}
             </div>
-            ${this.templateMode ? u : h`
+            <div class="preview-header-right">
+            ${this.templateMode ? u : d`
               <div class="preview-icon-btns">
                 ${this._renderSendInline()}
-                ${e && !t && a ? h`
+                ${e && !t && o ? d`
                   <button
                     class="email-icon-btn"
                     type="button"
-                    @mouseenter="${(o) => this._showTooltip(o, "Download printout")}"
+                    @mouseenter="${(a) => this._showTooltip(a, "Download printout")}"
                     @mouseleave="${() => this._hideTooltip()}"
                     @click="${() => {
       this._hideTooltip(), this._handleDownloadPdf();
     }}"
-                  >${ve}</button>
+                  >${be}</button>
                 ` : u}
                 <button
                   class="email-icon-btn"
                   type="button"
                   ?disabled="${!this.apiBaseUrl}"
-                  @mouseenter="${(o) => this._showTooltip(o, "Download or Email Individual Sections")}"
+                  @mouseenter="${(a) => this._showTooltip(a, "Download or Email Individual Sections")}"
                   @mouseleave="${() => this._hideTooltip()}"
                   @click="${() => {
       this._hideTooltip(), this._individualError = "", this._individualOpen = !0;
@@ -2382,8 +2376,9 @@ class te extends z {
               ${this._confirmSendEmail ? this._renderSendConfirmModal() : u}
               ${this._individualOpen ? this._renderIndividualModal() : u}
             `}
+            </div>
           </div>
-          ${i ? h`
+          ${i ? d`
             <div class="preview-loading">
               <div class="pulse-dots">
                 <span></span><span></span><span></span>
@@ -2391,22 +2386,22 @@ class te extends z {
               Generating preview…
             </div>
           ` : u}
-          ${!i && !e ? h`
+          ${!i && !e ? d`
             <div class="empty-preview">${this._statusError && this._statusMsg ? this._statusMsg : "Preview will appear once a payload is loaded"}</div>
           ` : u}
-          ${e && !t && a ? h`
+          ${e && !t && o ? d`
             <iframe class="pdf-frame" src="${this._pdfUrl}"></iframe>
           ` : u}
-          ${e && !t && !a ? h`
+          ${e && !t && !o ? d`
             <div style="width:100%;aspect-ratio:612/792;display:flex;align-items:center;justify-content:center;padding:20px;border:2px solid #d0d5dd;border-radius:8px;">
-              ${window.natively ? h`
+              ${window.natively ? d`
                 <button
                   class="btn btn-primary"
                   style="width:auto;padding:10px 24px;"
                   @click="${() => window.natively.openPDF({ base64: this._pdfUrl.split(",")[1], fileName: "offer.pdf", download: !0 }, () => {
     })}"
                 >Open PDF</button>
-              ` : h`
+              ` : d`
                 <a
                   href="${this._pdfUrl}"
                   target="_blank"
@@ -2423,7 +2418,7 @@ class te extends z {
   }
   // ── Main render ────────────────────────────────────────────────────────────
   render() {
-    return h`
+    return d`
       <div class="shell">
         ${this._renderHeader()}
         <main @click="${() => {
@@ -2441,7 +2436,7 @@ class te extends z {
     `;
   }
 }
-G(te, "properties", {
+F(ee, "properties", {
   // Public attributes
   apiBaseUrl: { type: String, attribute: "api-base-url" },
   apiMode: { type: String, attribute: "api-mode" },
@@ -2526,7 +2521,7 @@ G(te, "properties", {
   _individualSections: { type: Array, state: !0 },
   _individualBusy: { type: Boolean, state: !0 },
   _individualError: { type: String, state: !0 }
-}), G(te, "styles", Re`
+}), F(ee, "styles", ze`
     /* Kept deliberately simple — a host page can (and here, does) target
        "lexen-offer-sheet" by tag name from outside the shadow DOM, which can
        override :host rules. The actual split-scroll layout lives on .shell
@@ -2994,10 +2989,12 @@ G(te, "properties", {
 
     .preview-card-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .preview-card-header h2 { margin: 0; }
+    .preview-header-right { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .segmented-control.mode-toggle { width: auto; flex-shrink: 0; }
     .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
     .preview-actions .btn { width: auto; flex: 1; }
 
-    .preview-title-group { display: flex; align-items: center; gap: 8px; }
+    .preview-title-group { display: flex; align-items: center; gap: 12px; }
     .preview-title-group h2 { line-height: 1; }
 
     /* REMOVED (kept for reference — old clickable inline refresh trigger)
@@ -3027,6 +3024,7 @@ G(te, "properties", {
       flex-shrink: 0;
     }
     .preview-status-dot.stale { background: #f59f00; }
+    .preview-status-hit { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; margin-right: -8px; }
 
     /* Apply / Discard — both grey out with no pending changes, light up once
        something's been edited. Sit side by side above the reset-to-template
@@ -3363,10 +3361,18 @@ G(te, "properties", {
     .lock-btn.locked { background: #fff3cd; border-color: #f59f00; color: #b45309; }
     .lock-indicator {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 20px; color: #b0b8c4; flex-shrink: 0;
+      width: 20px; color: #b0b8c4; flex-shrink: 0; cursor: default;
+    }
+    .pill.one-page-locked { opacity: 0.55; cursor: default; }
+    /* One-Page hides this — shown in place of a lock icon. */
+    .full-only-chip {
+      display: inline-flex; align-items: center; flex-shrink: 0;
+      padding: 2px 8px; border-radius: 999px;
+      background: #006073; border: 1px solid #006073; color: #effcff;
+      font-size: 11px; font-weight: 500; white-space: nowrap; cursor: default;
     }
     .ctrl-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .ctrl-group.locked > :first-child { opacity: 0.5; pointer-events: none; }
+    .ctrl-group.locked > :not(.full-only-chip):not(.lock-indicator) { opacity: 0.5; pointer-events: none; }
     .group-row { display: flex; align-items: center; justify-content: space-between; }
     .group-row label.group-header { flex: 1; }
     .group-row-locked label.group-header { opacity: 0.5; }
@@ -3521,7 +3527,7 @@ G(te, "properties", {
       font-size: 12px; color: #98a2b3; text-align: center; padding: 4px 0;
     }
   `);
-customElements.define("lexen-offer-sheet", te);
+customElements.define("lexen-offer-sheet", ee);
 export {
-  te as LexenOfferSheet
+  ee as LexenOfferSheet
 };
