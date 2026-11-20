@@ -287,7 +287,7 @@ D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[L("elementProper
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const z = globalThis, le = (r) => r, j = z.trustedTypes, de = j ? j.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, we = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + b, je = `<${$e}>`, $ = document, T = () => $.createComment(""), M = (r) => r === null || typeof r != "object" && typeof r != "function", se = Array.isArray, He = (r) => se(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", q = `[ 	
+const z = globalThis, le = (r) => r, H = z.trustedTypes, de = H ? H.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, we = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, $e = "?" + b, He = `<${$e}>`, $ = document, T = () => $.createComment(""), M = (r) => r === null || typeof r != "object" && typeof r != "function", se = Array.isArray, je = (r) => se(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", q = `[ 	
 \f\r]`, O = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ce = /-->/g, he = />/g, x = RegExp(`>|${q}(?:([^\\s"'>=/]+)(${q}*=${q}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), pe = /'/g, ue = /"/g, Se = /^(?:script|style|textarea|title)$/i, Fe = (r) => (e, ...t) => ({ _$litType$: r, strings: e, values: t }), d = Fe(1), A = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), fe = /* @__PURE__ */ new WeakMap(), k = $.createTreeWalker($, 129);
 function Ee(r, e) {
@@ -302,7 +302,7 @@ const Ge = (r, e) => {
     let c, p, h = -1, f = 0;
     for (; f < n.length && (a.lastIndex = f, p = a.exec(n), p !== null); ) f = a.lastIndex, a === O ? p[1] === "!--" ? a = ce : p[1] !== void 0 ? a = he : p[2] !== void 0 ? (Se.test(p[2]) && (s = RegExp("</" + p[2], "g")), a = x) : p[3] !== void 0 && (a = x) : a === x ? p[0] === ">" ? (a = s ?? O, h = -1) : p[1] === void 0 ? h = -2 : (h = a.lastIndex - p[2].length, c = p[1], a = p[3] === void 0 ? x : p[3] === '"' ? ue : pe) : a === ue || a === pe ? a = x : a === ce || a === he ? a = O : (a = x, s = void 0);
     const _ = a === x && r[l + 1].startsWith("/>") ? " " : "";
-    o += a === O ? n + je : h >= 0 ? (i.push(c), n.slice(0, h) + we + n.slice(h) + b + _) : n + b + (h === -2 ? l : _);
+    o += a === O ? n + He : h >= 0 ? (i.push(c), n.slice(0, h) + we + n.slice(h) + b + _) : n + b + (h === -2 ? l : _);
   }
   return [Ee(r, o + (r[t] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
@@ -320,12 +320,12 @@ class B {
       if (s.nodeType === 1) {
         if (s.hasAttributes()) for (const h of s.getAttributeNames()) if (h.endsWith(we)) {
           const f = p[a++], _ = s.getAttribute(h).split(b), y = /([.?@])?(.*)/.exec(f);
-          n.push({ type: 1, index: o, name: y[2], strings: _, ctor: y[1] === "." ? We : y[1] === "?" ? Ke : y[1] === "@" ? Ye : H }), s.removeAttribute(h);
+          n.push({ type: 1, index: o, name: y[2], strings: _, ctor: y[1] === "." ? We : y[1] === "?" ? Ke : y[1] === "@" ? Ye : j }), s.removeAttribute(h);
         } else h.startsWith(b) && (n.push({ type: 6, index: o }), s.removeAttribute(h));
         if (Se.test(s.tagName)) {
           const h = s.textContent.split(b), f = h.length - 1;
           if (f > 0) {
-            s.textContent = j ? j.emptyScript : "";
+            s.textContent = H ? H.emptyScript : "";
             for (let _ = 0; _ < f; _++) s.append(h[_], T()), k.nextNode(), n.push({ type: 2, index: ++o });
             s.append(h[f], T());
           }
@@ -398,7 +398,7 @@ class N {
     return this._$AB;
   }
   _$AI(e, t = this) {
-    e = C(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== A && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : He(e) ? this.k(e) : this._(e);
+    e = C(this, e, t), M(e) ? e === u || e == null || e === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : e !== this._$AH && e !== A && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : je(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -441,7 +441,7 @@ class N {
     this._$AM === void 0 && (this._$Cv = e, (t = this._$AP) == null || t.call(this, e));
   }
 }
-class H {
+class j {
   get tagName() {
     return this.element.tagName;
   }
@@ -466,7 +466,7 @@ class H {
     e === u ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
-class We extends H {
+class We extends j {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -474,7 +474,7 @@ class We extends H {
     this.element[this.name] = e === u ? void 0 : e;
   }
 }
-class Ke extends H {
+class Ke extends j {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -482,7 +482,7 @@ class Ke extends H {
     this.element.toggleAttribute(this.name, !!e && e !== u);
   }
 }
-class Ye extends H {
+class Ye extends j {
   constructor(e, t, i, s, o) {
     super(e, t, i, s, o), this.type = 5;
   }
@@ -1158,13 +1158,13 @@ class ee extends R {
   /** Full / One-Page toggle. One-Page is a display rule: it hides what
    * can't fit on one page (ONE_PAGE_LOCKED) without touching the real
    * settings, so Full prints exactly what it did before. Not an edit — it
-   * re-renders and saves right away (an undo step, like any apply). Other
+   * re-renders and saves right away (not an undo step). Other
    * unapplied edits stay pending: the switch applies on top of the last
    * applied version, then the pending edits come back. */
   async _handleModeChange(e) {
     if (e === this._mode || this._generating || this._finalizing) return;
     const t = this._previewStale && this._appliedSnapshot ? { ...this._captureSettings(), mode: e } : null;
-    t ? (this._pendingDataLoad = !0, this._restoreSettings({ ...this._appliedSnapshot, mode: e })) : this._mode = e, await this._handleApply({ allowLocked: !0 }), t && (this._pendingDataLoad = !0, this._restoreSettings(t), this._previewStale = !0);
+    t ? (this._pendingDataLoad = !0, this._restoreSettings({ ...this._appliedSnapshot, mode: e })) : this._mode = e, await this._handleApply({ allowLocked: !0, fromHistory: !0 }), t && (this._pendingDataLoad = !0, this._restoreSettings(t), this._previewStale = !0);
   }
   _handleGroupChange(e, t) {
     if (this._groups = { ...this._groups, [e]: t ? "checked" : "unchecked" }, t && ["valuation", "observations", "market_scenarios", "selected_scenarios"].includes(e)) {
@@ -1249,7 +1249,7 @@ class ee extends R {
    * the applied version actually changed. */
   _pushHistory(e) {
     const t = this._appliedSnapshot;
-    e && t && t !== e && JSON.stringify(t) !== JSON.stringify(e) && (this._undoStack = [...this._undoStack, e].slice(-5), this._redoStack = []);
+    e && t && t !== e && !((s, o) => JSON.stringify({ ...s, mode: null }) === JSON.stringify({ ...o, mode: null }))(t, e) && (this._undoStack = [...this._undoStack, e].slice(-5), this._redoStack = []);
   }
   _handleUndo() {
     return this._stepHistory("_undoStack", "_redoStack");
@@ -1260,7 +1260,7 @@ class ee extends R {
   async _stepHistory(e, t) {
     if (this._sheetLocked() || this._generating || this._finalizing || !this[e].length) return;
     const i = this[e][this[e].length - 1], s = this._appliedSnapshot;
-    this[e] = this[e].slice(0, -1), this._restoreSettings(i), await this._handleApply({ fromHistory: !0 }) ? s && (this[t] = [...this[t], s].slice(-5)) : this[e] = [...this[e], i];
+    this[e] = this[e].slice(0, -1), this._restoreSettings({ ...i, mode: this._mode }), await this._handleApply({ fromHistory: !0 }) ? s && (this[t] = [...this[t], s].slice(-5)) : this[e] = [...this[e], i];
   }
   _resetToggles() {
     var t, i, s;

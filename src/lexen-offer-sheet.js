@@ -2092,7 +2092,7 @@ export class LexenOfferSheet extends LitElement {
   /** Full / One-Page toggle. One-Page is a display rule: it hides what
    * can't fit on one page (ONE_PAGE_LOCKED) without touching the real
    * settings, so Full prints exactly what it did before. Not an edit — it
-   * re-renders and saves right away (an undo step, like any apply). Other
+   * re-renders and saves right away (not an undo step). Other
    * unapplied edits stay pending: the switch applies on top of the last
    * applied version, then the pending edits come back. */
   async _handleModeChange(value) {
@@ -2106,7 +2106,8 @@ export class LexenOfferSheet extends LitElement {
     } else {
       this._mode = value;
     }
-    await this._handleApply({ allowLocked: true });
+    // Not an undo step — undo/redo only covers settings, not the display mode.
+    await this._handleApply({ allowLocked: true, fromHistory: true });
     if (pending) {
       this._pendingDataLoad = true;
       this._restoreSettings(pending);
@@ -2262,7 +2263,9 @@ export class LexenOfferSheet extends LitElement {
    * the applied version actually changed. */
   _pushHistory(before) {
     const after = this._appliedSnapshot;
-    if (before && after && after !== before && JSON.stringify(after) !== JSON.stringify(before)) {
+    // Ignores mode (Full / One-Page): a display mode, not part of history.
+    const same = (a, b) => JSON.stringify({ ...a, mode: null }) === JSON.stringify({ ...b, mode: null });
+    if (before && after && after !== before && !same(after, before)) {
       this._undoStack = [...this._undoStack, before].slice(-HISTORY_LIMIT);
       this._redoStack = [];
     }
@@ -2276,7 +2279,8 @@ export class LexenOfferSheet extends LitElement {
     const target  = this[fromKey][this[fromKey].length - 1];
     const current = this._appliedSnapshot;
     this[fromKey] = this[fromKey].slice(0, -1);
-    this._restoreSettings(target);
+    // Keep the current Full / One-Page — it's a display mode, not part of history.
+    this._restoreSettings({ ...target, mode: this._mode });
     const applied = await this._handleApply({ fromHistory: true });
     if (applied) {
       if (current) this[toKey] = [...this[toKey], current].slice(-HISTORY_LIMIT);
